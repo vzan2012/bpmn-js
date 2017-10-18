@@ -79,7 +79,8 @@
     "diagram-js-origin": "^0.15.2",
     "ids": "^0.2.0",
     "inherits": "^2.0.1",
-    "lodash": "^3.0.1",
+    "lodash": "^4.17.4",
+    "lodash-es": "^4.17.4",
     "min-dom": "^0.2.0",
     "object-refs": "^0.1.1",
     "tiny-svg": "^0.1.1"
