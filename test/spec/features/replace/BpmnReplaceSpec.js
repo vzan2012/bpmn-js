@@ -4,10 +4,10 @@ require('../../../TestHelper');
 
 /* global bootstrapModeler, inject */
 
-var modelingModule = require('../../../../lib/features/modeling'),
-    replaceModule = require('../../../../lib/features/replace'),
-    moveModule = require('diagram-js/lib/features/move'),
-    coreModule = require('../../../../lib/core');
+var modelingModule = require('../../../../lib/features/modeling').default,
+    replaceModule = require('../../../../lib/features/replace').default,
+    moveModule = require('diagram-js/lib/features/move').default,
+    coreModule = require('../../../../lib/core').default;
 
 var is = require('../../../../lib/util/ModelUtil').is,
     isExpanded = require('../../../../lib/util/DiUtil').isExpanded,
@@ -1213,6 +1213,7 @@ describe('features/replace - bpmn replace', function() {
         camunda: camundaPackage
       }
     }));
+
 
     it('should copy properties', inject(function(elementRegistry, bpmnReplace) {
       // given

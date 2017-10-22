@@ -2,8 +2,8 @@
 
 require('../../TestHelper');
 
-var coreModule = require('../../../lib/core'),
-    rendererModule = require('../../../lib/draw');
+var coreModule = require('../../../lib/core').default,
+    rendererModule = require('../../../lib/draw').default;
 
 var domQuery = require('min-dom/lib/query');
 
@@ -222,7 +222,7 @@ describe('draw - bpmn renderer', function() {
 
 
   it('should add random ID suffix to marker ID', function(done) {
-    
+
     var xml = require('../../fixtures/bpmn/simple.bpmn');
     bootstrapViewer(xml)(function(err) {
 

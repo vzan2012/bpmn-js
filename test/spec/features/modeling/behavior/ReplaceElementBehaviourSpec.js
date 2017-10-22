@@ -4,10 +4,10 @@ require('../../../../TestHelper');
 
 /* global bootstrapModeler, inject */
 
-var replacePreviewModule = require('../../../../../lib/features/replace-preview'),
-    modelingModule = require('../../../../../lib/features/modeling'),
-    moveModule = require('diagram-js/lib/features/move'),
-    coreModule = require('../../../../../lib/core');
+var replacePreviewModule = require('../../../../../lib/features/replace-preview').default,
+    modelingModule = require('../../../../../lib/features/modeling').default,
+    moveModule = require('diagram-js/lib/features/move').default,
+    coreModule = require('../../../../../lib/core').default;
 
 var is = require('../../../../../lib/util/ModelUtil').is,
     canvasEvent = require('../../../../util/MockEvents').createCanvasEvent;

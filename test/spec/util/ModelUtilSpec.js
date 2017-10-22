@@ -4,8 +4,8 @@ require('../../TestHelper');
 
 /* global bootstrapModeler, inject */
 
-var coreModule = require('../../../lib/core'),
-    modelingModule = require('../../../lib/features/modeling');
+var coreModule = require('../../../lib/core').default,
+    modelingModule = require('../../../lib/features/modeling').default;
 
 var ModelUtil = require('../../../lib/util/ModelUtil');
 

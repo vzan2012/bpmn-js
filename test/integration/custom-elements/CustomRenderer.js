@@ -2,7 +2,7 @@
 
 var inherits = require('inherits');
 
-var BaseRenderer = require('diagram-js/lib/draw/BaseRenderer');
+var BaseRenderer = require('diagram-js/lib/draw/BaseRenderer').default;
 
 var componentsToPath = require('diagram-js/lib/util/RenderUtil').componentsToPath;
 

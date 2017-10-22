@@ -14,12 +14,12 @@ var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
 /* global bootstrapModeler, inject */
 
 
-var contextPadModule = require('../../../../lib/features/context-pad'),
-    coreModule = require('../../../../lib/core'),
-    modelingModule = require('../../../../lib/features/modeling'),
-    replaceMenuModule = require('../../../../lib/features/popup-menu'),
-    createModule = require('diagram-js/lib/features/create'),
-    customRulesModule = require('../../../util/custom-rules');
+var contextPadModule = require('../../../../lib/features/context-pad').default,
+    coreModule = require('../../../../lib/core').default,
+    modelingModule = require('../../../../lib/features/modeling').default,
+    replaceMenuModule = require('../../../../lib/features/popup-menu').default,
+    createModule = require('diagram-js/lib/features/create').default,
+    customRulesModule = require('../../../util/custom-rules').default;
 
 
 describe('features - context-pad', function() {

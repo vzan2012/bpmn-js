@@ -6,14 +6,14 @@ var TestHelper = require('../../../TestHelper');
 
 var globalEvent = require('../../../util/MockEvents').createEvent;
 
-var coreModule = require('../../../../lib/core'),
-    modelingModule = require('../../../../lib/features/modeling'),
-    replaceMenuProviderModule = require('../../../../lib/features/popup-menu'),
-    customRulesModule = require('../../../util/custom-rules');
+var coreModule = require('../../../../lib/core').default,
+    modelingModule = require('../../../../lib/features/modeling').default,
+    replaceMenuProviderModule = require('../../../../lib/features/popup-menu').default,
+    customRulesModule = require('../../../util/custom-rules').default;
 
 var domQuery = require('min-dom/lib/query'),
     domClasses = require('min-dom/lib/classes'),
-    find = require('lodash-es/find');
+    find = require('lodash-es/find').default;
 
 var is = require('../../../../lib/util/ModelUtil').is,
     isExpanded = require('../../../../lib/util/DiUtil').isExpanded;

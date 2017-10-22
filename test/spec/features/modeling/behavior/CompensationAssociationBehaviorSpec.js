@@ -4,7 +4,7 @@ require('../../../../TestHelper');
 
 /* global inject, bootstrapModeler */
 
-var modelingModule = require('../../../../../lib/features/modeling');
+var modelingModule = require('../../../../../lib/features/modeling').default;
 
 
 describe('modeling/behavior - CompensationAssociation', function() {

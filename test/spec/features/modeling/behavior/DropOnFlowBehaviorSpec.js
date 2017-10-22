@@ -4,11 +4,11 @@ require('../../../../TestHelper');
 
 /* global inject, bootstrapModeler */
 
-var flatten = require('lodash-es/flatten');
+var flatten = require('lodash-es/flatten').default;
 
-var coreModule = require('../../../../../lib/core'),
-    moveModule = require('diagram-js/lib/features/move'),
-    modelingModule = require('../../../../../lib/features/modeling'),
+var coreModule = require('../../../../../lib/core').default,
+    moveModule = require('diagram-js/lib/features/move').default,
+    modelingModule = require('../../../../../lib/features/modeling').default,
     noTouchInteractionModule = { touchInteractionEvents: ['value', null ] };
 
 var canvasEvent = require('../../../../util/MockEvents').createCanvasEvent;

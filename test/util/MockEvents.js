@@ -1,8 +1,8 @@
 'use strict';
 
-var assign = require('lodash-es/assign');
+var assign = require('lodash-es/assign').default;
 
-var EventBus = require('diagram-js/lib/core/EventBus');
+var EventBusEvent = require('diagram-js/lib/core/EventBus').Event;
 
 var TestHelper = require('../TestHelper');
 
@@ -52,7 +52,7 @@ function createEvent(target, position, data) {
     offsetY: position.y
   }, data || {});
 
-  var event = new EventBus.Event();
+  var event = new EventBusEvent();
 
   event.init(data);
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var Modeler = require('../../lib/Modeler');
+var Modeler = require('../../lib/Modeler').default;
 
 var TestContainer = require('mocha-test-container-support');
 
@@ -390,8 +390,8 @@ describe('Modeler', function() {
   it('should expose Viewer and NavigatedViewer', function() {
 
     // given
-    var Viewer = require('../../lib/Viewer');
-    var NavigatedViewer = require('../../lib/NavigatedViewer');
+    var Viewer = require('../../lib/Viewer').default;
+    var NavigatedViewer = require('../../lib/NavigatedViewer').default;
 
     // then
     expect(Modeler.Viewer).to.equal(Viewer);

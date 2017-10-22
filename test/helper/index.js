@@ -28,15 +28,15 @@
  * ```
  */
 
-var unique = require('lodash-es/uniq'),
-    isFunction = require('lodash-es/isFunction'),
-    merge = require('lodash-es/merge'),
-    forEach = require('lodash-es/forEach');
+var unique = require('lodash-es/uniq').default,
+    isFunction = require('lodash-es/isFunction').default,
+    merge = require('lodash-es/merge').default,
+    forEach = require('lodash-es/forEach').default;
 
 var TestContainer = require('mocha-test-container-support');
 
-var Modeler = require('../../lib/Modeler'),
-    Viewer = require('../../lib/Viewer');
+var Modeler = require('../../lib/Modeler').default,
+    Viewer = require('../../lib/Viewer').default;
 
 var OPTIONS, BPMN_JS;
 
