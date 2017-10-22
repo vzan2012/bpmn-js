@@ -60,7 +60,10 @@ module.exports = function(karma) {
     browserify: {
       debug: true,
       paths: [ absoluteBasePath ],
-      transform: [ [ 'stringify', { global: true, extensions: [ '.bpmn', '.xml', '.css' ] } ] ]
+      transform: [
+        [ 'babelify', { global: true } ],
+        [ 'stringify', { global: true, extensions: [ '.bpmn', '.xml', '.css' ] } ]
+      ]
     }
   });
 };
