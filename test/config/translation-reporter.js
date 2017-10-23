@@ -1,7 +1,7 @@
 'use strict';
 
-var fs = require('fs').default;
-var path = require('path').default;
+var fs = require('fs');
+var path = require('path');
 
 var unique = require('lodash/uniq').default;
 var sortBy = require('lodash/sortBy').default;

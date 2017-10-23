@@ -39,6 +39,7 @@
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-lodash": "^3.2.11",
     "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babelify": "^7.3.0",
     "browserify": "^13.0.0",
@@ -92,6 +93,7 @@
     "inherits": "^2.0.1",
     "lodash": "^4.17.4",
     "lodash-es": "^4.17.4",
+    "min-dash": "^1.0.2",
     "min-dom": "^0.2.0",
     "object-refs": "^0.1.1",
     "tiny-svg": "^0.1.1"

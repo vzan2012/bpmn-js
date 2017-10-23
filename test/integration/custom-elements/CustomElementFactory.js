@@ -3,7 +3,7 @@
 var assign = require('lodash-es/assign').default;
 
 var BpmnElementFactory = require('../../../lib/features/modeling/ElementFactory').default,
-    LabelUtil = require('../../../lib/util/LabelUtil').default;
+    DEFAULT_LABEL_SIZE = require('../../../lib/util/LabelUtil').DEFAULT_LABEL_SIZE;
 
 
 class CustomElementFactory extends BpmnElementFactory {
@@ -18,7 +18,7 @@ class CustomElementFactory extends BpmnElementFactory {
         size;
 
     if (elementType === 'label') {
-      return super.create(elementType, assign({ type: 'label' }, LabelUtil.DEFAULT_LABEL_SIZE, attrs));
+      return super.create(elementType, assign({ type: 'label' }, DEFAULT_LABEL_SIZE, attrs));
     }
 
     if (/^custom\:/.test(type)) {

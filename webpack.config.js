@@ -28,7 +28,9 @@ module.exports = {
           ],
           plugins: [
             'lodash',
-            'external-helpers'
+            'external-helpers',
+            'transform-object-assign',
+            'transform-object-rest-spread'
           ]
         }
       }
@@ -55,7 +57,9 @@ module.exports = {
         'classCallCheck',
         'inherits',
         'typeof',
-        'possibleConstructorReturn'
+        'possibleConstructorReturn',
+        'extends',
+        'objectWithoutProperties'
       ]
     }),
     new LodashPlugin({ collections: true }),

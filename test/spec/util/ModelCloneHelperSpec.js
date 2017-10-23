@@ -10,15 +10,14 @@ var ModelCloneHelper = require('../../../lib/util/model/ModelCloneHelper').defau
 
 var camundaPackage = require('../../fixtures/json/model/camunda');
 
-var camundaModdleModule = require('./camunda-moddle');
+var camundaModdleModule = require('./camunda-moddle').default;
 
 function getProp(element, property) {
   return element && element.$model.properties.get(element, property);
 }
 
 
-// TODO(nikku): copy/paste is broken... fix and un-skip
-describe.skip('util/ModelCloneHelper', function() {
+describe('util/ModelCloneHelper', function() {
 
   var testModules = [ camundaModdleModule, coreModule ];
 
@@ -224,73 +223,101 @@ describe.skip('util/ModelCloneHelper', function() {
   });
 
 
-  describe('special cases', function() {
+  describe('extensions', function() {
 
-    it('failed job retry time cycle', inject(function(moddle) {
+    describe('should keep camunda:FailedJobRetryTimeCycle', function() {
 
-      function createExtElems() {
-        var retryTimeCycle = moddle.create('camunda:FailedJobRetryTimeCycle', { body: 'foobar' });
+      var create,
+          withFailedJobs;
 
-        return moddle.create('bpmn:ExtensionElements', { values: [ retryTimeCycle ] });
-      }
+      beforeEach(inject(function(moddle) {
 
-      // given
-      var timerEvtDef = moddle.create('bpmn:TimerEventDefinition', {
-        timeDuration: 'foobar'
-      });
+        create = function(name, attrs) {
+          return moddle.create(name, attrs);
+        };
 
-      var signalEvtDef = moddle.create('bpmn:SignalEventDefinition', {
-        async: true
-      });
+        withFailedJobs = function() {
 
-      var multiInst = moddle.create('bpmn:MultiInstanceLoopCharacteristics', {
-        elementVariable: 'foobar'
-      });
+          return create('bpmn:ExtensionElements', {
+            values: [
+              create('camunda:FailedJobRetryTimeCycle', {
+                body: 'foobar'
+              })
+            ]
+          });
+        };
 
-      var timerStartEvent = moddle.create('bpmn:StartEvent', {
-        extensionElements: createExtElems(),
-        eventDefinitions: [ timerEvtDef ]
-      });
+      }));
 
-      var signalStartEvt = moddle.create('bpmn:StartEvent', {
-        extensionElements: createExtElems(),
-        eventDefinitions: [ signalEvtDef ]
-      });
 
-      var subProcess = moddle.create('bpmn:SubProcess', {
-        extensionElements: createExtElems(),
-        loopCharacteristics: multiInst
-      });
+      it('bpmn:StartEvent -> bpmn:IntermediateCatchEvent', inject(function() {
 
-      var intCatchEvt = helper.clone(timerStartEvent, moddle.create('bpmn:IntermediateCatchEvent'), [
-        'bpmn:extensionElements',
-        'bpmn:eventDefinitions'
-      ]);
+        // given
+        var source = create('bpmn:StartEvent', {
+          extensionElements: withFailedJobs(),
+          eventDefinitions: [
+            create('bpmn:TimerEventDefinition', {
+              timeDuration: 'foobar'
+            })
+          ]
+        });
 
-      var startEvt = helper.clone(signalStartEvt, moddle.create('bpmn:StartEvent'), [
-        'bpmn:extensionElements',
-        'bpmn:eventDefinitions'
-      ]);
+        // when
+        var clone = helper.clone(source, create('bpmn:IntermediateCatchEvent'), [
+          'bpmn:extensionElements',
+          'bpmn:eventDefinitions'
+        ]);
 
-      var newSubProcess = helper.clone(subProcess, moddle.create('bpmn:SubProcess'), [
-        'bpmn:extensionElements',
-        'bpmn:loopCharacteristics'
-      ]);
+        // then
+        expect(clone.extensionElements).to.jsonEqual(source.extensionElements);
 
-      var intCatchEvtExtElems = intCatchEvt.extensionElements.values,
-          startEvtExtElems = startEvt.extensionElements.values,
-          newSubProcessExtElems = newSubProcess.extensionElements.values;
+      }));
 
-      // then
-      expect(intCatchEvtExtElems[0].$type).to.equal('camunda:FailedJobRetryTimeCycle');
-      expect(intCatchEvtExtElems[0].body).to.equal('foobar');
 
-      expect(startEvtExtElems[0].$type).to.equal('camunda:FailedJobRetryTimeCycle');
-      expect(startEvtExtElems[0].body).to.equal('foobar');
+      it('bpmn:SignalStartEvent -> bpmn:StartEvent', inject(function() {
 
-      expect(newSubProcessExtElems[0].$type).to.equal('camunda:FailedJobRetryTimeCycle');
-      expect(newSubProcessExtElems[0].body).to.equal('foobar');
-    }));
+        // given
+        var source = create('bpmn:StartEvent', {
+          extensionElements: withFailedJobs(),
+          eventDefinitions: [
+            create('bpmn:SignalEventDefinition', {
+              async: true
+            })
+          ]
+        });
+
+        var clone = helper.clone(source, create('bpmn:StartEvent'), [
+          'bpmn:extensionElements',
+          'bpmn:eventDefinitions'
+        ]);
+
+        // then
+        expect(clone.extensionElements).to.jsonEqual(source.extensionElements);
+
+      }));
+
+
+      it('bpmn:SubProcess', inject(function() {
+
+        // given
+        var source = create('bpmn:SubProcess', {
+          extensionElements: withFailedJobs(),
+          loopCharacteristics: create('bpmn:MultiInstanceLoopCharacteristics', {
+            elementVariable: 'foobar'
+          })
+        });
+
+        // when
+        var clone = helper.clone(source, create('bpmn:SubProcess'), [
+          'bpmn:extensionElements',
+          'bpmn:loopCharacteristics'
+        ]);
+
+        // then
+        expect(clone.extensionElements).to.jsonEqual(source.extensionElements);
+      }));
+
+    });
 
 
     it('connector', inject(function(moddle) {
