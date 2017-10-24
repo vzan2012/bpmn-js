@@ -1,4 +1,4 @@
-import assign from 'lodash-es/assign';
+import { assign } from 'min-dash/lib/object';
 
 import { Event as EventBusEvent } from 'diagram-js/lib/core/EventBus';
 

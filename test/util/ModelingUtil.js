@@ -2,10 +2,9 @@ import { invoke } from 'test/TestHelper';
 
 import { getCenter } from 'diagram-js/lib/layout/LayoutUtil';
 
-import isArray from 'lodash-es/isArray';
-import map from 'lodash-es/map';
-import pick from 'lodash-es/pick';
-import assign from 'lodash-es/assign';
+import { isArray } from 'min-dash/lib/lang';
+import { map } from 'min-dash/lib/collection';
+import { assign, pick } from 'min-dash/lib/object';
 
 
 function normalizeDelta(delta) {
@@ -26,7 +25,7 @@ export function getRelativeCenter(element, delta) {
 }
 
 
-export function function getElement(id) {
+export function getElement(id) {
 
   // assume
   expect(id).to.exist;

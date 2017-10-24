@@ -1,4 +1,4 @@
-import forEach from 'lodash-es/forEach';
+import { forEach } from 'min-dash/lib/collection';
 
 import RuleProvider from 'diagram-js/lib/features/rules/RuleProvider';
 

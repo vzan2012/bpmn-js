@@ -1,4 +1,3 @@
-const LodashPlugin = require('lodash-webpack-plugin');
 const ExternalsHelperPlugin = require('webpack-babel-external-helpers-2');
 
 const webpack = require('webpack');
@@ -27,7 +26,6 @@ module.exports = {
             } ]
           ],
           plugins: [
-            'lodash',
             'external-helpers',
             'transform-object-assign',
             'transform-object-rest-spread'
@@ -46,11 +44,6 @@ module.exports = {
     library: 'BpmnJS',
     libraryTarget: 'umd'
   },
-  resolve: {
-    alias: {
-      'lodash-es': 'lodash'
-    }
-  },
   plugins: [
     new ExternalsHelperPlugin({
       whitelist: [
@@ -62,7 +55,6 @@ module.exports = {
         'objectWithoutProperties'
       ]
     }),
-    new LodashPlugin({ collections: true }),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       include: /\.min\.js$/,

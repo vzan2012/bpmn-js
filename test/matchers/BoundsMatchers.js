@@ -1,4 +1,4 @@
-import pick from 'lodash-es/pick';
+import { pick } from 'min-dash/lib/object';
 
 var BOUNDS_ATTRS = [ 'x', 'y', 'width', 'height' ],
     POSITION_ATTRS = [ 'x', 'y' ],

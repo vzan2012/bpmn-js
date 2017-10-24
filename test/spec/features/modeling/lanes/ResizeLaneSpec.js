@@ -7,7 +7,7 @@ import coreModule from 'lib/core';
 
 import { resizeTRBL } from 'diagram-js/lib/features/resize/ResizeUtil';
 
-import pick from 'lodash-es/pick';
+import { pick } from 'min-dash/lib/object';
 
 function getBounds(element) {
   return pick(element, [ 'x', 'y', 'width', 'height']);

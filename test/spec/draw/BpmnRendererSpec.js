@@ -11,14 +11,6 @@ import rendererModule from 'lib/draw';
 
 import domQuery from 'min-dom/lib/query';
 
-function checkErrors(done) {
-  return function(err, warnings) {
-    expect(warnings).to.be.empty;
-    expect(err).not.to.exist;
-    done();
-  };
-}
-
 
 describe('draw - bpmn renderer', function() {
 
@@ -335,3 +327,14 @@ describe('draw - bpmn renderer', function() {
   });
 
 });
+
+
+//////////// helpers /////////////////////////
+
+function checkErrors(done) {
+  return function(err, warnings) {
+    expect(warnings).to.be.empty;
+    expect(err).not.to.exist;
+    done();
+  };
+}

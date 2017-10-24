@@ -17,7 +17,7 @@ import customRulesModule from '../../../util/custom-rules';
 
 import domQuery from 'min-dom/lib/query';
 import domClasses from 'min-dom/lib/classes';
-import find from 'lodash-es/find';
+import { find } from 'min-dash/lib/collection';
 
 import { is } from 'lib/util/ModelUtil';
 import { isExpanded } from 'lib/util/DiUtil';
@@ -44,7 +44,7 @@ function getEntries(popupMenu) {
 }
 
 function triggerAction(entries, id) {
-  var entry = find(entries, { id: id });
+  var entry = find(entries, (e) => e.id === id);
 
   if (!entry) {
     throw new Error('entry "'+ id +'" not found in replace menu');
@@ -1538,7 +1538,7 @@ describe('features/popup-menu - replace menu provider', function() {
         var entries = getEntries(popupMenu);
 
         // trigger DefaultFlow replacement
-        var replaceDefaultFlow = find(entries, { id: 'replace-with-default-flow' });
+        var replaceDefaultFlow = find(entries, (e) => e.id === 'replace-with-default-flow');
 
         replaceDefaultFlow.action();
 

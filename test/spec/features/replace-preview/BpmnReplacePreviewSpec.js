@@ -8,7 +8,7 @@ import coreModule from 'lib/core';
 
 import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
-import assign from 'lodash-es/assign';
+import { assign } from 'min-dash/lib/object';
 
 import svgAttr from 'tiny-svg/lib/attr';
 import svgClone from 'tiny-svg/lib/clone';

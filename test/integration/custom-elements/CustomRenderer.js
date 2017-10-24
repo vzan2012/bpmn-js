@@ -1,5 +1,3 @@
-import inherits from 'inherits';
-
 import BaseRenderer from 'diagram-js/lib/draw/BaseRenderer';
 
 import { componentsToPath } from 'diagram-js/lib/util/RenderUtil';

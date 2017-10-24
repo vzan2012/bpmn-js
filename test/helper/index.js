@@ -26,19 +26,18 @@
  * ```
  */
 
-import unique from 'lodash-es/uniq';
-import isFunction from 'lodash-es/isFunction';
-import merge from 'lodash-es/merge';
-import forEach from 'lodash-es/forEach';
+import { forEach } from 'min-dash/lib/collection';
+
+import { isFunction } from 'min-dash/lib/lang';
 
 import TestContainer from 'mocha-test-container-support';
 
 import Modeler from 'lib/Modeler';
 import Viewer from 'lib/Viewer';
 
-var OPTIONS, BPMN_JS;
-
 import translationModule from './TranslationCollector';
+
+var BPMN_JS;
 
 
 function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
@@ -77,12 +76,17 @@ function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
       _locals = _locals();
     }
 
-    _options = merge({
+    _options = _options || {};
+
+    _options = {
       container: testContainer,
+      modules: [],
+      ..._options,
       canvas: {
-        deferUpdate: false
+        deferUpdate: false,
+        ..._options.canvas
       }
-    }, OPTIONS, _options);
+    };
 
     if (_locals) {
       var mockModule = {};
@@ -94,8 +98,6 @@ function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
       _options.modules = [].concat(_options.modules || [], [ mockModule ]);
     }
 
-    _options.modules = unique(_options.modules);
-
     if (!_options.modules.length) {
       _options.modules = undefined;
     }
@@ -103,7 +105,6 @@ function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
     // used to extract translations used during tests
     if (window.__env__ && window.__env__.TRANSLATIONS === 'enabled') {
       _options.additionalModules = [].concat(_options.additionalModules || [], [ translationModule ]);
-      _options.additionalModules = unique(_options.additionalModules);
     }
 
     // clean up old bpmn-js instance

@@ -14,10 +14,12 @@ import tooltipsModule from 'diagram-js/lib/features/tooltips';
 import modelingModule from 'lib/features/modeling';
 import coreModule from 'lib/core';
 
-import map from 'lodash-es/map';
-import filter from 'lodash-es/filter';
-import forEach from 'lodash-es/forEach';
-import uniq from 'lodash-es/uniq';
+import {
+  map,
+  filter,
+  forEach,
+  uniqueBy
+} from 'min-dash/lib/collection';
 
 import DescriptorTree from './DescriptorTree';
 
@@ -573,7 +575,7 @@ describe.skip('features/copy-paste', function() {
         return e.businessObject.processRef.id;
       });
 
-      expect(uniq(processIds)).to.have.length(4);
+      expect(uniqueBy(processIds, (id) => id)).to.have.length(4);
     }));
 
 

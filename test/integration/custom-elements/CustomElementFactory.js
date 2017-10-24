@@ -1,4 +1,4 @@
-import assign from 'lodash-es/assign';
+import { assign } from 'min-dash/lib/object';
 
 import BpmnElementFactory from 'lib/features/modeling/ElementFactory';
 

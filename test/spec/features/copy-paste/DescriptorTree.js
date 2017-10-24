@@ -1,4 +1,4 @@
-import forEach from 'lodash-es/forEach';
+import { forEach } from 'min-dash/lib/collection';
 
 
 export default function DescriptorTree(tree) {

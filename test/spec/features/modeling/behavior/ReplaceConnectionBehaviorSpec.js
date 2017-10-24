@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
 import { is } from 'lib/util/ModelUtil';
-import find from 'lodash-es/find';
+import { find } from 'min-dash/lib/collection';
 
 import modelingModule from 'lib/features/modeling';
 import coreModule from 'lib/core';

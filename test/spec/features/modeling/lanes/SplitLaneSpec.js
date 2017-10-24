@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-import pick from 'lodash-es/pick';
+import { pick } from 'min-dash/lib/object';
 
 import modelingModule from 'lib/features/modeling';
 import coreModule from 'lib/core';

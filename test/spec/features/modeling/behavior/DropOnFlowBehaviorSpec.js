@@ -2,8 +2,6 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-import flatten from 'lodash-es/flatten';
-
 import coreModule from 'lib/core';
 import moveModule from 'diagram-js/lib/features/move';
 import modelingModule from 'lib/features/modeling';
@@ -618,3 +616,21 @@ describe('modeling/behavior - drop on connection', function() {
   });
 
 });
+
+
+import { reduce } from 'min-dash/lib/collection';
+import { isArray } from 'min-dash/lib/lang';
+
+function flatten(...args) {
+
+  return reduce(args, function(result, a) {
+
+    if (isArray(a)) {
+      a = flatten(...a);
+    } else {
+      a = [ a ];
+    }
+
+    return result.concat(a);
+  }, []);
+}

@@ -1,6 +1,9 @@
 import { getBpmnJS } from 'test/TestHelper';
 
-import map from 'lodash-es/map';
+import {
+  map,
+  forEach
+} from 'min-dash/lib/collection';
 
 
 // polyfill, because Math.sign is not available in PhantomJS, IE and Safari
@@ -13,7 +16,8 @@ Math.sign = Math.sign || function(x) {
   return x > 0 ? 1 : -1;
 };
 
-function move(elementIds, delta, targetId, isAttach) {
+
+export function move(elementIds, delta, targetId, isAttach) {
 
   if (typeof elementIds === 'string') {
     elementIds = [ elementIds ];
@@ -54,10 +58,8 @@ function move(elementIds, delta, targetId, isAttach) {
   });
 }
 
-module.exports.move = move;
 
-
-function add(attrs, position, target, isAttach) {
+export function add(attrs, position, target, isAttach) {
 
   return getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
 
@@ -81,14 +83,10 @@ function add(attrs, position, target, isAttach) {
   });
 }
 
-module.exports.add = add;
 
-
-function attach(attrs, position, target) {
+export function attach(attrs, position, target) {
   return add(attrs, position, target, true);
 }
-
-module.exports.attach = attach;
 
 
 function getAncestors(element) {
@@ -161,9 +159,7 @@ function compareZOrder(aId, bId) {
 }
 
 
-import forEach from 'lodash-es/forEach';
-
-function expectZOrder() {
+export function expectZOrder() {
 
   var elements = Array.prototype.slice.call(arguments);
 
@@ -180,5 +176,3 @@ function expectZOrder() {
 
   return true;
 }
-
-module.exports.expectZOrder = expectZOrder;

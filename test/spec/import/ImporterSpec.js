@@ -6,10 +6,11 @@ import TestContainer from 'mocha-test-container-support';
 
 import Diagram from 'diagram-js/lib/Diagram';
 import BpmnModdle from 'bpmn-moddle';
-import Importer from 'lib/import/Importer';
 import Viewer from 'lib/Viewer';
 
-import find from 'lodash-es/find';
+import { importBpmnDiagram } from 'lib/import/Importer';
+
+import { find } from 'min-dash/lib/collection';
 
 
 describe('import - Importer', function() {
@@ -37,7 +38,7 @@ describe('import - Importer', function() {
         return done(err);
       }
 
-      Importer.importBpmnDiagram(diagram, definitions, done);
+      importBpmnDiagram(diagram, definitions, done);
     });
   }
 
