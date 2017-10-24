@@ -90,8 +90,8 @@
     "ids": "^0.2.0",
     "inherits": "^2.0.3",
     "min-dash": "^1.1.0",
-    "min-dom": "^0.2.0",
+    "min-dom": "^0.3.0",
     "object-refs": "^0.1.1",
-    "tiny-svg": "^0.1.1"
+    "tiny-svg": "^0.1.3"
   }
 }
