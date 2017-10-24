@@ -3,15 +3,12 @@
 var fs = require('fs');
 var path = require('path');
 
-var unique = require('lodash/uniq').default;
-var sortBy = require('lodash/sortBy').default;
-
 function TranslationReporter() {
   process.env.TRANSLATIONS = 'enabled';
 
   var outputFile = path.join(__dirname, '../../docs/translations.json');
 
-  var translations = [];
+  var translations = {};
 
 
   this.onBrowserLog = function(browser, log, type) {
@@ -28,7 +25,7 @@ function TranslationReporter() {
       var obj = JSON.parse(log);
 
       if (obj.type === 'translations') {
-        translations.push(obj.msg);
+        translations[obj.msg] = true;
       }
     } catch (e) {
       return;
@@ -37,10 +34,10 @@ function TranslationReporter() {
 
 
   this.onRunComplete = function() {
-    translations = unique(translations);
-    translations = sortBy(translations);
+    var allTranslations = Object.keys(translations);
+    allTranslations.sort();
 
-    fs.writeFileSync(outputFile, JSON.stringify(translations, null, 2));
+    fs.writeFileSync(outputFile, JSON.stringify(allTranslations, null, 2));
   };
 }
 
