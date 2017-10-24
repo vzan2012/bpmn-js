@@ -66,24 +66,6 @@ module.exports = function(grunt) {
       }
     },
 
-    bundle: {
-      viewer: {
-        name: 'bpmn-viewer',
-        src: '<%= config.sources %>/Viewer.js',
-        dest: '<%= config.dist %>'
-      },
-      navigated_viewer: {
-        name: 'bpmn-navigated-viewer',
-        src: '<%= config.sources %>/NavigatedViewer.js',
-        dest: '<%= config.dist %>'
-      },
-      modeler: {
-        name: 'bpmn-modeler',
-        src: '<%= config.sources %>/Modeler.js',
-        dest: '<%= config.dist %>'
-      }
-    },
-
     copy: {
       bpmn_js: {
         files: [
@@ -99,8 +81,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadTasks('tasks');
-
 
   // tasks
   grunt.registerTask('extract-translations', [ 'karma:translations' ]);
@@ -111,7 +91,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('auto-test', [ 'karma:unit' ]);
 
-  grunt.registerTask('build', [ 'bundle', 'copy' ]);
+  grunt.registerTask('build', [ 'copy' ]);
 
   grunt.registerTask('default', [ 'lint', 'test', 'build' ]);
 };

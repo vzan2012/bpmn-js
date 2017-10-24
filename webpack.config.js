@@ -1,7 +1,26 @@
 const ExternalsHelperPlugin = require('webpack-babel-external-helpers-2');
 
 const webpack = require('webpack');
+
 const path = require('path');
+const fs = require('fs');
+
+const banner = fs.readFileSync('resources/banner.txt', 'utf-8');
+const bannerMin = fs.readFileSync('resources/banner-min.txt', 'utf-8');
+
+function processBanner(banner) {
+
+  var now = new Date();
+
+  var pkgDate = [ now.getFullYear(), now.getMonth() + 1, now.getDate() ].join('-');
+  var pkgVersion = require('./package').version;
+
+  return (
+    banner
+      .replace(/\[pkgDate\]/, pkgDate)
+      .replace(/\[pkgVersion\]/, pkgVersion)
+  );
+}
 
 module.exports = {
   entry: {
@@ -54,6 +73,14 @@ module.exports = {
         'extends',
         'objectWithoutProperties'
       ]
+    }),
+    new webpack.BannerPlugin({
+      include: /\.min\.js$/,
+      banner: processBanner(bannerMin)
+    }),
+    new webpack.BannerPlugin({
+      exclude: /\.min\.js$/,
+      banner: processBanner(banner)
     }),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.UglifyJsPlugin({

@@ -5,7 +5,7 @@
   "scripts": {
     "all": "run-s lint test distro",
     "dev": "grunt auto-test",
-    "distro": "NODE_ENV=production webpack",
+    "distro": "NODE_ENV=production webpack && grunt build",
     "test": "grunt test",
     "lint": "grunt lint"
   },
@@ -43,8 +43,6 @@
     "babelify": "^7.3.0",
     "brfs-babel": "^1.0.0",
     "browserify": "^13.0.0",
-    "browserify-derequire": "^0.9.1",
-    "bundle-collapser": "^1.1.1",
     "chai": "^4.1.2",
     "chai-match": "^1.1.1",
     "eslint": "^3.19.0",
@@ -75,7 +73,6 @@
     "puppeteer": "^0.12.0",
     "sinon": "^4.0.1",
     "sinon-chai": "^2.14.0",
-    "source-map-concat": "^1.0.0",
     "time-grunt": "^0.3.2",
     "uglify-js": "^2.4.16",
     "watchify": "^3.7.0",
