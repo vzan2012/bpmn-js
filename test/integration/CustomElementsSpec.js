@@ -1,8 +1,8 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var Modeler = require('../../lib/Modeler').default;
+var Modeler = require('lib/Modeler').default;
 
 var canvasEvent = require('../util/MockEvents').createCanvasEvent;
 
@@ -14,9 +14,9 @@ var customElementsModules = require('./custom-elements').default,
 
 var testModules = [].concat(modelerModules, customModules);
 
-var processDiagramXML = require('../fixtures/bpmn/simple.bpmn');
+var processDiagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
-var collaborationDiagramXML = require('../fixtures/bpmn/collaboration.bpmn');
+var collaborationDiagramXML = readFileSync('test/fixtures/bpmn/collaboration.bpmn', 'utf-8');
 
 
 describe('custom elements', function() {

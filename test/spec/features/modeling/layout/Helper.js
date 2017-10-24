@@ -1,4 +1,4 @@
-var TestHelper = require('../../../../TestHelper');
+import * as TestHelper from 'test/TestHelper';
 
 
 function connect(source, target, attrs) {

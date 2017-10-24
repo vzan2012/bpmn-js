@@ -1,15 +1,15 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('../../../../lib/features/modeling').default,
-    providerModule = require('../../../../lib/features/global-connect').default,
-    coreModule = require('../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    providerModule = require('lib/features/global-connect').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/bpmn-global-connect-provider', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/simple.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
   var testModules = [ coreModule, modelingModule, providerModule ];
 

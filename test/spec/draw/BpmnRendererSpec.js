@@ -1,13 +1,15 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../TestHelper');
+import {
+  bootstrapViewer,
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-var coreModule = require('../../../lib/core').default,
-    rendererModule = require('../../../lib/draw').default;
+var coreModule = require('lib/core').default,
+    rendererModule = require('lib/draw').default;
 
 var domQuery = require('min-dom/lib/query');
-
-/* global bootstrapViewer, bootstrapModeler, inject */
 
 function checkErrors(done) {
   return function(err, warnings) {
@@ -17,166 +19,167 @@ function checkErrors(done) {
   };
 }
 
+
 describe('draw - bpmn renderer', function() {
 
   it('should render activity markers', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/activity-markers.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/activity-markers.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render association markers', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/associations.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/associations.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render activity markers (combination)', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/activity-markers-combination.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/activity-markers-combination.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render conditional flows', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/conditional-flow.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/conditional-flow.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render conditional default flows', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/conditional-flow-default.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/conditional-flow-default.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render NO conditional flow (gateway)', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/conditional-flow-gateways.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/conditional-flow-gateways.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render conditional flow (typed task)', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/conditional-flow-typed-task.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/conditional-flow-typed-task.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render data objects', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/data-objects.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/data-objects.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render events', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/events.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/events.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render events (interrupting)', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/events-interrupting.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/events-interrupting.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render event subprocesses (collapsed)', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/event-subprocesses-collapsed.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/event-subprocesses-collapsed.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render event subprocesses (expanded)', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/event-subprocesses-expanded.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/event-subprocesses-expanded.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render gateways', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/gateways.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/gateways.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render group', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/group.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/group.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render message marker', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/message-marker.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/message-marker.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render pools', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/pools.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/pools.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render pool collection marker', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/pools-with-collection-marker.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/pools-with-collection-marker.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render task types', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/task-types.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/task-types.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render text annotations', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/text-annotation.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/text-annotation.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render flow markers', function(done) {
-    var xml = require('../../fixtures/bpmn/flow-markers.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/flow-markers.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render xor gateways blank and with X', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/xor.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/xor.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render boundary events with correct z-index', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/boundary-event-z-index.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/boundary-event-z-index.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render boundary events without flowNodeRef', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/boundary-event-without-refnode.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/boundary-event-without-refnode.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render boundary event only once if referenced incorrectly via flowNodeRef (robustness)', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/boundary-event-with-refnode.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/boundary-event-with-refnode.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render gateway event if attribute is missing in XML', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/gateway-type-default.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/gateway-type-default.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it.skip('should render colors', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/colors.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/colors.bpmn', 'utf-8');
     bootstrapViewer(xml)(checkErrors(done));
   });
 
 
   it('should render call activity', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/call-activity.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/call-activity.bpmn', 'utf-8');
 
     bootstrapViewer(xml)(function(err) {
 
@@ -199,7 +202,7 @@ describe('draw - bpmn renderer', function() {
 
 
   it('should render adhoc sub process', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/activity-markers-simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/activity-markers-simple.bpmn', 'utf-8');
 
     bootstrapViewer(xml)(function(err) {
 
@@ -223,7 +226,7 @@ describe('draw - bpmn renderer', function() {
 
   it('should add random ID suffix to marker ID', function(done) {
 
-    var xml = require('../../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
     bootstrapViewer(xml)(function(err) {
 
       if (err) {
@@ -244,7 +247,7 @@ describe('draw - bpmn renderer', function() {
 
   it('should properly render colored markers', function(done) {
 
-    var xml = require('../../fixtures/bpmn/draw/colors.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/draw/colors.bpmn', 'utf-8');
     bootstrapViewer(xml)(function(err) {
 
       if (err) {
@@ -267,7 +270,7 @@ describe('draw - bpmn renderer', function() {
 
   describe('path', function() {
 
-    var diagramXML = require('../../fixtures/bpmn/simple-cropping.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/simple-cropping.bpmn', 'utf-8');
 
     var testModules = [ coreModule, rendererModule ];
 

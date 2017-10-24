@@ -1,19 +1,16 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 var find = require('lodash-es/find').default;
 
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - append text-annotation', function() {
 
-  var diagramXML = require('../../../../fixtures/bpmn/containers.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/containers.bpmn', 'utf-8');
 
   var testModules = [ coreModule, modelingModule ];
 

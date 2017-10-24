@@ -1,12 +1,10 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var replacePreviewModule = require('../../../../lib/features/replace-preview').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+var replacePreviewModule = require('lib/features/replace-preview').default,
+    modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
 
@@ -21,7 +19,7 @@ describe('features/replace-preview', function() {
 
   var testModules = [ replacePreviewModule, modelingModule, coreModule ];
 
-  var diagramXML = require('../../../fixtures/bpmn/event-sub-processes.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/event-sub-processes.bpmn', 'utf-8');
 
   var startEvent_1,
       rootElement;

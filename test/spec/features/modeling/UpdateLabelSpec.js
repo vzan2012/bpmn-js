@@ -1,17 +1,20 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - update label', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/features/modeling/update-label.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/features/modeling/update-label.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(diagramXML, {
-    modules: [ coreModule, modelingModule ]
+    modules: [
+      coreModule,
+      modelingModule
+    ]
   }));
 
 

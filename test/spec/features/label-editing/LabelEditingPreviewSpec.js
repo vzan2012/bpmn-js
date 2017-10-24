@@ -1,18 +1,18 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapViewer, inject */
+import { bootstrapViewer, inject } from 'test/TestHelper';
 
 var pick = require('lodash-es/pick').default;
 
-var labelEditingModule = require('../../../../lib/features/label-editing').default,
-    coreModule = require('../../../../lib/core').default,
+var labelEditingModule = require('lib/features/label-editing').default,
+    coreModule = require('lib/core').default,
     draggingModule = require('diagram-js/lib/features/dragging').default,
     modelingModule = require('diagram-js/lib/features/modeling').default;
 
 
 describe('features - label-editing preview', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/features/label-editing/labels.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/features/label-editing/labels.bpmn', 'utf-8');
 
   var testModules = [ labelEditingModule, coreModule, draggingModule, modelingModule ];
 

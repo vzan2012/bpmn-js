@@ -1,16 +1,14 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 var pick = require('lodash-es/pick').default,
     assign = require('lodash-es/assign').default;
 
-var autoResizeModule = require('../../../../lib/features/auto-resize').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
+var autoResizeModule = require('lib/features/auto-resize').default,
+    modelingModule = require('lib/features/modeling').default,
     createModule = require('diagram-js/lib/features/create').default,
-    coreModule = require('../../../../lib/core').default,
+    coreModule = require('lib/core').default,
     canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
 
 function getBounds(shape) {
@@ -30,7 +28,7 @@ describe('features/auto-resize', function() {
 
   describe('participant', function() {
 
-    var diagramXML = require('./AutoResize.participant.bpmn');
+    var diagramXML = readFileSync(__dirname + '/AutoResize.participant.bpmn', 'utf-8');
 
     var taskShape,
         participantShape,
@@ -288,7 +286,7 @@ describe('features/auto-resize', function() {
 
   describe('lane', function() {
 
-    var diagramXML = require('./AutoResize.lanes.bpmn');
+    var diagramXML = readFileSync(__dirname + '/AutoResize.lanes.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -329,7 +327,7 @@ describe('features/auto-resize', function() {
 
   describe('sub processes', function() {
 
-    var diagramXML = require('./AutoResize.sub-processes.bpmn');
+    var diagramXML = readFileSync(__dirname + '/AutoResize.sub-processes.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -436,7 +434,7 @@ describe('features/auto-resize', function() {
 
   describe('after moving multiple elements', function() {
 
-    var diagramXML = require('./AutoResize.multi-selection.bpmn');
+    var diagramXML = readFileSync(__dirname + '/AutoResize.multi-selection.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -532,7 +530,7 @@ describe('features/auto-resize', function() {
 
   describe('nested sub processes', function() {
 
-    var diagramXML = require('./AutoResize.nested-sub-processes.bpmn');
+    var diagramXML = readFileSync(__dirname + '/AutoResize.nested-sub-processes.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -574,7 +572,7 @@ describe('features/auto-resize', function() {
 
   describe('space-tool', function() {
 
-    var diagramXML = require('./AutoResize.space-tool.bpmn');
+    var diagramXML = readFileSync(__dirname + '/AutoResize.space-tool.bpmn', 'utf-8');
 
     var taskShape,
         participantShape,

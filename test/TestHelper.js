@@ -1,12 +1,14 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-var TestHelper = module.exports = require('./helper');
+export * from './helper';
 
-TestHelper.insertCSS('diagram-js.css', require('diagram-js/assets/diagram-js.css'));
+import { insertCSS } from './helper';
 
-TestHelper.insertCSS('bpmn-embedded.css', require('../assets/bpmn-font/css/bpmn-embedded.css'));
+insertCSS('diagram-js.css', readFileSync('node_modules/diagram-js/assets/diagram-js.css', 'utf-8'));
 
-TestHelper.insertCSS('diagram-js-testing.css',
+insertCSS('bpmn-embedded.css', readFileSync('assets/bpmn-font/css/bpmn-embedded.css', 'utf-8'));
+
+insertCSS('diagram-js-testing.css',
   '.test-container .result { height: 500px; }' + '.test-container { height: 1000px !important }'
 );
 

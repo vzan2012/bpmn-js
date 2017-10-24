@@ -1,18 +1,16 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
-
-var LabelUtil = require('../../../../../lib/util/LabelUtil');
+var LabelUtil = require('lib/util/LabelUtil');
 
 
 describe('behavior - LabelBehavior', function() {
 
-  var diagramXML = require('../../../../fixtures/bpmn/basic.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/basic.bpmn', 'utf-8');
 
   var testModules = [ modelingModule, coreModule ];
 

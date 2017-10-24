@@ -1,20 +1,18 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-var Helper = require('./Helper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var connect = Helper.connect,
-    element = Helper.element,
-    move = Helper.move,
-    reconnectEnd = Helper.reconnectEnd;
+import {
+  connect,
+  element,
+  move,
+  reconnectEnd
+} from './Helper';
 
-var Modeler = require('../../../../../lib/Modeler').default;
+var Modeler = require('lib/Modeler').default;
 
-
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - layout', function() {
@@ -22,7 +20,7 @@ describe('features/modeling - layout', function() {
 
   describe.skip('overall experience, flow elements', function() {
 
-    var diagramXML = require('./LayoutSequenceFlowSpec.flowElements.bpmn');
+    var diagramXML = readFileSync(__dirname + '/LayoutSequenceFlowSpec.flowElements.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: Modeler.prototype._modules }));
 
@@ -34,7 +32,7 @@ describe('features/modeling - layout', function() {
 
   describe.skip('overall experience, boundary events', function() {
 
-    var diagramXML = require('./LayoutSequenceFlowSpec.boundaryEvents.bpmn');
+    var diagramXML = readFileSync(__dirname + '/LayoutSequenceFlowSpec.boundaryEvents.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: Modeler.prototype._modules }));
 
@@ -46,7 +44,7 @@ describe('features/modeling - layout', function() {
 
   describe('flow elements', function() {
 
-    var diagramXML = require('./LayoutSequenceFlowSpec.flowElements.bpmn');
+    var diagramXML = readFileSync(__dirname + '/LayoutSequenceFlowSpec.flowElements.bpmn', 'utf-8');
 
     var testModules = [ coreModule, modelingModule ];
 
@@ -214,7 +212,7 @@ describe('features/modeling - layout', function() {
 
   describe('boundary events', function() {
 
-    var diagramXML = require('./LayoutSequenceFlowSpec.boundaryEvents.bpmn');
+    var diagramXML = readFileSync(__dirname + '/LayoutSequenceFlowSpec.boundaryEvents.bpmn', 'utf-8');
 
     var testModules = [ coreModule, modelingModule ];
 

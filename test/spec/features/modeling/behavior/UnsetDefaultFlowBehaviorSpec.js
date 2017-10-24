@@ -1,16 +1,16 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - delete default connection', function() {
 
   var testModules = [ coreModule, modelingModule ];
 
-  var processDiagramXML = require('./UnsetDefaultFlowBehaviorSpec.bpmn');
+  var processDiagramXML = readFileSync(__dirname + '/UnsetDefaultFlowBehaviorSpec.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 

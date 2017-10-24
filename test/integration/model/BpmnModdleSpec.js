@@ -1,4 +1,4 @@
-'use strict';
+import { readFileSync } from 'fs';
 
 var BpmnModdle = require('bpmn-moddle');
 
@@ -44,7 +44,7 @@ describe('bpmn-moddle', function() {
 
     it('should parse complex xml', function(done) {
 
-      var xml = require('../../fixtures/bpmn/complex.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/complex.bpmn', 'utf-8');
 
       var start = new Date().getTime();
 

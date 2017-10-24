@@ -1,17 +1,14 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - move elements', function() {
 
-  var diagramXML = require('./MoveElements.flow-collaboration.bpmn');
+  var diagramXML = readFileSync(__dirname + '/MoveElements.flow-collaboration.bpmn', 'utf-8');
 
   var testModules = [ coreModule, modelingModule ];
 

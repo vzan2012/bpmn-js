@@ -1,12 +1,10 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var bpmnDistributeElements = require('../../../../lib/features/distribute-elements').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+var bpmnDistributeElements = require('lib/features/distribute-elements').default,
+    modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 function last(arr) {
   return arr[arr.length - 1];
@@ -20,7 +18,7 @@ describe('features/distribute-elements', function() {
 
   describe('basics', function() {
 
-    var basicXML = require('../../../fixtures/bpmn/distribute-elements.bpmn');
+    var basicXML = readFileSync('test/fixtures/bpmn/distribute-elements.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(basicXML, { modules: testModules }));
 
@@ -80,7 +78,7 @@ describe('features/distribute-elements', function() {
 
   describe('filtering elements', function() {
 
-    var xml = require('../../../fixtures/bpmn/distribute-elements-filtering.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/distribute-elements-filtering.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(xml, { modules: testModules }));
 

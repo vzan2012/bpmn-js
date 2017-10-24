@@ -1,18 +1,15 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('../../../../lib/features/modeling').default,
+var modelingModule = require('lib/features/modeling').default,
     bendpointsModule = require('diagram-js/lib/features/bendpoints').default,
-    coreModule = require('../../../../lib/core').default;
+    coreModule = require('lib/core').default;
 
 
 describe('features/bendpoints', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/features/drop/drop.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/features/drop/drop.bpmn', 'utf-8');
 
   var testModules = [ coreModule, bendpointsModule, modelingModule ];
 

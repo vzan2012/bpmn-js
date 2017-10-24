@@ -1,14 +1,12 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var is = require('../../../../../lib/util/ModelUtil').is,
+var is = require('lib/util/ModelUtil').is,
     find = require('lodash-es/find').default;
 
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 var canvasEvent = require('../../../../util/MockEvents').createCanvasEvent;
 
@@ -36,7 +34,7 @@ describe('features/modeling - replace connection', function() {
 
   describe('should replace SequenceFlow <> MessageFlow', function() {
 
-    var processDiagramXML = require('./ReplaceConnectionBehavior.message-sequence-flow.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/ReplaceConnectionBehavior.message-sequence-flow.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, {
       modules: testModules
@@ -261,7 +259,7 @@ describe('features/modeling - replace connection', function() {
 
   describe('should replace SequenceFlow <> MessageFlow', function() {
 
-    var processDiagramXML = require('./ReplaceConnectionBehavior.association.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/ReplaceConnectionBehavior.association.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, {
       modules: testModules
@@ -319,7 +317,7 @@ describe('features/modeling - replace connection', function() {
 
     describe('moving host', function() {
 
-      var processDiagramXML = require('./ReplaceConnectionBehavior.boundary-events.bpmn');
+      var processDiagramXML = readFileSync(__dirname + '/ReplaceConnectionBehavior.boundary-events.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -387,7 +385,7 @@ describe('features/modeling - replace connection', function() {
 
     describe('moving along host with outgoing', function() {
 
-      var processDiagramXML = require('../../../../fixtures/bpmn/features/replace/connection.bpmn');
+      var processDiagramXML = readFileSync('test/fixtures/bpmn/features/replace/connection.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(processDiagramXML, {
         modules: testModules

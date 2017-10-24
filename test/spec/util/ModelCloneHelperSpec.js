@@ -1,12 +1,10 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+var coreModule = require('lib/core').default;
 
-var coreModule = require('../../../lib/core').default;
-
-var ModelCloneHelper = require('../../../lib/util/model/ModelCloneHelper').default;
+var ModelCloneHelper = require('lib/util/model/ModelCloneHelper').default;
 
 var camundaPackage = require('../../fixtures/json/model/camunda');
 
@@ -21,7 +19,7 @@ describe('util/ModelCloneHelper', function() {
 
   var testModules = [ camundaModdleModule, coreModule ];
 
-  var basicXML = require('../../fixtures/bpmn/basic.bpmn');
+  var basicXML = readFileSync('test/fixtures/bpmn/basic.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(basicXML, {
     modules: testModules,

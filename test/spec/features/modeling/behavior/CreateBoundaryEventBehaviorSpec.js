@@ -1,12 +1,9 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling/behavior - create boundary events', function() {
@@ -14,7 +11,7 @@ describe('features/modeling/behavior - create boundary events', function() {
   var testModules = [ coreModule, modelingModule ];
 
 
-  var processDiagramXML = require('../../../../fixtures/bpmn/collaboration/process-empty.bpmn');
+  var processDiagramXML = readFileSync('test/fixtures/bpmn/collaboration/process-empty.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules.concat(modelingModule) }));
 

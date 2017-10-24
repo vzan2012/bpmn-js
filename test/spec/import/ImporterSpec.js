@@ -1,14 +1,13 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../TestHelper');
-
+import 'test/TestHelper';
 
 var TestContainer = require('mocha-test-container-support');
 
 var Diagram = require('diagram-js/lib/Diagram').default,
     BpmnModdle = require('bpmn-moddle'),
-    Importer = require('../../../lib/import/Importer'),
-    Viewer = require('../../../lib/Viewer').default;
+    Importer = require('lib/import/Importer'),
+    Viewer = require('lib/Viewer').default;
 
 var find = require('lodash-es/find').default;
 
@@ -48,7 +47,7 @@ describe('import - Importer', function() {
     it('should fire <import.render.start> and <import.render.complete>', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/process.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/process.bpmn', 'utf-8');
 
       var eventCount = 0;
 
@@ -82,7 +81,7 @@ describe('import - Importer', function() {
     it('should fire <bpmnElement.added> during import', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/process.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/process.bpmn', 'utf-8');
 
       var eventCount = 0;
 
@@ -109,7 +108,7 @@ describe('import - Importer', function() {
     it('should import process', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/process.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/process.bpmn', 'utf-8');
 
       var events = [];
 
@@ -147,7 +146,7 @@ describe('import - Importer', function() {
     it('should import collaboration', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/collaboration.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/collaboration.bpmn', 'utf-8');
 
       var events = [];
 
@@ -186,7 +185,7 @@ describe('import - Importer', function() {
 
   describe('position', function() {
 
-    var xml = require('../../fixtures/bpmn/import/position/position-testcase.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/import/position/position-testcase.bpmn', 'utf-8');
 
     it('should round shape\'s x and y coordinates', function(done) {
 
@@ -243,7 +242,7 @@ describe('import - Importer', function() {
     it('should import boundary events', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/boundaryEvent.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/boundaryEvent.bpmn', 'utf-8');
 
       var events = [];
 
@@ -281,7 +280,7 @@ describe('import - Importer', function() {
     it('should import invalid flowElement', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/error/invalid-flow-element.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/error/invalid-flow-element.bpmn', 'utf-8');
 
       // when
       runImport(diagram, xml, function(err, warnings) {
@@ -296,7 +295,7 @@ describe('import - Importer', function() {
     it('should import multiple DIs', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/error/multiple-dis.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/error/multiple-dis.bpmn', 'utf-8');
 
       // when
       runImport(diagram, xml, function(err, warnings) {
@@ -315,7 +314,7 @@ describe('import - Importer', function() {
     it('should extend attributes with default value', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/default-attrs.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/default-attrs.bpmn', 'utf-8');
 
       // when
       runImport(diagram, xml, function(err, warnings) {
@@ -336,7 +335,7 @@ describe('import - Importer', function() {
       it('should handle missing attachToRef', function(done) {
 
         // given
-        var xml = require('../../fixtures/bpmn/import/error/boundaryEvent-missingAttachToRef.bpmn');
+        var xml = readFileSync('test/fixtures/bpmn/import/error/boundaryEvent-missingAttachToRef.bpmn', 'utf-8');
 
         // when
         runImport(diagram, xml, function(err, warnings) {
@@ -355,7 +354,7 @@ describe('import - Importer', function() {
       it('should handle invalid attachToRef', function(done) {
 
         // given
-        var xml = require('../../fixtures/bpmn/import/error/boundaryEvent-invalidAttachToRef.bpmn');
+        var xml = readFileSync('test/fixtures/bpmn/import/error/boundaryEvent-invalidAttachToRef.bpmn', 'utf-8');
 
         // when
         runImport(diagram, xml, function(err, warnings) {
@@ -380,7 +379,7 @@ describe('import - Importer', function() {
     it('should import dangling process message flows', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/error/dangling-process-message-flow.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/error/dangling-process-message-flow.bpmn', 'utf-8');
 
       // when
       runImport(diagram, xml, function(err, warnings) {
@@ -403,7 +402,7 @@ describe('import - Importer', function() {
     it('should hide shapes and connections inside of collapsed subprocess', function(done) {
 
       // given
-      var xml = require('../../fixtures/bpmn/import/collapsed/processWithChildren.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/import/collapsed/processWithChildren.bpmn', 'utf-8');
 
       // when
       runImport(diagram, xml, function(err, warnings) {

@@ -1,11 +1,11 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import 'test/TestHelper';
 
 
 var TestContainer = require('mocha-test-container-support');
 
-var Modeler = require('../../../../lib/Modeler').default;
+var Modeler = require('lib/Modeler').default;
 
 
 describe('direct editing - touch integration', function() {
@@ -27,13 +27,13 @@ describe('direct editing - touch integration', function() {
 
 
   it('should work on modeler (manual test)', function(done) {
-    var xml = require('../../../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
     createModeler(xml, done);
   });
 
 
   it('should edit labels via double tap (manual test)', function(done) {
-    var xml = require('../../../fixtures/bpmn/features/label-editing/labels.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/features/label-editing/labels.bpmn', 'utf-8');
     createModeler(xml, done);
   });
 

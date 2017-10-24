@@ -61,8 +61,8 @@ module.exports = function(karma) {
       debug: true,
       paths: [ absoluteBasePath ],
       transform: [
-        [ 'babelify', { global: true } ],
-        [ 'stringify', { global: true, extensions: [ '.bpmn', '.xml', '.css' ] } ]
+        [ 'brfs-babel' ],
+        [ 'babelify', { global: true } ]
       ]
     }
   });

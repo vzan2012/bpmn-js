@@ -1,8 +1,8 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../TestHelper');
+import 'test/TestHelper';
 
-var NavigatedViewer = require('../../lib/NavigatedViewer').default;
+var NavigatedViewer = require('lib/NavigatedViewer').default;
 
 
 describe('NavigatedViewer', function() {
@@ -26,14 +26,14 @@ describe('NavigatedViewer', function() {
 
 
   it('should import simple process', function(done) {
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
     createViewer(xml, done);
   });
 
 
   describe('navigation features', function() {
 
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     it('should include zoomScroll', function(done) {
 

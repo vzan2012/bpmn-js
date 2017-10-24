@@ -1,15 +1,16 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-var Helper = require('./Helper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var expectCanConnect = Helper.expectCanConnect,
-    expectCanDrop = Helper.expectCanDrop,
-    expectCanMove = Helper.expectCanMove;
+import {
+  expectCanConnect,
+  expectCanDrop,
+  expectCanMove
+} from './Helper';
 
-/* global bootstrapModeler, inject */
 
-var modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling/rules - BpmnRules', function() {
@@ -19,7 +20,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('on process diagram', function() {
 
-    var testXML = require('./BpmnRules.process.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.process.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -332,7 +333,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('boundary events', function() {
 
-    var testXML = require('./BpmnRules.boundaryEvent.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.boundaryEvent.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -462,7 +463,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('event based gateway', function() {
 
-    var testXML = require('./BpmnRules.eventBasedGateway.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.eventBasedGateway.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -592,7 +593,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('compensation', function() {
 
-    var testXML = require('./BpmnRules.compensation.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.compensation.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -672,7 +673,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('on collaboration diagram', function() {
 
-    var testXML = require('./BpmnRules.collaboration.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.collaboration.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -895,7 +896,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('message flows', function() {
 
-    var testXML = require('./BpmnRules.messageFlow.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.messageFlow.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -912,7 +913,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
     describe('on process diagram', function() {
 
-      var testXML = require('./BpmnRules.dataAssociation.bpmn');
+      var testXML = readFileSync(__dirname + '/BpmnRules.dataAssociation.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -938,7 +939,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
     describe('on sub process', function() {
 
-      var testXML = require('./BpmnRules.subProcess-dataAssociation.bpmn');
+      var testXML = readFileSync(__dirname + '/BpmnRules.subProcess-dataAssociation.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -964,7 +965,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
     describe('on collaboration', function() {
 
-      var testXML = require('./BpmnRules.collaboration-dataAssociation.bpmn');
+      var testXML = readFileSync(__dirname + '/BpmnRules.collaboration-dataAssociation.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -990,7 +991,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('multi selection move', function() {
 
-    var testXML = require('./BpmnRules.multiSelectionPools.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.multiSelectionPools.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -1015,7 +1016,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('event move', function() {
 
-    var testXML = require('../../../fixtures/bpmn/boundary-events.bpmn');
+    var testXML = readFileSync('test/fixtures/bpmn/boundary-events.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -1108,7 +1109,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('event create', function() {
 
-    var testXML = require('../../../fixtures/bpmn/boundary-events.bpmn');
+    var testXML = readFileSync('test/fixtures/bpmn/boundary-events.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -1239,7 +1240,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('event append', function() {
 
-    var testXML = require('../../../fixtures/bpmn/boundary-events.bpmn');
+    var testXML = readFileSync('test/fixtures/bpmn/boundary-events.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -1295,7 +1296,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('lanes', function() {
 
-    var testXML = require('./BpmnRules.collaboration-lanes.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.collaboration-lanes.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
@@ -1443,7 +1444,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   describe('labels', function() {
 
-    var testXML = require('./BpmnRules.process.bpmn');
+    var testXML = readFileSync(__dirname + '/BpmnRules.process.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 

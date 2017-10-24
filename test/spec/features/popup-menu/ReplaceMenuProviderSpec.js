@@ -1,22 +1,24 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapModeler, inject */
-
-var TestHelper = require('../../../TestHelper');
+import {
+  bootstrapModeler,
+  inject,
+  getBpmnJS
+} from 'test/TestHelper';
 
 var globalEvent = require('../../../util/MockEvents').createEvent;
 
-var coreModule = require('../../../../lib/core').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
-    replaceMenuProviderModule = require('../../../../lib/features/popup-menu').default,
+var coreModule = require('lib/core').default,
+    modelingModule = require('lib/features/modeling').default,
+    replaceMenuProviderModule = require('lib/features/popup-menu').default,
     customRulesModule = require('../../../util/custom-rules').default;
 
 var domQuery = require('min-dom/lib/query'),
     domClasses = require('min-dom/lib/classes'),
     find = require('lodash-es/find').default;
 
-var is = require('../../../../lib/util/ModelUtil').is,
-    isExpanded = require('../../../../lib/util/DiUtil').isExpanded;
+var is = require('lib/util/ModelUtil').is,
+    isExpanded = require('lib/util/DiUtil').isExpanded;
 
 function queryEntry(popupMenu, id) {
   return queryPopup(popupMenu, '[data-id="' + id + '"]');
@@ -52,8 +54,8 @@ function triggerAction(entries, id) {
 
 describe('features/popup-menu - replace menu provider', function() {
 
-  var diagramXMLMarkers = require('../../../fixtures/bpmn/draw/activity-markers-simple.bpmn'),
-      diagramXMLReplace = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+  var diagramXMLMarkers = readFileSync('test/fixtures/bpmn/draw/activity-markers-simple.bpmn', 'utf-8'),
+      diagramXMLReplace = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
   var testModules = [
     coreModule,
@@ -65,7 +67,7 @@ describe('features/popup-menu - replace menu provider', function() {
   var openPopup = function(element, offset) {
     offset = offset || 100;
 
-    TestHelper.getBpmnJS().invoke(function(popupMenu) {
+    getBpmnJS().invoke(function(popupMenu) {
 
       popupMenu.create('bpmn-replace', element);
 
@@ -770,7 +772,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('cancel events', function() {
 
-      var diagramXML = require('../../../fixtures/bpmn/features/replace/cancel-events.bpmn');
+      var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/cancel-events.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -891,7 +893,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('default flows', function() {
 
-      var diagramXML = require('./ReplaceMenuProvider.defaultFlows.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ReplaceMenuProvider.defaultFlows.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules
@@ -938,7 +940,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('default flows from inclusive gateways', function() {
 
-      var diagramXML = require('./ReplaceMenuProvider.defaultFlowsFromInclusiveGateways.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ReplaceMenuProvider.defaultFlowsFromInclusiveGateways.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules
@@ -981,7 +983,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('default flows from complex gateways', function() {
 
-      var diagramXML = require('./ReplaceMenuProvider.defaultFlowsFromComplexGateways.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ReplaceMenuProvider.defaultFlowsFromComplexGateways.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules
@@ -1024,7 +1026,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('conditional flows', function() {
 
-      var diagramXML = require('./ReplaceMenuProvider.conditionalFlows.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ReplaceMenuProvider.conditionalFlows.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules
@@ -1063,7 +1065,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('compensate activities', function() {
 
-      var diagramXML = require('./ReplaceMenuProvider.compensation-activity.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ReplaceMenuProvider.compensation-activity.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -1088,7 +1090,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('collapsed subprocesses', function() {
 
-      var diagramXML = require('./ReplaceMenuProvider.collapsedSubProcess.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ReplaceMenuProvider.collapsedSubProcess.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -1118,7 +1120,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('default flows', function() {
 
-      var diagramXML = require('./ReplaceMenuProvider.defaultFlows.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ReplaceMenuProvider.defaultFlows.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -1627,7 +1629,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
     describe('conditional flows', function() {
 
-      var diagramXML = require('./ReplaceMenuProvider.conditionalFlows.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ReplaceMenuProvider.conditionalFlows.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules
@@ -1853,7 +1855,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
   describe('rules', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/basic.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/basic.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules.concat([ customRulesModule ])

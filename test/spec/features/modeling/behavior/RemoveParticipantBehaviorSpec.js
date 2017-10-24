@@ -1,13 +1,11 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+var is = require('lib/util/ModelUtil').is;
 
-var is = require('../../../../../lib/util/ModelUtil').is;
-
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - remove participant behavior', function() {
@@ -17,7 +15,7 @@ describe('features/modeling - remove participant behavior', function() {
 
   describe('when removing participant in collaboration', function() {
 
-    var processDiagramXML = require('../../../../fixtures/bpmn/collaboration/collaboration-message-flows.bpmn');
+    var processDiagramXML = readFileSync('test/fixtures/bpmn/collaboration/collaboration-message-flows.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -45,7 +43,7 @@ describe('features/modeling - remove participant behavior', function() {
 
   describe('when removing last remaining participant', function() {
 
-    var processDiagramXML = require('../../../../fixtures/bpmn/collaboration/collaboration-empty-participant.bpmn');
+    var processDiagramXML = readFileSync('test/fixtures/bpmn/collaboration/collaboration-empty-participant.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 

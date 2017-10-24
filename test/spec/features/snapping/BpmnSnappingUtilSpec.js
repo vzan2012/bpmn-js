@@ -1,8 +1,6 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('test/TestHelper').default;
-
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 
 var getParticipantSizeConstraints = require('lib/features/snapping/BpmnSnappingUtil').getParticipantSizeConstraints;
@@ -22,7 +20,7 @@ describe('features/snapping - BpmnSnappingUtil', function() {
 
     describe('lanes', function() {
 
-      var diagramXML = require('./BpmnSnappingUtil.lanes.bpmn');
+      var diagramXML = readFileSync(__dirname + '/BpmnSnappingUtil.lanes.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, { modules: [ coreModule ] }));
 
@@ -155,7 +153,7 @@ describe('features/snapping - BpmnSnappingUtil', function() {
 
     describe('flowNodes', function() {
 
-      var diagramXML = require('./BpmnSnappingUtil.lanes-flowNodes.bpmn');
+      var diagramXML = readFileSync(__dirname + '/BpmnSnappingUtil.lanes-flowNodes.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, { modules: [ coreModule ] }));
 

@@ -1,6 +1,8 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-var Modeler = require('../../lib/Modeler').default;
+import 'test/TestHelper';
+
+var Modeler = require('lib/Modeler').default;
 
 var TestContainer = require('mocha-test-container-support');
 
@@ -18,10 +20,10 @@ describe.skip('scenario - successive reopening', function() {
   });
 
 
-  var boundaryXML = require('../fixtures/bpmn/boundary-events.bpmn'),
-      containersXML = require('../fixtures/bpmn/containers.bpmn'),
-      flowMarkersXML = require('../fixtures/bpmn/flow-markers.bpmn'),
-      simpleXML = require('../fixtures/bpmn/simple.bpmn');
+  var boundaryXML = readFileSync('test/fixtures/bpmn/boundary-events.bpmn', 'utf-8'),
+      containersXML = readFileSync('test/fixtures/bpmn/containers.bpmn', 'utf-8'),
+      flowMarkersXML = readFileSync('test/fixtures/bpmn/flow-markers.bpmn', 'utf-8'),
+      simpleXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
   var allDiagrams = [
     boundaryXML,

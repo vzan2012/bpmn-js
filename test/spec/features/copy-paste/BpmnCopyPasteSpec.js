@@ -1,14 +1,18 @@
-'use strict';
+/* global sinon */
 
-var TestHelper = require('../../../TestHelper');
+import { readFileSync } from 'fs';
 
-/* global bootstrapModeler, inject, sinon */
+import {
+  bootstrapModeler,
+  inject,
+  getBpmnJS
+} from 'test/TestHelper';
 
-var bpmnCopyPasteModule = require('../../../../lib/features/copy-paste').default,
+var bpmnCopyPasteModule = require('lib/features/copy-paste').default,
     copyPasteModule = require('diagram-js/lib/features/copy-paste').default,
     tooltipsModule = require('diagram-js/lib/features/tooltips').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+    modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 var map = require('lodash-es/map').default,
     filter = require('lodash-es/filter').default,
@@ -17,7 +21,7 @@ var map = require('lodash-es/map').default,
 
 var DescriptorTree = require('./DescriptorTree').default;
 
-var is = require('../../../../lib/util/ModelUtil').is;
+var is = require('lib/util/ModelUtil').is;
 
 
 // TODO(nikku): copy/paste is broken... fix and un-skip
@@ -25,12 +29,12 @@ describe.skip('features/copy-paste', function() {
 
   var testModules = [ bpmnCopyPasteModule, copyPasteModule, tooltipsModule, modelingModule, coreModule ];
 
-  var basicXML = require('../../../fixtures/bpmn/features/copy-paste/basic.bpmn'),
-      clonePropertiesXML = require('../../../fixtures/bpmn/features/replace/clone-properties.bpmn'),
-      propertiesXML = require('../../../fixtures/bpmn/features/copy-paste/properties.bpmn'),
-      collaborationXML = require('../../../fixtures/bpmn/features/copy-paste/collaboration.bpmn'),
-      collaborationMultipleXML = require('../../../fixtures/bpmn/features/copy-paste/collaboration-multiple.bpmn'),
-      collaborationAssociations = require('../../../fixtures/bpmn/features/copy-paste/data-associations.bpmn');
+  var basicXML = readFileSync('test/fixtures/bpmn/features/copy-paste/basic.bpmn', 'utf-8'),
+      clonePropertiesXML = readFileSync('test/fixtures/bpmn/features/replace/clone-properties.bpmn', 'utf-8'),
+      propertiesXML = readFileSync('test/fixtures/bpmn/features/copy-paste/properties.bpmn', 'utf-8'),
+      collaborationXML = readFileSync('test/fixtures/bpmn/features/copy-paste/collaboration.bpmn', 'utf-8'),
+      collaborationMultipleXML = readFileSync('test/fixtures/bpmn/features/copy-paste/collaboration-multiple.bpmn', 'utf-8'),
+      collaborationAssociations = readFileSync('test/fixtures/bpmn/features/copy-paste/data-associations.bpmn', 'utf-8');
 
 
   describe('basic diagram', function() {
@@ -726,7 +730,7 @@ function integrationTest(ids) {
  */
 function copy(ids) {
 
-  return TestHelper.getBpmnJS().invoke(function(copyPaste, elementRegistry) {
+  return getBpmnJS().invoke(function(copyPaste, elementRegistry) {
 
     var elements = ids.map(function(e) {
       var element = elementRegistry.get(e.id || e);

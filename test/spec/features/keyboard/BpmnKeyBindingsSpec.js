@@ -1,20 +1,22 @@
-'use strict';
+/* global sinon */
+
+import { readFileSync } from 'fs';
+
+import { bootstrapViewer, inject } from 'test/TestHelper';
 
 var TestContainer = require('mocha-test-container-support');
 
-var coreModule = require('../../../../lib/core').default,
-    editorActionsModule = require('../../../../lib/features/editor-actions').default,
-    keyboardModule = require('../../../../lib/features/keyboard').default,
-    modelingModule = require('../../../../lib/features/modeling').default;
+var coreModule = require('lib/core').default,
+    editorActionsModule = require('lib/features/editor-actions').default,
+    keyboardModule = require('lib/features/keyboard').default,
+    modelingModule = require('lib/features/modeling').default;
 
 var createKeyEvent = require('../../../util/KeyEvents').createKeyEvent;
-
-/* global bootstrapViewer, inject, sinon */
 
 
 describe('features - keyboard', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/simple.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
   var testModules = [
     coreModule,

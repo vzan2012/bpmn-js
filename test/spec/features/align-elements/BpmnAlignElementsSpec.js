@@ -1,19 +1,17 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 var alignElementsModule = require('diagram-js/lib/features/align-elements').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+    modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/align-elements', function() {
 
   var testModules = [ alignElementsModule, modelingModule, coreModule ];
 
-  var basicXML = require('../../../fixtures/bpmn/align-elements.bpmn');
+  var basicXML = readFileSync('test/fixtures/bpmn/align-elements.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(basicXML, { modules: testModules }));
 

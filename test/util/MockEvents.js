@@ -1,10 +1,8 @@
-'use strict';
-
 var assign = require('lodash-es/assign').default;
 
 var EventBusEvent = require('diagram-js/lib/core/EventBus').Event;
 
-var TestHelper = require('../TestHelper');
+import { getBpmnJS } from 'test/TestHelper';
 
 
 /**
@@ -19,7 +17,7 @@ var TestHelper = require('../TestHelper');
  */
 function createCanvasEvent(position, data) {
 
-  return TestHelper.getBpmnJS().invoke(function(canvas) {
+  return getBpmnJS().invoke(function(canvas) {
 
     var target = canvas._svg;
 

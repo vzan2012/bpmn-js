@@ -1,15 +1,13 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global inject, bootstrapModeler */
-
-var modelingModule = require('../../../../../lib/features/modeling').default;
+var modelingModule = require('lib/features/modeling').default;
 
 
 describe('modeling/behavior - CompensationAssociation', function() {
 
-  var diagramXML = require('./CompensationAssociationBehavior.bpmn');
+  var diagramXML = readFileSync(__dirname + '/CompensationAssociationBehavior.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(diagramXML, { modules: modelingModule }));
 

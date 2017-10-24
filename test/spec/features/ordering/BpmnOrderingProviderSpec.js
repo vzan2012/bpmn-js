@@ -1,15 +1,15 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-var Helper = require('./Helper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+import {
+  move,
+  attach,
+  expectZOrder
+} from './Helper';
 
-var move = Helper.move,
-    attach = Helper.attach,
-    expectZOrder = Helper.expectZOrder;
-
-var modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - ordering', function() {
@@ -21,7 +21,7 @@ describe('features/modeling - ordering', function() {
 
     describe('move', function() {
 
-      var diagramXML = require('./ordering.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ordering.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -50,7 +50,7 @@ describe('features/modeling - ordering', function() {
 
     describe('add', function() {
 
-      var diagramXML = require('./ordering-start-event.bpmn');
+      var diagramXML = readFileSync(__dirname + '/ordering-start-event.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -71,7 +71,7 @@ describe('features/modeling - ordering', function() {
 
   describe('participants', function() {
 
-    var diagramXML = require('./ordering.bpmn');
+    var diagramXML = readFileSync(__dirname + '/ordering.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -134,7 +134,7 @@ describe('features/modeling - ordering', function() {
 
   describe('sub processes', function() {
 
-    var diagramXML = require('./ordering-subprocesses.bpmn');
+    var diagramXML = readFileSync(__dirname + '/ordering-subprocesses.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -173,7 +173,7 @@ describe('features/modeling - ordering', function() {
 
   describe('transaction', function() {
 
-    var diagramXML = require('./ordering-subprocesses.bpmn');
+    var diagramXML = readFileSync(__dirname + '/ordering-subprocesses.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -212,7 +212,7 @@ describe('features/modeling - ordering', function() {
 
   describe('labels', function() {
 
-    var diagramXML = require('./ordering.bpmn');
+    var diagramXML = readFileSync(__dirname + '/ordering.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 

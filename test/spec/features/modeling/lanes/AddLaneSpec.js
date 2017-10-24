@@ -1,16 +1,13 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 var pick = require('lodash-es/pick').default;
 
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
-var getChildLanes = require('../../../../../lib/features/modeling/util/LaneUtil').getChildLanes;
+var getChildLanes = require('lib/features/modeling/util/LaneUtil').getChildLanes;
 
 var DEFAULT_LANE_HEIGHT = 120;
 
@@ -24,7 +21,7 @@ describe('features/modeling - add Lane', function() {
 
   describe('nested Lanes', function() {
 
-    var diagramXML = require('./lanes.bpmn');
+    var diagramXML = readFileSync(__dirname + '/lanes.bpmn', 'utf-8');
 
     var testModules = [ coreModule, modelingModule ];
 
@@ -183,7 +180,7 @@ describe('features/modeling - add Lane', function() {
 
   describe('Participant without Lane', function() {
 
-    var diagramXML = require('./participant-no-lane.bpmn');
+    var diagramXML = readFileSync(__dirname + '/participant-no-lane.bpmn', 'utf-8');
 
     var testModules = [ coreModule, modelingModule ];
 

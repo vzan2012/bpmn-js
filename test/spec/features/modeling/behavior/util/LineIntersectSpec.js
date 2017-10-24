@@ -1,6 +1,6 @@
 'use strict';
 
-require('../../../../../TestHelper');
+import 'test/TestHelper';
 
 var intersection = require('lib/features/modeling/behavior/util/LineIntersect').default;
 

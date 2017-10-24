@@ -1,8 +1,9 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-var Modeler = require('../../lib/Modeler').default;
+var Modeler = require('lib/Modeler').default;
 
 var TestContainer = require('mocha-test-container-support');
+
 
 describe('Modeler', function() {
 
@@ -23,31 +24,31 @@ describe('Modeler', function() {
 
 
   it('should import simple process', function(done) {
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
     createModeler(xml, done);
   });
 
 
   it('should import collaboration', function(done) {
-    var xml = require('../fixtures/bpmn/collaboration-message-flows.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/collaboration-message-flows.bpmn', 'utf-8');
     createModeler(xml, done);
   });
 
 
   it('should import nested lanes', function(done) {
-    var xml = require('./features/modeling/lanes/lanes.bpmn');
+    var xml = readFileSync(__dirname + '/features/modeling/lanes/lanes.bpmn', 'utf-8');
     createModeler(xml, done);
   });
 
 
   it.skip('should import complex', function(done) {
-    var xml = require('../fixtures/bpmn/complex.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/complex.bpmn', 'utf-8');
     createModeler(xml, done);
   });
 
 
   it('should not import empty definitions', function(done) {
-    var xml = require('../fixtures/bpmn/empty-definitions.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/empty-definitions.bpmn', 'utf-8');
 
     // given
     createModeler(xml, function(err, warnings, modeler) {
@@ -67,7 +68,7 @@ describe('Modeler', function() {
 
   it('should re-import simple process', function(done) {
 
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     // given
     createModeler(xml, function(err, warnings, modeler) {
@@ -96,7 +97,7 @@ describe('Modeler', function() {
 
   describe('translate support', function() {
 
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     it('should allow translation of multi-lingual strings', function(done) {
 
@@ -126,7 +127,7 @@ describe('Modeler', function() {
 
     it('should allow to add overlays', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       createModeler(xml, function(err, warnings, modeler) {
 
@@ -175,7 +176,7 @@ describe('Modeler', function() {
 
     it('should allow to edit bendpoints', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       createModeler(xml, function(err, warnings, modeler) {
 
@@ -203,7 +204,7 @@ describe('Modeler', function() {
   describe('configuration', function() {
 
     // given
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     it('should configure Canvas', function(done) {
 
@@ -249,7 +250,7 @@ describe('Modeler', function() {
     it('should populate ids on import', function(done) {
 
       // given
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       var modeler = new Modeler({ container: container });
 
@@ -275,8 +276,8 @@ describe('Modeler', function() {
     it('should clear ids before re-import', function(done) {
 
       // given
-      var someXML = require('../fixtures/bpmn/simple.bpmn'),
-          otherXML = require('../fixtures/bpmn/basic.bpmn');
+      var someXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8'),
+          otherXML = readFileSync('test/fixtures/bpmn/basic.bpmn', 'utf-8');
 
       var modeler = new Modeler({ container: container });
 
@@ -331,7 +332,7 @@ describe('Modeler', function() {
 
     it('should provide self as <bpmnjs>', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       createModeler(xml, function(err, warnings, modeler) {
 
@@ -357,8 +358,8 @@ describe('Modeler', function() {
     it('should keep references to services across re-import', function(done) {
 
       // given
-      var someXML = require('../fixtures/bpmn/simple.bpmn'),
-          otherXML = require('../fixtures/bpmn/basic.bpmn');
+      var someXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8'),
+          otherXML = readFileSync('test/fixtures/bpmn/basic.bpmn', 'utf-8');
 
       var modeler = new Modeler({ container: container });
 
@@ -390,8 +391,8 @@ describe('Modeler', function() {
   it('should expose Viewer and NavigatedViewer', function() {
 
     // given
-    var Viewer = require('../../lib/Viewer').default;
-    var NavigatedViewer = require('../../lib/NavigatedViewer').default;
+    var Viewer = require('lib/Viewer').default;
+    var NavigatedViewer = require('lib/NavigatedViewer').default;
 
     // then
     expect(Modeler.Viewer).to.equal(Viewer);

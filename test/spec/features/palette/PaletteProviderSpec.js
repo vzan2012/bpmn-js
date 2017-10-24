@@ -1,19 +1,17 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('../../../../lib/features/modeling').default,
-    paletteModule = require('../../../../lib/features/palette').default,
-    coreModule = require('../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    paletteModule = require('lib/features/palette').default,
+    coreModule = require('lib/core').default;
 
 var domQuery = require('min-dom/lib/query');
 
 
 describe('features/palette', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
   var testModules = [ coreModule, modelingModule, paletteModule ];
 

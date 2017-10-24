@@ -1,10 +1,11 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-var coreModule = require('../../../../lib/core').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
-    bpmnSearchModule = require('../../../../lib/features/search').default;
+import { bootstrapViewer, inject } from 'test/TestHelper';
 
-/* global bootstrapViewer, inject */
+var coreModule = require('lib/core').default,
+    modelingModule = require('lib/features/modeling').default,
+    bpmnSearchModule = require('lib/features/search').default;
+
 
 describe('features - BPMN search provider', function() {
 
@@ -16,7 +17,7 @@ describe('features - BPMN search provider', function() {
 
 
   describe(' - with collaboration as root - ', function() {
-    var diagramXML = require('./bpmn-search-collaboration.bpmn');
+    var diagramXML = readFileSync(__dirname + '/bpmn-search-collaboration.bpmn', 'utf-8');
 
     beforeEach(bootstrapViewer(diagramXML, { modules: testModules }));
 
@@ -35,7 +36,7 @@ describe('features - BPMN search provider', function() {
 
 
   describe(' - with process as root - ', function() {
-    var diagramXML = require('./bpmn-search.bpmn');
+    var diagramXML = readFileSync(__dirname + '/bpmn-search.bpmn', 'utf-8');
 
     beforeEach(bootstrapViewer(diagramXML, { modules: testModules }));
 

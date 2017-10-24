@@ -1,15 +1,13 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var replacePreviewModule = require('../../../../../lib/features/replace-preview').default,
-    modelingModule = require('../../../../../lib/features/modeling').default,
+var replacePreviewModule = require('lib/features/replace-preview').default,
+    modelingModule = require('lib/features/modeling').default,
     moveModule = require('diagram-js/lib/features/move').default,
-    coreModule = require('../../../../../lib/core').default;
+    coreModule = require('lib/core').default;
 
-var is = require('../../../../../lib/util/ModelUtil').is,
+var is = require('lib/util/ModelUtil').is,
     canvasEvent = require('../../../../util/MockEvents').createCanvasEvent;
 
 var domQuery = require('min-dom/lib/query');
@@ -27,7 +25,7 @@ describe('features/modeling - move start event behavior', function() {
 
   describe('Start Events', function() {
 
-    var diagramXML = require('../../../../fixtures/bpmn/event-sub-processes.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/event-sub-processes.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -107,7 +105,7 @@ describe('features/modeling - move start event behavior', function() {
 
   describe('Cancel Events', function() {
 
-    var diagramXML = require('../../../../fixtures/bpmn/features/replace/cancel-events.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/cancel-events.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -421,7 +419,7 @@ describe('features/modeling - move start event behavior', function() {
 
   describe('outline', function() {
 
-    var diagramXML = require('../../../../fixtures/bpmn/features/replace/connection.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/connection.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 

@@ -1,17 +1,15 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
-
-/* global inject, bootstrapModeler */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 var find = require('lodash-es/find').default;
 
-var modelingModule = require('../../../../../lib/features/modeling').default;
+var modelingModule = require('lib/features/modeling').default;
 
 
 describe('modeling/behavior - fix DataInputAssociation#targetRef', function() {
 
-  var diagramXML = require('./DataInputAssociationBehavior.bpmn');
+  var diagramXML = readFileSync(__dirname + '/DataInputAssociationBehavior.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(diagramXML, { modules: modelingModule }));
 

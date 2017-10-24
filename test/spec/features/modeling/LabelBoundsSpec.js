@@ -1,8 +1,10 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapModeler, inject, sinon */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var Modeler = require('../../../../lib/Modeler').default;
+/* global sinon */
+
+var Modeler = require('lib/Modeler').default;
 
 var TestContainer = require('mocha-test-container-support');
 
@@ -28,7 +30,7 @@ describe('label bounds', function() {
   describe('on import', function() {
 
     it('should import simple label process', function(done) {
-      var xml = require('./LabelBoundsSpec.simple.bpmn');
+      var xml = readFileSync(__dirname + '/LabelBoundsSpec.simple.bpmn', 'utf-8');
       createModeler(xml, done);
     });
 
@@ -37,7 +39,7 @@ describe('label bounds', function() {
 
   describe('on label change', function() {
 
-    var diagramXML = require('./LabelBoundsSpec.simple.bpmn');
+    var diagramXML = readFileSync(__dirname + '/LabelBoundsSpec.simple.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML));
 
@@ -227,7 +229,7 @@ describe('label bounds', function() {
 
     it('should create DI when label has changed', function(done) {
 
-      var xml = require('./LabelBoundsSpec.simple.bpmn');
+      var xml = readFileSync(__dirname + '/LabelBoundsSpec.simple.bpmn', 'utf-8');
 
       createModeler(xml, function(err, warnings, modeler) {
 
@@ -270,7 +272,7 @@ describe('label bounds', function() {
 
     it('should update existing DI when label has changed', function(done) {
 
-      var xml = require('./LabelBoundsSpec.simple.bpmn');
+      var xml = readFileSync(__dirname + '/LabelBoundsSpec.simple.bpmn', 'utf-8');
 
       createModeler(xml, function(err, warnings, modeler) {
 
@@ -313,7 +315,7 @@ describe('label bounds', function() {
 
     it('should not update DI of untouched labels', function(done) {
 
-      var xml = require('./LabelBoundsSpec.simple.bpmn');
+      var xml = readFileSync(__dirname + '/LabelBoundsSpec.simple.bpmn', 'utf-8');
 
       // strip windows line breaks (if any)
       xml = xml.replace(/\r/g, '');

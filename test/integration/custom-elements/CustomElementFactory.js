@@ -2,8 +2,8 @@
 
 var assign = require('lodash-es/assign').default;
 
-var BpmnElementFactory = require('../../../lib/features/modeling/ElementFactory').default,
-    DEFAULT_LABEL_SIZE = require('../../../lib/util/LabelUtil').DEFAULT_LABEL_SIZE;
+var BpmnElementFactory = require('lib/features/modeling/ElementFactory').default,
+    DEFAULT_LABEL_SIZE = require('lib/util/LabelUtil').DEFAULT_LABEL_SIZE;
 
 
 class CustomElementFactory extends BpmnElementFactory {

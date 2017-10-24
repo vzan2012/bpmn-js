@@ -1,14 +1,13 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapViewer, inject */
+import { bootstrapViewer, inject } from 'test/TestHelper';
 
-
-var labelEditingModule = require('../../../../lib/features/label-editing').default,
-    coreModule = require('../../../../lib/core').default,
+var labelEditingModule = require('lib/features/label-editing').default,
+    coreModule = require('lib/core').default,
     draggingModule = require('diagram-js/lib/features/dragging').default,
     modelingModule = require('diagram-js/lib/features/modeling').default;
 
-var LabelUtil = require('../../../../lib/features/label-editing/LabelUtil');
+var LabelUtil = require('lib/features/label-editing/LabelUtil');
 
 var MEDIUM_LINE_HEIGHT = 14;
 
@@ -36,7 +35,7 @@ function expectBounds(parent, bounds) {
 
 describe('features - label-editing', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/features/label-editing/labels.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/features/label-editing/labels.bpmn', 'utf-8');
 
   describe('basics', function() {
 

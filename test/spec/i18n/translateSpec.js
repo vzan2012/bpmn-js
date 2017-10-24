@@ -1,11 +1,9 @@
-'use strict';
+import { readFileSync } from 'fs';
+
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 // skipping this file during translation extraction
 var skip = window.__env__ && window.__env__.TRANSLATIONS === 'enabled';
-
-require('test/TestHelper').default;
-
-/* global bootstrapModeler, inject */
 
 var coreModule = require('lib/core').default,
     translateModule = require('diagram-js/lib/i18n/translate').default,
@@ -14,7 +12,7 @@ var coreModule = require('lib/core').default,
     paletteModule = require('lib/features/palette').default,
     contextPadModule = require('lib/features/context-pad').default;
 
-var diagramXML = require('test/fixtures/bpmn/simple.bpmn');
+var diagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
 
 skip ? describe.only : describe('i18n - translate', function() {

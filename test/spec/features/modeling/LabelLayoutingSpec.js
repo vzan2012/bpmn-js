@@ -1,9 +1,6 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 var coreModule = require('lib/core').default,
     bendpointsModule = require('diagram-js/lib/features/bendpoints').default,
@@ -26,7 +23,7 @@ describe('modeling - label layouting', function() {
 
   describe('should position created label', function() {
 
-    var diagramXML = require('./LabelLayouting.initial.bpmn');
+    var diagramXML = readFileSync(__dirname + '/LabelLayouting.initial.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -67,7 +64,7 @@ describe('modeling - label layouting', function() {
 
   describe('should move label', function() {
 
-    var diagramXML = require('./LabelLayouting.move.bpmn');
+    var diagramXML = readFileSync(__dirname + '/LabelLayouting.move.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -542,7 +539,7 @@ describe('modeling - label layouting', function() {
 
     describe('space tool', function() {
 
-      var diagramXML = require('./LabelLayouting.special.bpmn');
+      var diagramXML = readFileSync(__dirname + '/LabelLayouting.special.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules

@@ -1,12 +1,9 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - create participant', function() {
@@ -18,7 +15,7 @@ describe('features/modeling - create participant', function() {
 
     describe('should transform diagram into collaboration', function() {
 
-      var processDiagramXML = require('../../../../fixtures/bpmn/collaboration/process-empty.bpmn');
+      var processDiagramXML = readFileSync('test/fixtures/bpmn/collaboration/process-empty.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -98,7 +95,7 @@ describe('features/modeling - create participant', function() {
 
     describe('should wrap existing elements', function() {
 
-      var processDiagramXML = require('../../../../fixtures/bpmn/collaboration/process.bpmn');
+      var processDiagramXML = readFileSync('test/fixtures/bpmn/collaboration/process.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -175,7 +172,7 @@ describe('features/modeling - create participant', function() {
 
   describe('should add to collaboration', function() {
 
-    var collaborationDiagramXML = require('../../../../fixtures/bpmn/collaboration/collaboration-participant.bpmn');
+    var collaborationDiagramXML = readFileSync('test/fixtures/bpmn/collaboration/collaboration-participant.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(collaborationDiagramXML, { modules: testModules }));
 

@@ -1,18 +1,16 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
 
-var coreModule = require('../../../../lib/core').default,
-    snappingModule = require('../../../../lib/features/snapping').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
+var coreModule = require('lib/core').default,
+    snappingModule = require('lib/features/snapping').default,
+    modelingModule = require('lib/features/modeling').default,
     createModule = require('diagram-js/lib/features/create').default,
     resizeModule = require('diagram-js/lib/features/resize').default,
     moveModule = require('diagram-js/lib/features/move').default,
-    rulesModule = require('../../../../lib/features/rules').default,
+    rulesModule = require('lib/features/rules').default,
     connectModule = require('diagram-js/lib/features/connect').default;
 
 
@@ -30,7 +28,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
   describe('on Boundary Events', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/collaboration/process.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/collaboration/process.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -101,7 +99,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
   describe('on Sequence Flows', function() {
 
-    var diagramXML = require('./BpmnSnapping.sequenceFlow.bpmn');
+    var diagramXML = readFileSync(__dirname + '/BpmnSnapping.sequenceFlow.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -169,7 +167,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
     describe('in non-empty process', function() {
 
-      var diagramXML = require('../../../fixtures/bpmn/collaboration/process.bpmn');
+      var diagramXML = readFileSync('test/fixtures/bpmn/collaboration/process.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules
@@ -232,7 +230,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
     describe('in empty process', function() {
 
-      var diagramXML = require('../../../fixtures/bpmn/collaboration/process-empty.bpmn');
+      var diagramXML = readFileSync('test/fixtures/bpmn/collaboration/process-empty.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules
@@ -270,7 +268,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
     describe('in collaboration', function() {
 
-      var diagramXML = require('../../../fixtures/bpmn/collaboration/collaboration-participant.bpmn');
+      var diagramXML = readFileSync('test/fixtures/bpmn/collaboration/collaboration-participant.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(diagramXML, {
         modules: testModules
@@ -333,7 +331,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
     describe('snap min bounds', function() {
 
-      var diagramXML = require('./BpmnSnapping.participant-resize.bpmn');
+      var diagramXML = readFileSync(__dirname + '/BpmnSnapping.participant-resize.bpmn', 'utf-8');
 
       var testResizeModules = [
         coreModule,
@@ -430,7 +428,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
     describe('snap child lanes', function() {
 
-      var diagramXML = require('./BpmnSnapping.lanes-resize.bpmn');
+      var diagramXML = readFileSync(__dirname + '/BpmnSnapping.lanes-resize.bpmn', 'utf-8');
 
       var testResizeModules = [
         coreModule,
@@ -475,7 +473,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
   describe('on SubProcess resize', function() {
 
-    var diagramXML = require('./BpmnSnapping.subProcess-resize.bpmn');
+    var diagramXML = readFileSync(__dirname + '/BpmnSnapping.subProcess-resize.bpmn', 'utf-8');
 
     var testResizeModules = [
       coreModule,
@@ -505,7 +503,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
   describe('on TextAnnotation resize', function() {
 
-    var diagramXML = require('./BpmnSnapping.textAnnotation-resize.bpmn');
+    var diagramXML = readFileSync(__dirname + '/BpmnSnapping.textAnnotation-resize.bpmn', 'utf-8');
 
     var testResizeModules = [
       coreModule,
@@ -535,7 +533,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
   describe('labels', function() {
 
-    var diagramXML = require('./BpmnSnapping.labels.bpmn');
+    var diagramXML = readFileSync(__dirname + '/BpmnSnapping.labels.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -614,7 +612,7 @@ describe('features/snapping - BpmnSnapping', function() {
 
   describe('on connect', function() {
 
-    var diagramXML = require('./BpmnSnapping.connect.bpmn');
+    var diagramXML = readFileSync(__dirname + '/BpmnSnapping.connect.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 

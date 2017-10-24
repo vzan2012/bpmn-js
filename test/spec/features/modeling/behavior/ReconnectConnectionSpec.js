@@ -1,18 +1,16 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - reconnect connection', function() {
 
   var testModules = [ coreModule, modelingModule ];
 
-  var processDiagramXML = require('./ReconnectConnection.data-association.bpmn');
+  var processDiagramXML = readFileSync(__dirname + '/ReconnectConnection.data-association.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 

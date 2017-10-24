@@ -1,13 +1,11 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
-
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
 var pick = require('lodash-es/pick').default;
 
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 function getBounds(element) {
   return pick(element, [ 'x', 'y', 'width', 'height' ]);
@@ -16,7 +14,7 @@ function getBounds(element) {
 
 describe('features/modeling - delete lane', function() {
 
-  var diagramXML = require('./lanes.bpmn');
+  var diagramXML = readFileSync(__dirname + '/lanes.bpmn', 'utf-8');
 
   var testModules = [ coreModule, modelingModule ];
 

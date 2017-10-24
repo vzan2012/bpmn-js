@@ -1,11 +1,9 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../TestHelper');
-
-/* global bootstrapViewer, inject */
+import { bootstrapViewer, inject } from 'test/TestHelper';
 
 
-var is = require('../../../lib/util/ModelUtil').is;
+var is = require('lib/util/ModelUtil').is;
 
 
 describe('import - model wiring', function() {
@@ -13,7 +11,7 @@ describe('import - model wiring', function() {
 
   describe('basics', function() {
 
-    var xml = require('../../fixtures/bpmn/import/process.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/import/process.bpmn', 'utf-8');
 
     beforeEach(bootstrapViewer(xml));
 
@@ -110,7 +108,7 @@ describe('import - model wiring', function() {
 
   describe('host attacher relationship', function() {
 
-    var xml = require('../../fixtures/bpmn/import/boundaryEvent.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/import/boundaryEvent.bpmn', 'utf-8');
 
     beforeEach(bootstrapViewer(xml));
 
@@ -139,7 +137,7 @@ describe('import - model wiring', function() {
 
   describe('lanes + flow elements', function() {
 
-    var xml = require('./lane-flowNodes.bpmn');
+    var xml = readFileSync(__dirname + '/lane-flowNodes.bpmn', 'utf-8');
 
     beforeEach(bootstrapViewer(xml));
 
@@ -174,7 +172,7 @@ describe('import - model wiring', function() {
 
   describe('lanes + flow elements / missing flowNodeRef', function() {
 
-    var xml = require('./lane-missing-flowNodeRef.bpmn');
+    var xml = readFileSync(__dirname + '/lane-missing-flowNodeRef.bpmn', 'utf-8');
 
     beforeEach(bootstrapViewer(xml));
 

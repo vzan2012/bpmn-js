@@ -1,13 +1,11 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
-
-var is = require('../../../../../lib/util/ModelUtil').is;
+var is = require('lib/util/ModelUtil').is;
 
 var testModules = [
   modelingModule,
@@ -16,7 +14,7 @@ var testModules = [
 
 describe('features/modeling - collapse and expand elements', function() {
 
-  var diagramXML = require('../../../../fixtures/bpmn/import/collapsed/processWithChildren.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/import/collapsed/processWithChildren.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(diagramXML, {
     modules: testModules

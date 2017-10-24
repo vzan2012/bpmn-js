@@ -1,12 +1,9 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 var resizeTRBL = require('diagram-js/lib/features/resize/ResizeUtil').resizeTRBL;
@@ -20,7 +17,7 @@ function getBounds(element) {
 
 describe('features/modeling - resize lane', function() {
 
-  var diagramXML = require('./lanes.bpmn');
+  var diagramXML = readFileSync(__dirname + '/lanes.bpmn', 'utf-8');
 
   var testModules = [ coreModule, modelingModule ];
 

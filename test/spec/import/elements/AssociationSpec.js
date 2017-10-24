@@ -1,8 +1,6 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
-
-/* global bootstrapViewer, inject */
+import { bootstrapViewer, inject } from 'test/TestHelper';
 
 
 describe('import - associations', function() {
@@ -11,7 +9,7 @@ describe('import - associations', function() {
 
     it('connecting task -> text annotation', function(done) {
 
-      var xml = require('./AssociationSpec.text-annotation.bpmn');
+      var xml = readFileSync(__dirname + '/AssociationSpec.text-annotation.bpmn', 'utf-8');
 
       // given
       bootstrapViewer(xml)(function(err) {
@@ -37,7 +35,7 @@ describe('import - associations', function() {
 
     it('connecting boundary -> compensate task', function(done) {
 
-      var xml = require('./AssociationSpec.compensation.bpmn');
+      var xml = readFileSync(__dirname + '/AssociationSpec.compensation.bpmn', 'utf-8');
 
       // given
       bootstrapViewer(xml)(function(err) {
@@ -85,7 +83,7 @@ describe('import - associations', function() {
 
     it('task -> data object -> task', function(done) {
 
-      var xml = require('./AssociationSpec.data-association.bpmn');
+      var xml = readFileSync(__dirname + '/AssociationSpec.data-association.bpmn', 'utf-8');
 
       // given
       bootstrapViewer(xml)(function(err) {
@@ -107,7 +105,7 @@ describe('import - associations', function() {
 
     it('data input -> task -> data output', function(done) {
 
-      var xml = require('./AssociationSpec.data-input-output.bpmn');
+      var xml = readFileSync(__dirname + '/AssociationSpec.data-input-output.bpmn', 'utf-8');
 
       // given
       bootstrapViewer(xml)(function(err) {
@@ -129,7 +127,7 @@ describe('import - associations', function() {
 
     it('in collaboration', function(done) {
 
-      var xml = require('./AssociationSpec.collaboration.bpmn');
+      var xml = readFileSync(__dirname + '/AssociationSpec.collaboration.bpmn', 'utf-8');
 
       // given
       bootstrapViewer(xml)(function(err) {
@@ -152,7 +150,7 @@ describe('import - associations', function() {
 
     it('catch event -> data object -> throw event', function(done) {
 
-      var xml = require('./AssociationSpec.events.bpmn');
+      var xml = readFileSync(__dirname + '/AssociationSpec.events.bpmn', 'utf-8');
 
       // given
       bootstrapViewer(xml)(function(err) {

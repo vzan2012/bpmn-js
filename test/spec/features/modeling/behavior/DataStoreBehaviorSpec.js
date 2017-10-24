@@ -1,11 +1,9 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling/behavior - data store', function() {
@@ -15,7 +13,7 @@ describe('features/modeling/behavior - data store', function() {
 
   describe('create', function() {
 
-    var processDiagramXML = require('./DataStoreBehavior.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/DataStoreBehavior.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -73,7 +71,7 @@ describe('features/modeling/behavior - data store', function() {
 
   describe('move', function() {
 
-    var processDiagramXML = require('./DataStoreBehavior.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/DataStoreBehavior.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -100,7 +98,7 @@ describe('features/modeling/behavior - data store', function() {
 
   describe('connect', function() {
 
-    var processDiagramXML = require('./DataStoreBehavior.connect.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/DataStoreBehavior.connect.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 

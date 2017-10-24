@@ -1,19 +1,17 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('../../../../lib/features/modeling').default,
-    replaceModule = require('../../../../lib/features/replace').default,
+var modelingModule = require('lib/features/modeling').default,
+    replaceModule = require('lib/features/replace').default,
     moveModule = require('diagram-js/lib/features/move').default,
-    coreModule = require('../../../../lib/core').default;
+    coreModule = require('lib/core').default;
 
-var is = require('../../../../lib/util/ModelUtil').is,
-    isExpanded = require('../../../../lib/util/DiUtil').isExpanded,
-    isInterrupting = require('../../../../lib/util/DiUtil').isInterrupting,
-    isEventSubProcess = require('../../../../lib/util/DiUtil').isEventSubProcess,
-    hasErrorEventDefinition = require('../../../../lib/util/DiUtil').hasErrorEventDefinition;
+var is = require('lib/util/ModelUtil').is,
+    isExpanded = require('lib/util/DiUtil').isExpanded,
+    isInterrupting = require('lib/util/DiUtil').isInterrupting,
+    isEventSubProcess = require('lib/util/DiUtil').isEventSubProcess,
+    hasErrorEventDefinition = require('lib/util/DiUtil').hasErrorEventDefinition;
 
 
 describe('features/replace - bpmn replace', function() {
@@ -28,7 +26,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('should replace', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -199,7 +197,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('should replace in collaboration', function() {
 
-    var diagramXML = require('./BpmnReplace.collaboration.bpmn');
+    var diagramXML = readFileSync(__dirname + '/BpmnReplace.collaboration.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -238,7 +236,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('position and size', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -283,7 +281,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('selection', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -310,7 +308,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('label', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -358,7 +356,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('undo support', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -420,7 +418,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('connection handling', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -656,7 +654,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('children handling', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -697,7 +695,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('sub processes', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -816,7 +814,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('morph task with boundaryEvent', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -869,7 +867,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('compensation activity', function() {
 
-    var diagramXML = require('./BpmnReplace.compensation.bpmn');
+    var diagramXML = readFileSync(__dirname + '/BpmnReplace.compensation.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -896,7 +894,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('event sub processes', function() {
 
-    var diagramXML = require('./BpmnReplace.eventSubProcesses.bpmn');
+    var diagramXML = readFileSync(__dirname + '/BpmnReplace.eventSubProcesses.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -1177,7 +1175,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('events', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/basic.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/basic.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, {
       modules: testModules
@@ -1203,7 +1201,7 @@ describe('features/replace - bpmn replace', function() {
 
 
   describe('properties', function() {
-    var clonePropertiesXML = require('../../../fixtures/bpmn/features/replace/clone-properties.bpmn');
+    var clonePropertiesXML = readFileSync('test/fixtures/bpmn/features/replace/clone-properties.bpmn', 'utf-8');
 
     var camundaPackage = require('../../../fixtures/json/model/camunda');
 
@@ -1270,7 +1268,7 @@ describe('features/replace - bpmn replace', function() {
 
   describe('colors', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/features/replace/01_replace.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 

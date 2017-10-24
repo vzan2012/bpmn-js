@@ -1,13 +1,11 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+var is = require('lib/util/ModelUtil').is;
 
-var is = require('../../../../../lib/util/ModelUtil').is;
-
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling/behavior - data object', function() {
@@ -19,7 +17,7 @@ describe('features/modeling/behavior - data object', function() {
 
   describe('DataObjectReference', function() {
 
-    var processDiagramXML = require('./DataObjectBehavior.data-object-reference.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/DataObjectBehavior.data-object-reference.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -73,7 +71,7 @@ describe('features/modeling/behavior - data object', function() {
 
   describe('create', function() {
 
-    var processDiagramXML = require('./DataObjectBehavior.create-data-association.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/DataObjectBehavior.create-data-association.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -183,7 +181,7 @@ describe('features/modeling/behavior - data object', function() {
 
   describe('remove', function() {
 
-    var processDiagramXML = require('./DataObjectBehavior.remove-data-association.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/DataObjectBehavior.remove-data-association.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 

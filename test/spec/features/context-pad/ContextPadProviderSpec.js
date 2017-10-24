@@ -1,23 +1,24 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-var TestHelper = require('../../../TestHelper');
+import {
+  bootstrapModeler,
+  inject,
+  getBpmnJS
+} from 'test/TestHelper';
 
 var TestContainer = require('mocha-test-container-support');
 
 var domQuery = require('min-dom/lib/query');
 
-var is = require('../../../../lib/util/ModelUtil').is;
+var is = require('lib/util/ModelUtil').is;
 
 var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
 
 
-/* global bootstrapModeler, inject */
-
-
-var contextPadModule = require('../../../../lib/features/context-pad').default,
-    coreModule = require('../../../../lib/core').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
-    replaceMenuModule = require('../../../../lib/features/popup-menu').default,
+var contextPadModule = require('lib/features/context-pad').default,
+    coreModule = require('lib/core').default,
+    modelingModule = require('lib/features/modeling').default,
+    replaceMenuModule = require('lib/features/popup-menu').default,
     createModule = require('diagram-js/lib/features/create').default,
     customRulesModule = require('../../../util/custom-rules').default;
 
@@ -36,7 +37,7 @@ describe('features - context-pad', function() {
 
   describe('remove action rules', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/simple.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
@@ -164,13 +165,13 @@ describe('features - context-pad', function() {
 
   describe('available entries', function() {
 
-    var diagramXML = require('./ContextPad.activation.bpmn');
+    var diagramXML = readFileSync(__dirname + '/ContextPad.activation.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
     function expectContextPadEntries(elementOrId, expectedEntries) {
 
-      TestHelper.getBpmnJS().invoke(function(elementRegistry, contextPad) {
+      getBpmnJS().invoke(function(elementRegistry, contextPad) {
 
         var element = typeof elementOrId === 'string' ? elementRegistry.get(elementOrId) : elementOrId;
 
@@ -280,7 +281,7 @@ describe('features - context-pad', function() {
 
   describe('replace', function() {
 
-    var diagramXML = require('../../../fixtures/bpmn/simple.bpmn');
+    var diagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 

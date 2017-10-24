@@ -1,6 +1,6 @@
 'use strict';
 
-require('../../../../../TestHelper');
+import 'test/TestHelper';
 
 var GeometricUtil = require('lib/features/modeling/behavior/util/GeometricUtil');
 

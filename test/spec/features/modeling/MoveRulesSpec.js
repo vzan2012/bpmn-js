@@ -1,13 +1,11 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var coreModule = require('../../../../lib/core').default,
-    modelingModule = require('../../../../lib/features/modeling').default,
+var coreModule = require('lib/core').default,
+    modelingModule = require('lib/features/modeling').default,
     moveModule = require('diagram-js/lib/features/move').default,
-    snappingModule = require('../../../../lib/features/snapping').default;
+    snappingModule = require('lib/features/snapping').default;
 
 var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
 
@@ -16,7 +14,7 @@ describe('features/modeling - move', function() {
 
   var testModules = [ coreModule, modelingModule, moveModule, snappingModule ];
 
-  var testXML = require('../../../fixtures/bpmn/boundary-events.bpmn');
+  var testXML = readFileSync('test/fixtures/bpmn/boundary-events.bpmn', 'utf-8');
 
   beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 

@@ -1,10 +1,10 @@
-'use strict';
+import { readFileSync } from 'fs';
 
 var TestContainer = require('mocha-test-container-support');
 
 var Diagram = require('diagram-js/lib/Diagram').default;
 
-var Viewer = require('../../lib/Viewer').default;
+var Viewer = require('lib/Viewer').default;
 
 var inherits = require('inherits');
 
@@ -28,14 +28,14 @@ describe('Viewer', function() {
 
 
   it('should import simple process', function(done) {
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
     createViewer(xml, done);
   });
 
 
   it('should re-import simple process', function(done) {
 
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     // given
     createViewer(xml, function(err, warnings, viewer) {
@@ -76,7 +76,7 @@ describe('Viewer', function() {
 
     it('should allow to add overlays', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       createViewer(xml, function(err, warnings, viewer) {
 
@@ -148,7 +148,7 @@ describe('Viewer', function() {
 
     it('should handle invalid BPMNPlane#bpmnElement', function(done) {
 
-      var xml = require('../fixtures/bpmn/error/di-plane-no-bpmn-element.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/error/di-plane-no-bpmn-element.bpmn', 'utf-8');
 
       // when
       createViewer(xml, function(err, warnings) {
@@ -171,7 +171,7 @@ describe('Viewer', function() {
 
     it('should handle invalid namespaced element', function(done) {
 
-      var xml = require('../fixtures/bpmn/error/categoryValue.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/error/categoryValue.bpmn', 'utf-8');
 
       // when
       createViewer(xml, function(err, warnings) {
@@ -191,7 +191,7 @@ describe('Viewer', function() {
 
     it('should handle missing namespace', function(done) {
 
-      var xml = require('../fixtures/bpmn/error/missing-namespace.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/error/missing-namespace.bpmn', 'utf-8');
 
       // when
       createViewer(xml, function(err, warnings) {
@@ -214,7 +214,7 @@ describe('Viewer', function() {
 
     it('should handle duplicate ids', function(done) {
 
-      var xml = require('../fixtures/bpmn/error/duplicate-ids.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/error/duplicate-ids.bpmn', 'utf-8');
 
       // when
       createViewer(xml, function(err, warnings) {
@@ -237,7 +237,7 @@ describe('Viewer', function() {
 
     it('should provide self as <bpmnjs>', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       createViewer(xml, function(err, warnings, viewer) {
 
@@ -263,8 +263,8 @@ describe('Viewer', function() {
     it('should keep references to services across re-import', function(done) {
 
       // given
-      var someXML = require('../fixtures/bpmn/simple.bpmn'),
-          otherXML = require('../fixtures/bpmn/basic.bpmn');
+      var someXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8'),
+          otherXML = readFileSync('test/fixtures/bpmn/basic.bpmn', 'utf-8');
 
       var viewer = new Viewer({ container: container });
 
@@ -329,7 +329,7 @@ describe('Viewer', function() {
     it('should export XML', function(done) {
 
       // given
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       createViewer(xml, function(err, warnings, viewer) {
 
@@ -359,7 +359,7 @@ describe('Viewer', function() {
     it('should export svg', function(done) {
 
       // given
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       createViewer(xml, function(err, warnings, viewer) {
 
@@ -388,7 +388,7 @@ describe('Viewer', function() {
       this.timeout(3000);
 
       // given
-      var xml = require('../fixtures/bpmn/complex.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/complex.bpmn', 'utf-8');
 
       createViewer(xml, function(err, warnings, viewer) {
 
@@ -420,7 +420,7 @@ describe('Viewer', function() {
     it('should remove outer-makers on export', function(done) {
 
       // given
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
       function appendTestRect(svgDoc) {
         var rect = document.createElementNS(svgDoc.namespaceURI, 'rect');
         rect.setAttribute('class', 'outer-bound-marker');
@@ -475,7 +475,7 @@ describe('Viewer', function() {
     ];
 
     // given
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     var viewer;
 
@@ -538,7 +538,7 @@ describe('Viewer', function() {
 
     it('should provide custom moddle extensions', function(done) {
 
-      var xml = require('../fixtures/bpmn/extension/camunda.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/extension/camunda.bpmn', 'utf-8');
 
       // given
       viewer = new Viewer({
@@ -579,7 +579,7 @@ describe('Viewer', function() {
     it('should allow to add default custom moddle extensions', function(done) {
 
       // given
-      var xml = require('../fixtures/bpmn/extension/custom.bpmn'),
+      var xml = readFileSync('test/fixtures/bpmn/extension/custom.bpmn', 'utf-8'),
           additionalModdleDescriptors = {
             custom: require('../fixtures/json/model/custom')
           };
@@ -633,7 +633,7 @@ describe('Viewer', function() {
     it('should allow user to override default custom moddle extensions', function(done) {
 
       // given
-      var xml = require('../fixtures/bpmn/extension/custom-override.bpmn'),
+      var xml = readFileSync('test/fixtures/bpmn/extension/custom-override.bpmn', 'utf-8'),
           additionalModdleDescriptors = {
             custom: require('../fixtures/json/model/custom')
           },
@@ -688,7 +688,7 @@ describe('Viewer', function() {
 
     it('should throw error due to missing diagram', function(done) {
 
-      var xml = require('../fixtures/bpmn/empty-definitions.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/empty-definitions.bpmn', 'utf-8');
 
       // given
       viewer = new Viewer({ container: container, additionalModules: testModules });
@@ -709,7 +709,7 @@ describe('Viewer', function() {
 
   describe('configuration', function() {
 
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     it('should configure Canvas', function(done) {
 
@@ -736,7 +736,7 @@ describe('Viewer', function() {
 
     it('should attach the viewer to the given parent', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       var viewer = new Viewer({ container: container });
 
@@ -750,7 +750,7 @@ describe('Viewer', function() {
 
     it('should not attach the viewer automatically if no parent was given', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       var viewer = new Viewer();
 
@@ -771,7 +771,7 @@ describe('Viewer', function() {
       // given
       var viewer = new Viewer({ container: container });
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       var events = [];
 
@@ -813,7 +813,7 @@ describe('Viewer', function() {
       // given
       var viewer = new Viewer({ container: container });
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       // when
       viewer.importXML(xml);
@@ -834,7 +834,7 @@ describe('Viewer', function() {
       // given
       var viewer = new Viewer({ container: container });
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       // when
       viewer.on('foo', 1000, function() {
@@ -859,7 +859,7 @@ describe('Viewer', function() {
 
   describe('#off', function() {
 
-    var xml = require('../fixtures/bpmn/simple.bpmn');
+    var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
     it('should remove listener permanently', function(done) {
 
@@ -941,7 +941,7 @@ describe('Viewer', function() {
   describe('#attachTo', function() {
     it('should attach the viewer', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       var viewer = new Viewer();
 
@@ -960,7 +960,7 @@ describe('Viewer', function() {
   describe('#detach', function() {
     it('should detach the viewer', function(done) {
 
-      var xml = require('../fixtures/bpmn/simple.bpmn');
+      var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
       var viewer = new Viewer({ container: container });
 

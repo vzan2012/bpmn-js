@@ -1,9 +1,9 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-/* global bootstrapModeler, inject */
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('../../../../../lib/features/modeling').default,
-    coreModule = require('../../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/modeling - remove element behavior', function() {
@@ -16,7 +16,7 @@ describe('features/modeling - remove element behavior', function() {
 
     describe('parallel connections', function() {
 
-      var processDiagramXML = require('./RemoveElementBehavior.bpmn');
+      var processDiagramXML = readFileSync(__dirname + '/RemoveElementBehavior.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
@@ -70,7 +70,7 @@ describe('features/modeling - remove element behavior', function() {
 
     describe('perpendicular connections', function() {
 
-      var gatewayDiagramXML = require('./RemoveElementBehavior.perpendicular.bpmn');
+      var gatewayDiagramXML = readFileSync(__dirname + '/RemoveElementBehavior.perpendicular.bpmn', 'utf-8');
 
       beforeEach(bootstrapModeler(gatewayDiagramXML, { modules: testModules }));
 
@@ -191,7 +191,7 @@ describe('features/modeling - remove element behavior', function() {
 
   describe('do not combine sequence flows ', function() {
 
-    var processDiagramXML = require('./RemoveElementBehavior.bpmn');
+    var processDiagramXML = readFileSync(__dirname + '/RemoveElementBehavior.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 

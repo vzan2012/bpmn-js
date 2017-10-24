@@ -1,17 +1,15 @@
-'use strict';
+import { readFileSync } from 'fs';
 
-require('../../../TestHelper');
+import { bootstrapModeler, inject } from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('../../../../lib/features/modeling').default,
-    coreModule = require('../../../../lib/core').default;
+var modelingModule = require('lib/features/modeling').default,
+    coreModule = require('lib/core').default;
 
 
 describe('features/move - drop', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/features/drop/drop.bpmn');
-  var diagramXML2 = require('../../../fixtures/bpmn/features/drop/recursive-task.bpmn');
+  var diagramXML = readFileSync('test/fixtures/bpmn/features/drop/drop.bpmn', 'utf-8');
+  var diagramXML2 = readFileSync('test/fixtures/bpmn/features/drop/recursive-task.bpmn', 'utf-8');
 
   var testModules = [ coreModule, modelingModule ];
 
