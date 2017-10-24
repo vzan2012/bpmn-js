@@ -6,10 +6,10 @@ import {
   inject
 } from 'test/TestHelper';
 
-var coreModule = require('lib/core').default,
-    rendererModule = require('lib/draw').default;
+import coreModule from 'lib/core';
+import rendererModule from 'lib/draw';
 
-var domQuery = require('min-dom/lib/query');
+import domQuery from 'min-dom/lib/query';
 
 function checkErrors(done) {
   return function(err, warnings) {

@@ -4,9 +4,9 @@ import { bootstrapModeler, inject } from 'test/TestHelper';
 
 /* global sinon */
 
-var Modeler = require('lib/Modeler').default;
+import Modeler from 'lib/Modeler';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
 var DELTA = 2;
 

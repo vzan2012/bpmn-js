@@ -4,14 +4,14 @@ import { readFileSync } from 'fs';
 
 import { bootstrapViewer, inject } from 'test/TestHelper';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
-var coreModule = require('lib/core').default,
-    editorActionsModule = require('lib/features/editor-actions').default,
-    keyboardModule = require('lib/features/keyboard').default,
-    modelingModule = require('lib/features/modeling').default;
+import coreModule from 'lib/core';
+import editorActionsModule from 'lib/features/editor-actions';
+import keyboardModule from 'lib/features/keyboard';
+import modelingModule from 'lib/features/modeling';
 
-var createKeyEvent = require('../../../util/KeyEvents').createKeyEvent;
+import { createKeyEvent } from '../../../util/KeyEvents';
 
 
 describe('features - keyboard', function() {

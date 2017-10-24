@@ -2,13 +2,12 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
+import { resizeTRBL } from 'diagram-js/lib/features/resize/ResizeUtil';
 
-var resizeTRBL = require('diagram-js/lib/features/resize/ResizeUtil').resizeTRBL;
-
-var pick = require('lodash-es/pick').default;
+import pick from 'lodash-es/pick';
 
 function getBounds(element) {
   return pick(element, [ 'x', 'y', 'width', 'height']);

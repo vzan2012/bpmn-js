@@ -1,19 +1,9 @@
-'use strict';
+import RuleProvider from 'diagram-js/lib/features/rules/RuleProvider';
 
-var inherits = require('inherits');
-
-var RuleProvider = require('diagram-js/lib/features/rules/RuleProvider').default;
-
-function CustomRules(eventBus) {
-  RuleProvider.call(this, eventBus);
+export default class CustomRules extends RuleProvider {
+  init() {
+    // placeholder
+  }
 }
 
 CustomRules.$inject = [ 'eventBus' ];
-
-inherits(CustomRules, RuleProvider);
-
-CustomRules.prototype.init = function() {
-  // placeholder
-};
-
-module.exports = CustomRules;

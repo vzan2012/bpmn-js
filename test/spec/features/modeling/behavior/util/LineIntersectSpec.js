@@ -1,13 +1,12 @@
-'use strict';
-
 import 'test/TestHelper';
 
-var intersection = require('lib/features/modeling/behavior/util/LineIntersect').default;
+import intersection from 'lib/features/modeling/behavior/util/LineIntersect';
 
 
 describe('modeling/behavior/util - LineIntersect', function() {
 
   it('should compute intersections', function() {
+
     expect(intersection(
       { x: 10, y: 20 }, { x: 50, y: 50 },
       { x: 10, y: 50 }, { x: 50, y: 50 }

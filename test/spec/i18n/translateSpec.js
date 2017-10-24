@@ -5,12 +5,12 @@ import { bootstrapModeler, inject } from 'test/TestHelper';
 // skipping this file during translation extraction
 var skip = window.__env__ && window.__env__.TRANSLATIONS === 'enabled';
 
-var coreModule = require('lib/core').default,
-    translateModule = require('diagram-js/lib/i18n/translate').default,
-    customTranslateModule = require('./custom-translate').default,
-    modelingModule = require('lib/features/modeling').default,
-    paletteModule = require('lib/features/palette').default,
-    contextPadModule = require('lib/features/context-pad').default;
+import coreModule from 'lib/core';
+import translateModule from 'diagram-js/lib/i18n/translate';
+import customTranslateModule from './custom-translate';
+import modelingModule from 'lib/features/modeling';
+import paletteModule from 'lib/features/palette';
+import contextPadModule from 'lib/features/context-pad';
 
 var diagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 

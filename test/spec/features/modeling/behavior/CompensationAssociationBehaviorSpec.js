@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('lib/features/modeling').default;
+import modelingModule from 'lib/features/modeling';
 
 
 describe('modeling/behavior - CompensationAssociation', function() {

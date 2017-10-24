@@ -2,12 +2,12 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var pick = require('lodash-es/pick').default;
+import pick from 'lodash-es/pick';
 
-var modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
-var getChildLanes = require('lib/features/modeling/util/LaneUtil').getChildLanes;
+import { getChildLanes } from 'lib/features/modeling/util/LaneUtil';
 
 
 function getBounds(element) {

@@ -2,10 +2,10 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var find = require('lodash-es/find').default;
+import find from 'lodash-es/find';
 
-var modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - append shape', function() {

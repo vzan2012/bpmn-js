@@ -9,10 +9,10 @@ import {
   reconnectEnd
 } from './Helper';
 
-var Modeler = require('lib/Modeler').default;
+import Modeler from 'lib/Modeler';
 
-var modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - layout', function() {

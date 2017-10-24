@@ -1,9 +1,7 @@
-'use strict';
-
-var forEach = require('lodash-es/forEach').default;
+import forEach from 'lodash-es/forEach';
 
 
-function DescriptorTree(tree) {
+export default function DescriptorTree(tree) {
 
   this._tree = {};
   this._length = 0;
@@ -22,8 +20,6 @@ function DescriptorTree(tree) {
 
   }, this);
 }
-
-module.exports = DescriptorTree;
 
 DescriptorTree.prototype.getLength = function() {
   return this._length;

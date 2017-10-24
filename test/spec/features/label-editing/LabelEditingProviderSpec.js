@@ -2,12 +2,12 @@ import { readFileSync } from 'fs';
 
 import { bootstrapViewer, inject } from 'test/TestHelper';
 
-var labelEditingModule = require('lib/features/label-editing').default,
-    coreModule = require('lib/core').default,
-    draggingModule = require('diagram-js/lib/features/dragging').default,
-    modelingModule = require('diagram-js/lib/features/modeling').default;
+import labelEditingModule from 'lib/features/label-editing';
+import coreModule from 'lib/core';
+import draggingModule from 'diagram-js/lib/features/dragging';
+import modelingModule from 'diagram-js/lib/features/modeling';
 
-var LabelUtil = require('lib/features/label-editing/LabelUtil');
+import { getLabel } from 'lib/features/label-editing/LabelUtil';
 
 var MEDIUM_LINE_HEIGHT = 14;
 
@@ -199,7 +199,7 @@ describe('features - label-editing', function() {
         // given
         var diagramElement = elementRegistry.get('Task_1');
 
-        var oldLabel = LabelUtil.getLabel(diagramElement);
+        var oldLabel = getLabel(diagramElement);
 
         // when
         directEditActivate(diagramElement);
@@ -208,7 +208,7 @@ describe('features - label-editing', function() {
         commandStack.undo();
 
         // then
-        var label = LabelUtil.getLabel(diagramElement);
+        var label = getLabel(diagramElement);
         expect(label).to.eql(oldLabel);
       }));
 
@@ -271,7 +271,7 @@ describe('features - label-editing', function() {
 
           var diagramElement = elementRegistry.get(elementId);
 
-          var label = LabelUtil.getLabel(diagramElement);
+          var label = getLabel(diagramElement);
 
 
           // when
@@ -288,7 +288,7 @@ describe('features - label-editing', function() {
 
           // then
           // expect update to have happened
-          label = LabelUtil.getLabel(diagramElement);
+          label = getLabel(diagramElement);
           expect(label).to.equal('B');
 
 
@@ -297,7 +297,7 @@ describe('features - label-editing', function() {
           directEditCancel('C');
 
           // expect no label update to have happened
-          label = LabelUtil.getLabel(diagramElement);
+          label = getLabel(diagramElement);
           expect(label).to.equal('B');
         });
       }

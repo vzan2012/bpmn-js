@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('lib/features/modeling').default,
-    providerModule = require('lib/features/global-connect').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import providerModule from 'lib/features/global-connect';
+import coreModule from 'lib/core';
 
 
 describe('features/bpmn-global-connect-provider', function() {

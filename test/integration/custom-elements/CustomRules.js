@@ -1,9 +1,6 @@
-'use strict';
+import forEach from 'lodash-es/forEach';
 
-var forEach = require('lodash-es/forEach').default,
-    inherits = require('inherits');
-
-var RuleProvider = require('diagram-js/lib/features/rules/RuleProvider').default;
+import RuleProvider from 'diagram-js/lib/features/rules/RuleProvider';
 
 var HIGH_PRIORITY = 1500;
 
@@ -21,74 +18,69 @@ function isCustom(element) {
 /**
  * Specific rules for custom elements
  */
-function CustomRules(eventBus) {
-  RuleProvider.call(this, eventBus);
-}
+export default class CustomRules extends RuleProvider {
 
-inherits(CustomRules, RuleProvider);
+  init() {
+
+    this.addRule('connection.create', HIGH_PRIORITY, function(context) {
+      var source = context.source,
+          target = context.target;
+
+      return canConnect(source, target);
+    });
+
+    this.addRule('connection.reconnectStart', HIGH_PRIORITY, function(context) {
+
+      var connection = context.connection,
+          source = context.hover || context.source,
+          target = connection.target;
+
+      return canConnect(source, target, connection);
+    });
+
+    this.addRule('connection.reconnectEnd', HIGH_PRIORITY, function(context) {
+
+      var connection = context.connection,
+          source = connection.source,
+          target = context.hover || context.target;
+
+      return canConnect(source, target, connection);
+    });
+
+    this.addRule('connection.updateWaypoints', HIGH_PRIORITY, function(context) {
+      // OK! but visually ignore
+      return null;
+    });
+
+    this.addRule('elements.move', HIGH_PRIORITY, function(context) {
+
+      var target = context.target,
+          shapes = context.shapes,
+          position = context.position;
+
+      return canMove(shapes, target, position);
+    });
+
+    this.addRule('shape.create', HIGH_PRIORITY, function(context) {
+      var target = context.target,
+          shape = context.shape,
+          position = context.position;
+
+      return canCreate(shape, target, position);
+    });
+
+    this.addRule('shape.resize', HIGH_PRIORITY, function(context) {
+      var shape = context.shape;
+
+      if (isCustom(shape)) {
+        return false;
+      }
+    });
+  }
+}
 
 CustomRules.$inject = [ 'eventBus' ];
 
-module.exports = CustomRules;
-
-
-CustomRules.prototype.init = function() {
-
-  this.addRule('connection.create', HIGH_PRIORITY, function(context) {
-    var source = context.source,
-        target = context.target;
-
-    return canConnect(source, target);
-  });
-
-  this.addRule('connection.reconnectStart', HIGH_PRIORITY, function(context) {
-
-    var connection = context.connection,
-        source = context.hover || context.source,
-        target = connection.target;
-
-    return canConnect(source, target, connection);
-  });
-
-  this.addRule('connection.reconnectEnd', HIGH_PRIORITY, function(context) {
-
-    var connection = context.connection,
-        source = connection.source,
-        target = context.hover || context.target;
-
-    return canConnect(source, target, connection);
-  });
-
-  this.addRule('connection.updateWaypoints', HIGH_PRIORITY, function(context) {
-    // OK! but visually ignore
-    return null;
-  });
-
-  this.addRule('elements.move', HIGH_PRIORITY, function(context) {
-
-    var target = context.target,
-        shapes = context.shapes,
-        position = context.position;
-
-    return canMove(shapes, target, position);
-  });
-
-  this.addRule('shape.create', HIGH_PRIORITY, function(context) {
-    var target = context.target,
-        shape = context.shape,
-        position = context.position;
-
-    return canCreate(shape, target, position);
-  });
-
-  this.addRule('shape.resize', HIGH_PRIORITY, function(context) {
-    var shape = context.shape;
-
-    if (isCustom(shape)) {
-      return false;
-    }
-  });
-};
 
 function canConnect(source, target) {
   if (isType(target, 'custom:triangle')) {

@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('lib/features/modeling').default,
-    replaceModule = require('lib/features/replace').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import replaceModule from 'lib/features/replace';
+import coreModule from 'lib/core';
 
 
 

@@ -2,18 +2,15 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var pick = require('lodash-es/pick').default,
-    assign = require('lodash-es/assign').default;
+import pick from 'lodash-es/pick';
+import assign from 'lodash-es/assign';
 
-var autoResizeModule = require('lib/features/auto-resize').default,
-    modelingModule = require('lib/features/modeling').default,
-    createModule = require('diagram-js/lib/features/create').default,
-    coreModule = require('lib/core').default,
-    canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
+import autoResizeModule from 'lib/features/auto-resize';
+import modelingModule from 'lib/features/modeling';
+import createModule from 'diagram-js/lib/features/create';
+import coreModule from 'lib/core';
 
-function getBounds(shape) {
-  return pick(shape, [ 'x', 'y', 'width', 'height' ]);
-}
+import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
 
 describe('features/auto-resize', function() {
@@ -570,6 +567,7 @@ describe('features/auto-resize', function() {
 
   });
 
+
   describe('space-tool', function() {
 
     var diagramXML = readFileSync(__dirname + '/AutoResize.space-tool.bpmn', 'utf-8');
@@ -608,3 +606,10 @@ describe('features/auto-resize', function() {
   });
 
 });
+
+
+//////// helpers ////////////////////////
+
+function getBounds(shape) {
+  return pick(shape, [ 'x', 'y', 'width', 'height' ]);
+}

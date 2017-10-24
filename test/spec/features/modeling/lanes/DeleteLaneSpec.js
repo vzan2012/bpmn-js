@@ -2,10 +2,10 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var pick = require('lodash-es/pick').default;
+import pick from 'lodash-es/pick';
 
-var modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 function getBounds(element) {
   return pick(element, [ 'x', 'y', 'width', 'height' ]);

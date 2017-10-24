@@ -8,20 +8,22 @@ import {
   getBpmnJS
 } from 'test/TestHelper';
 
-var bpmnCopyPasteModule = require('lib/features/copy-paste').default,
-    copyPasteModule = require('diagram-js/lib/features/copy-paste').default,
-    tooltipsModule = require('diagram-js/lib/features/tooltips').default,
-    modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import bpmnCopyPasteModule from 'lib/features/copy-paste';
+import copyPasteModule from 'diagram-js/lib/features/copy-paste';
+import tooltipsModule from 'diagram-js/lib/features/tooltips';
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
-var map = require('lodash-es/map').default,
-    filter = require('lodash-es/filter').default,
-    forEach = require('lodash-es/forEach').default,
-    uniq = require('lodash-es/uniq').default;
+import map from 'lodash-es/map';
+import filter from 'lodash-es/filter';
+import forEach from 'lodash-es/forEach';
+import uniq from 'lodash-es/uniq';
 
-var DescriptorTree = require('./DescriptorTree').default;
+import DescriptorTree from './DescriptorTree';
 
-var is = require('lib/util/ModelUtil').is;
+import { is } from 'lib/util/ModelUtil';
+
+import camundaPackage from '../../../fixtures/json/model/camunda';
 
 
 // TODO(nikku): copy/paste is broken... fix and un-skip
@@ -584,8 +586,6 @@ describe.skip('features/copy-paste', function() {
 
 
   describe('deep properties', function() {
-
-    var camundaPackage = require('../../../fixtures/json/model/camunda').default;
 
     beforeEach(bootstrapModeler(clonePropertiesXML, {
       modules: testModules,

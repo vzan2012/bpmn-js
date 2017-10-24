@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var alignElementsModule = require('diagram-js/lib/features/align-elements').default,
-    modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import alignElementsModule from 'diagram-js/lib/features/align-elements';
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/align-elements', function() {

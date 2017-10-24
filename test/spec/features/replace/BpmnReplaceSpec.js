@@ -2,16 +2,21 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var modelingModule = require('lib/features/modeling').default,
-    replaceModule = require('lib/features/replace').default,
-    moveModule = require('diagram-js/lib/features/move').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import replaceModule from 'lib/features/replace';
+import moveModule from 'diagram-js/lib/features/move';
+import coreModule from 'lib/core';
 
-var is = require('lib/util/ModelUtil').is,
-    isExpanded = require('lib/util/DiUtil').isExpanded,
-    isInterrupting = require('lib/util/DiUtil').isInterrupting,
-    isEventSubProcess = require('lib/util/DiUtil').isEventSubProcess,
-    hasErrorEventDefinition = require('lib/util/DiUtil').hasErrorEventDefinition;
+import { is } from 'lib/util/ModelUtil';
+
+import {
+  isExpanded,
+  isInterrupting,
+  isEventSubProcess,
+  hasErrorEventDefinition
+} from 'lib/util/DiUtil';
+
+import camundaPackage from '../../../fixtures/json/model/camunda';
 
 
 describe('features/replace - bpmn replace', function() {
@@ -1201,9 +1206,8 @@ describe('features/replace - bpmn replace', function() {
 
 
   describe('properties', function() {
-    var clonePropertiesXML = readFileSync('test/fixtures/bpmn/features/replace/clone-properties.bpmn', 'utf-8');
 
-    var camundaPackage = require('../../../fixtures/json/model/camunda');
+    var clonePropertiesXML = readFileSync('test/fixtures/bpmn/features/replace/clone-properties.bpmn', 'utf-8');
 
     beforeEach(bootstrapModeler(clonePropertiesXML, {
       modules: testModules,

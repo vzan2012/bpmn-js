@@ -1,6 +1,4 @@
-'use strict';
-
-var getLabelAdjustment = require('lib/features/modeling/behavior/util/LabelLayoutUtil').getLabelAdjustment;
+import { getLabelAdjustment } from 'lib/features/modeling/behavior/util/LabelLayoutUtil';
 
 
 describe('modeling/behavior/util - LabelLayoutUtil#getLabelAdjustment', function() {

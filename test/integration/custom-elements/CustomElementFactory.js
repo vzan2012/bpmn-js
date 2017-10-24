@@ -1,12 +1,11 @@
-'use strict';
+import assign from 'lodash-es/assign';
 
-var assign = require('lodash-es/assign').default;
+import BpmnElementFactory from 'lib/features/modeling/ElementFactory';
 
-var BpmnElementFactory = require('lib/features/modeling/ElementFactory').default,
-    DEFAULT_LABEL_SIZE = require('lib/util/LabelUtil').DEFAULT_LABEL_SIZE;
+import { DEFAULT_LABEL_SIZE } from 'lib/util/LabelUtil';
 
 
-class CustomElementFactory extends BpmnElementFactory {
+export default class CustomElementFactory extends BpmnElementFactory {
 
   constructor(bpmnFactory, moddle, translate) {
     super(bpmnFactory, moddle, translate);
@@ -69,8 +68,6 @@ class CustomElementFactory extends BpmnElementFactory {
   }
 
 }
-
-module.exports = CustomElementFactory;
 
 CustomElementFactory.$inject = [
   'bpmnFactory',

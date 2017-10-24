@@ -1,6 +1,4 @@
-'use strict';
-
-var translate = require('diagram-js/lib/i18n/translate/translate').default;
+import translate from 'diagram-js/lib/i18n/translate/translate';
 
 function collectTranslations(template, replacements) {
   var log = {

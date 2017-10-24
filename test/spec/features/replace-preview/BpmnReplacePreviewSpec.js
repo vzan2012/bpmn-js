@@ -2,17 +2,17 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var replacePreviewModule = require('lib/features/replace-preview').default,
-    modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import replacePreviewModule from 'lib/features/replace-preview';
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
+import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
-var assign = require('lodash-es/assign').default;
+import assign from 'lodash-es/assign';
 
-var svgAttr = require('tiny-svg/lib/attr'),
-    svgClone = require('tiny-svg/lib/clone'),
-    innerSVG = require('tiny-svg/lib/innerSVG');
+import svgAttr from 'tiny-svg/lib/attr';
+import svgClone from 'tiny-svg/lib/clone';
+import innerSVG from 'tiny-svg/lib/innerSVG';
 
 
 describe('features/replace-preview', function() {

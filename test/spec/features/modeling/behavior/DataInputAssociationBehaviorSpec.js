@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var find = require('lodash-es/find').default;
+import find from 'lodash-es/find';
 
-var modelingModule = require('lib/features/modeling').default;
+import modelingModule from 'lib/features/modeling';
 
 
 describe('modeling/behavior - fix DataInputAssociation#targetRef', function() {

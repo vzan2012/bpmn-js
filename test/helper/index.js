@@ -26,19 +26,19 @@
  * ```
  */
 
-var unique = require('lodash-es/uniq').default,
-    isFunction = require('lodash-es/isFunction').default,
-    merge = require('lodash-es/merge').default,
-    forEach = require('lodash-es/forEach').default;
+import unique from 'lodash-es/uniq';
+import isFunction from 'lodash-es/isFunction';
+import merge from 'lodash-es/merge';
+import forEach from 'lodash-es/forEach';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
-var Modeler = require('lib/Modeler').default,
-    Viewer = require('lib/Viewer').default;
+import Modeler from 'lib/Modeler';
+import Viewer from 'lib/Viewer';
 
 var OPTIONS, BPMN_JS;
 
-var translationModule = require('./TranslationCollector');
+import translationModule from './TranslationCollector';
 
 
 function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {

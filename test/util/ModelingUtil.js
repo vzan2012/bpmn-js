@@ -1,25 +1,19 @@
-'use strict';
+import { invoke } from 'test/TestHelper';
 
-var TestHelper = require('../helper').default;
+import { getCenter } from 'diagram-js/lib/layout/LayoutUtil';
 
-var getCenter = require('diagram-js/lib/layout/LayoutUtil').getCenter;
+import isArray from 'lodash-es/isArray';
+import map from 'lodash-es/map';
+import pick from 'lodash-es/pick';
+import assign from 'lodash-es/assign';
 
-var isArray = require('lodash-es/isArray').default,
-    map = require('lodash-es/map').default,
-    pick = require('lodash-es/pick').default,
-    assign = require('lodash-es/assign').default;
-
-
-function invoke(fn) {
-  return TestHelper.getBpmnJS().invoke(fn);
-}
 
 function normalizeDelta(delta) {
   return assign({ x: 0, y: 0 }, delta);
 }
 
 
-module.exports.getRelativeCenter = function(element, delta) {
+export function getRelativeCenter(element, delta) {
 
   var normalizedDelta = normalizeDelta(delta);
 
@@ -29,10 +23,10 @@ module.exports.getRelativeCenter = function(element, delta) {
     x: center.x + normalizedDelta.x,
     y: center.y + normalizedDelta.y
   };
-};
+}
 
 
-function getElement(id) {
+export function function getElement(id) {
 
   // assume
   expect(id).to.exist;
@@ -42,10 +36,8 @@ function getElement(id) {
   });
 }
 
-module.exports.getElement = getElement;
 
-
-module.exports.appendShape = function(source, shape, distance, target, connection, connectionParent) {
+export function appendShape(source, shape, distance, target, connection, connectionParent) {
 
   source = getElement(source);
   target = target && getElement(target);
@@ -63,10 +55,10 @@ module.exports.appendShape = function(source, shape, distance, target, connectio
     expect(allowed).to.eql(true);
   });
 
-};
+}
 
 
-module.exports.moveElements = function(elements, distance, target, isAttach, hints) {
+export function moveElements(elements, distance, target, isAttach, hints) {
 
   var actualElements = elements.map(function(e) {
     var actualElement = getElement(e);
@@ -94,10 +86,10 @@ module.exports.moveElements = function(elements, distance, target, isAttach, hin
     // perform actual move
     modeling.moveElements(actualElements, delta, target, isAttach, hints);
   });
-};
+}
 
 
-module.exports.getBounds = function() {
+export function getBounds() {
 
   var args = Array.prototype.slice.call(arguments);
 
@@ -115,4 +107,4 @@ module.exports.getBounds = function() {
 
     return pick(e, [ 'x', 'y', 'width', 'height' ]);
   });
-};
+}

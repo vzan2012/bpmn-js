@@ -2,15 +2,15 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var replacePreviewModule = require('lib/features/replace-preview').default,
-    modelingModule = require('lib/features/modeling').default,
-    moveModule = require('diagram-js/lib/features/move').default,
-    coreModule = require('lib/core').default;
+import replacePreviewModule from 'lib/features/replace-preview';
+import modelingModule from 'lib/features/modeling';
+import moveModule from 'diagram-js/lib/features/move';
+import coreModule from 'lib/core';
 
-var is = require('lib/util/ModelUtil').is,
-    canvasEvent = require('../../../../util/MockEvents').createCanvasEvent;
+import { is } from 'lib/util/ModelUtil';
+import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
-var domQuery = require('min-dom/lib/query');
+import domQuery from 'min-dom/lib/query';
 
 
 describe('features/modeling - move start event behavior', function() {

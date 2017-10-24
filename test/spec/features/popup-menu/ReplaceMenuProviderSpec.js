@@ -6,19 +6,21 @@ import {
   getBpmnJS
 } from 'test/TestHelper';
 
-var globalEvent = require('../../../util/MockEvents').createEvent;
+import {
+  createEvent as globalEvent
+} from '../../../util/MockEvents';
 
-var coreModule = require('lib/core').default,
-    modelingModule = require('lib/features/modeling').default,
-    replaceMenuProviderModule = require('lib/features/popup-menu').default,
-    customRulesModule = require('../../../util/custom-rules').default;
+import coreModule from 'lib/core';
+import modelingModule from 'lib/features/modeling';
+import replaceMenuProviderModule from 'lib/features/popup-menu';
+import customRulesModule from '../../../util/custom-rules';
 
-var domQuery = require('min-dom/lib/query'),
-    domClasses = require('min-dom/lib/classes'),
-    find = require('lodash-es/find').default;
+import domQuery from 'min-dom/lib/query';
+import domClasses from 'min-dom/lib/classes';
+import find from 'lodash-es/find';
 
-var is = require('lib/util/ModelUtil').is,
-    isExpanded = require('lib/util/DiUtil').isExpanded;
+import { is } from 'lib/util/ModelUtil';
+import { isExpanded } from 'lib/util/DiUtil';
 
 function queryEntry(popupMenu, id) {
   return queryPopup(popupMenu, '[data-id="' + id + '"]');

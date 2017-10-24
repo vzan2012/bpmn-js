@@ -6,21 +6,21 @@ import {
   getBpmnJS
 } from 'test/TestHelper';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
-var domQuery = require('min-dom/lib/query');
+import domQuery from 'min-dom/lib/query';
 
-var is = require('lib/util/ModelUtil').is;
+import { is } from 'lib/util/ModelUtil';
 
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
+import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
 
-var contextPadModule = require('lib/features/context-pad').default,
-    coreModule = require('lib/core').default,
-    modelingModule = require('lib/features/modeling').default,
-    replaceMenuModule = require('lib/features/popup-menu').default,
-    createModule = require('diagram-js/lib/features/create').default,
-    customRulesModule = require('../../../util/custom-rules').default;
+import contextPadModule from 'lib/features/context-pad';
+import coreModule from 'lib/core';
+import modelingModule from 'lib/features/modeling';
+import replaceMenuModule from 'lib/features/popup-menu';
+import createModule from 'diagram-js/lib/features/create';
+import customRulesModule from '../../../util/custom-rules';
 
 
 describe('features - context-pad', function() {

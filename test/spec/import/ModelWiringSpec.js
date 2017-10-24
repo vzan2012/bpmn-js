@@ -2,8 +2,7 @@ import { readFileSync } from 'fs';
 
 import { bootstrapViewer, inject } from 'test/TestHelper';
 
-
-var is = require('lib/util/ModelUtil').is;
+import { is } from 'lib/util/ModelUtil';
 
 
 describe('import - model wiring', function() {

@@ -1,3 +1,5 @@
+import CustomTranslate from './custom-translate';
+
 export default {
-  translate: [ 'value', require('./custom-translate') ]
+  translate: [ 'value', CustomTranslate ]
 };

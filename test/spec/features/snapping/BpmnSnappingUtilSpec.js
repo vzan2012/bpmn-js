@@ -2,10 +2,11 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
+import {
+  getParticipantSizeConstraints
+} from 'lib/features/snapping/BpmnSnappingUtil';
 
-var getParticipantSizeConstraints = require('lib/features/snapping/BpmnSnappingUtil').getParticipantSizeConstraints;
-
-var coreModule = require('lib/core').default;
+import coreModule from 'lib/core';
 
 var LANE_MIN_HEIGHT = 60,
     LANE_RIGHT_PADDING = 20,

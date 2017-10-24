@@ -2,13 +2,13 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var coreModule = require('lib/core').default,
-    bendpointsModule = require('diagram-js/lib/features/bendpoints').default,
-    modelingModule = require('lib/features/modeling').default,
-    labelEditingModule = require('lib/features/label-editing').default,
-    spaceTool = require('diagram-js/lib/features/space-tool').default;
+import coreModule from 'lib/core';
+import bendpointsModule from 'diagram-js/lib/features/bendpoints';
+import modelingModule from 'lib/features/modeling';
+import labelEditingModule from 'lib/features/label-editing';
+import spaceTool from 'diagram-js/lib/features/space-tool';
 
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
+import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
 var testModules = [
   coreModule,

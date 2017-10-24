@@ -2,12 +2,12 @@ import { readFileSync } from 'fs';
 
 import { bootstrapViewer, inject } from 'test/TestHelper';
 
-var pick = require('lodash-es/pick').default;
+import pick from 'lodash-es/pick';
 
-var labelEditingModule = require('lib/features/label-editing').default,
-    coreModule = require('lib/core').default,
-    draggingModule = require('diagram-js/lib/features/dragging').default,
-    modelingModule = require('diagram-js/lib/features/modeling').default;
+import labelEditingModule from 'lib/features/label-editing';
+import coreModule from 'lib/core';
+import draggingModule from 'diagram-js/lib/features/dragging';
+import modelingModule from 'diagram-js/lib/features/modeling';
 
 
 describe('features - label-editing preview', function() {

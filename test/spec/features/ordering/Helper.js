@@ -1,8 +1,7 @@
-'use strict';
+import { getBpmnJS } from 'test/TestHelper';
 
-import * as TestHelper from 'test/TestHelper';
+import map from 'lodash-es/map';
 
-var map = require('lodash-es/map').default;
 
 // polyfill, because Math.sign is not available in PhantomJS, IE and Safari
 // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Math/sign
@@ -31,7 +30,7 @@ function move(elementIds, delta, targetId, isAttach) {
     targetId = null;
   }
 
-  return TestHelper.getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
+  return getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
 
     function getElement(id) {
 
@@ -60,7 +59,7 @@ module.exports.move = move;
 
 function add(attrs, position, target, isAttach) {
 
-  return TestHelper.getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
+  return getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
 
     function getElement(id) {
 
@@ -110,7 +109,7 @@ function compareZOrder(aId, bId) {
   var elementA,
       elementB;
 
-  TestHelper.getBpmnJS().invoke(function(elementRegistry) {
+  getBpmnJS().invoke(function(elementRegistry) {
 
     function getElement(id) {
 
@@ -162,7 +161,7 @@ function compareZOrder(aId, bId) {
 }
 
 
-var forEach = require('lodash-es/forEach').default;
+import forEach from 'lodash-es/forEach';
 
 function expectZOrder() {
 

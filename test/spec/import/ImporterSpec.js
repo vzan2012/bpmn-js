@@ -2,14 +2,14 @@ import { readFileSync } from 'fs';
 
 import 'test/TestHelper';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
-var Diagram = require('diagram-js/lib/Diagram').default,
-    BpmnModdle = require('bpmn-moddle'),
-    Importer = require('lib/import/Importer'),
-    Viewer = require('lib/Viewer').default;
+import Diagram from 'diagram-js/lib/Diagram';
+import BpmnModdle from 'bpmn-moddle';
+import Importer from 'lib/import/Importer';
+import Viewer from 'lib/Viewer';
 
-var find = require('lodash-es/find').default;
+import find from 'lodash-es/find';
 
 
 describe('import - Importer', function() {

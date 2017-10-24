@@ -2,17 +2,20 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var Modeler = require('lib/Modeler').default;
+import Modeler from 'lib/Modeler';
 
-var canvasEvent = require('../util/MockEvents').createCanvasEvent;
+import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
 
-var customElementsModules = require('./custom-elements').default,
-    noTouchInteractionModule = { touchInteractionEvents: ['value', null ] },
-    modelerModules = Modeler.prototype._modules,
-    customModules = [ customElementsModules, noTouchInteractionModule ];
+import customElementsModules from './custom-elements';
 
-var testModules = [].concat(modelerModules, customModules);
+const noTouchInteractionModule = {
+  touchInteractionEvents: ['value', null ]
+};
+
+const modelerModules = Modeler.prototype._modules;
+const customModules = [ customElementsModules, noTouchInteractionModule ];
+const testModules = [].concat(modelerModules, customModules);
 
 var processDiagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 

@@ -2,21 +2,26 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var coreModule = require('lib/core').default,
-    modelingModule = require('lib/features/modeling').default,
-    moveModule = require('diagram-js/lib/features/move').default,
-    snappingModule = require('lib/features/snapping').default;
+import coreModule from 'lib/core';
+import modelingModule from 'lib/features/modeling';
+import moveModule from 'diagram-js/lib/features/move';
+import snappingModule from 'lib/features/snapping';
 
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
+import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
 
 describe('features/modeling - move', function() {
 
-  var testModules = [ coreModule, modelingModule, moveModule, snappingModule ];
-
   var testXML = readFileSync('test/fixtures/bpmn/boundary-events.bpmn', 'utf-8');
 
-  beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+  beforeEach(bootstrapModeler(testXML, {
+    modules: [
+      coreModule,
+      modelingModule,
+      moveModule,
+      snappingModule
+    ]
+  }));
 
   beforeEach(inject(function(dragging, canvas) {
     dragging.setOptions({ manual: true });
@@ -84,34 +89,36 @@ describe('features/modeling - move', function() {
   );
 
 
-  it('should move BoundaryEvent and Label with parent', inject(function(canvas, elementRegistry, move, dragging) {
+  it('should move BoundaryEvent and Label with parent', inject(
+    function(canvas, elementRegistry, move, dragging) {
 
-    // given
-    var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
-        subProcess = elementRegistry.get('SubProcess_1'),
-        label = boundaryEvent.label,
-        root = canvas.getRootElement();
+      // given
+      var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
+          subProcess = elementRegistry.get('SubProcess_1'),
+          label = boundaryEvent.label,
+          root = canvas.getRootElement();
 
-    // when
-    move.start(canvasEvent({ x: 190, y: 355 }), subProcess);
+      // when
+      move.start(canvasEvent({ x: 190, y: 355 }), subProcess);
 
-    dragging.hover({
-      element: root,
-      gfx: elementRegistry.getGraphics(root)
-    });
-    dragging.move(canvasEvent({ x: 290, y: 455 }));
-    dragging.end();
+      dragging.hover({
+        element: root,
+        gfx: elementRegistry.getGraphics(root)
+      });
+      dragging.move(canvasEvent({ x: 290, y: 455 }));
+      dragging.end();
 
-    // then
-    expect(subProcess.x).to.eql(304);
-    expect(subProcess.y).to.eql(178);
+      // then
+      expect(subProcess.x).to.eql(304);
+      expect(subProcess.y).to.eql(178);
 
-    expect(subProcess.attachers).not.to.include(label);
-    expect(subProcess.attachers).to.include(boundaryEvent);
+      expect(subProcess.attachers).not.to.include(label);
+      expect(subProcess.attachers).to.include(boundaryEvent);
 
-    expect(boundaryEvent.host).to.eql(subProcess);
-    expect(label.host).to.not.exist;
-  }));
+      expect(boundaryEvent.host).to.eql(subProcess);
+      expect(label.host).to.not.exist;
+    })
+  );
 
 
   it('should move BoundaryEvent, Label and parent',

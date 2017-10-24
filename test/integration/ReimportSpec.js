@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 
 import 'test/TestHelper';
 
-var Modeler = require('lib/Modeler').default;
+import Modeler from 'lib/Modeler';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
 function delay(fn) {
   setTimeout(fn, 10);

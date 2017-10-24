@@ -2,16 +2,16 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
+import { createCanvasEvent as canvasEvent } from 'test/util/MockEvents';
 
-var coreModule = require('lib/core').default,
-    snappingModule = require('lib/features/snapping').default,
-    modelingModule = require('lib/features/modeling').default,
-    createModule = require('diagram-js/lib/features/create').default,
-    resizeModule = require('diagram-js/lib/features/resize').default,
-    moveModule = require('diagram-js/lib/features/move').default,
-    rulesModule = require('lib/features/rules').default,
-    connectModule = require('diagram-js/lib/features/connect').default;
+import coreModule from 'lib/core';
+import snappingModule from 'lib/features/snapping';
+import modelingModule from 'lib/features/modeling';
+import createModule from 'diagram-js/lib/features/create';
+import resizeModule from 'diagram-js/lib/features/resize';
+import moveModule from 'diagram-js/lib/features/move';
+import rulesModule from 'lib/features/rules';
+import connectModule from 'diagram-js/lib/features/connect';
 
 
 describe('features/snapping - BpmnSnapping', function() {

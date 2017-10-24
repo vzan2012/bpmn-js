@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 import 'test/TestHelper';
 
-var NavigatedViewer = require('lib/NavigatedViewer').default;
+import NavigatedViewer from 'lib/NavigatedViewer';
 
 
 describe('NavigatedViewer', function() {

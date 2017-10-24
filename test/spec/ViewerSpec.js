@@ -1,13 +1,17 @@
 import { readFileSync } from 'fs';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
-var Diagram = require('diagram-js/lib/Diagram').default;
+import Diagram from 'diagram-js/lib/Diagram';
 
-var Viewer = require('lib/Viewer').default;
+import Viewer from 'lib/Viewer';
 
-var inherits = require('inherits');
+import inherits from 'inherits';
 
+
+import camundaPackage from '../fixtures/json/model/camunda';
+import customPackage from '../fixtures/json/model/custom';
+import customOverridePackage from '../fixtures/json/model/custom-override';
 
 describe('Viewer', function() {
 
@@ -534,8 +538,6 @@ describe('Viewer', function() {
     });
 
 
-    var camundaPackage = require('../fixtures/json/model/camunda');
-
     it('should provide custom moddle extensions', function(done) {
 
       var xml = readFileSync('test/fixtures/bpmn/extension/camunda.bpmn', 'utf-8');
@@ -581,7 +583,7 @@ describe('Viewer', function() {
       // given
       var xml = readFileSync('test/fixtures/bpmn/extension/custom.bpmn', 'utf-8'),
           additionalModdleDescriptors = {
-            custom: require('../fixtures/json/model/custom')
+            custom: customPackage
           };
 
       function CustomViewer(options) {
@@ -635,9 +637,8 @@ describe('Viewer', function() {
       // given
       var xml = readFileSync('test/fixtures/bpmn/extension/custom-override.bpmn', 'utf-8'),
           additionalModdleDescriptors = {
-            custom: require('../fixtures/json/model/custom')
-          },
-          customOverride = require('../fixtures/json/model/custom-override');
+            custom: customPackage
+          };
 
       function CustomViewer(options) {
         Viewer.call(this, options);
@@ -651,7 +652,7 @@ describe('Viewer', function() {
         container: container,
         moddleExtensions: {
           camunda: camundaPackage,
-          custom : customOverride
+          custom : customOverridePackage
         }
       });
 
@@ -734,6 +735,7 @@ describe('Viewer', function() {
 
     });
 
+
     it('should attach the viewer to the given parent', function(done) {
 
       var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
@@ -748,6 +750,7 @@ describe('Viewer', function() {
       });
     });
 
+
     it('should not attach the viewer automatically if no parent was given', function(done) {
 
       var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
@@ -761,6 +764,7 @@ describe('Viewer', function() {
         done(err, warnings);
       });
     });
+
   });
 
 
@@ -939,6 +943,7 @@ describe('Viewer', function() {
 
 
   describe('#attachTo', function() {
+
     it('should attach the viewer', function(done) {
 
       var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
@@ -954,10 +959,12 @@ describe('Viewer', function() {
         done(err, warnings);
       });
     });
+
   });
 
 
   describe('#detach', function() {
+
     it('should detach the viewer', function(done) {
 
       var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
@@ -973,5 +980,7 @@ describe('Viewer', function() {
         done(err, warnings);
       });
     });
+
   });
+
 });

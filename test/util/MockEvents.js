@@ -1,6 +1,6 @@
-var assign = require('lodash-es/assign').default;
+import assign from 'lodash-es/assign';
 
-var EventBusEvent = require('diagram-js/lib/core/EventBus').Event;
+import { Event as EventBusEvent } from 'diagram-js/lib/core/EventBus';
 
 import { getBpmnJS } from 'test/TestHelper';
 

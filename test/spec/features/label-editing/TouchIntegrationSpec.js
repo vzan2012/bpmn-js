@@ -3,9 +3,9 @@ import { readFileSync } from 'fs';
 import 'test/TestHelper';
 
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
-var Modeler = require('lib/Modeler').default;
+import Modeler from 'lib/Modeler';
 
 
 describe('direct editing - touch integration', function() {

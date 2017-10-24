@@ -1,6 +1,4 @@
-'use strict';
-
-var getAttachment = require('lib/features/modeling/behavior/util/LineAttachmentUtil').getAttachment;
+import { getAttachment } from 'lib/features/modeling/behavior/util/LineAttachmentUtil';
 
 var EPSILON = 0.1;
 

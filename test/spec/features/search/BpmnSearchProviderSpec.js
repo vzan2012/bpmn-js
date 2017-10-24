@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 
 import { bootstrapViewer, inject } from 'test/TestHelper';
 
-var coreModule = require('lib/core').default,
-    modelingModule = require('lib/features/modeling').default,
-    bpmnSearchModule = require('lib/features/search').default;
+import coreModule from 'lib/core';
+import modelingModule from 'lib/features/modeling';
+import bpmnSearchModule from 'lib/features/search';
 
 
 describe('features - BPMN search provider', function() {

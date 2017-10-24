@@ -1,12 +1,10 @@
-'use strict';
-
 import { readFileSync } from 'fs';
 
 import { bootstrapViewer, inject } from 'test/TestHelper';
 
-var EventBus = require('diagram-js/lib/core/EventBus').default;
+import EventBus from 'diagram-js/lib/core/EventBus';
 
-var Viewer = require('lib/Viewer').default;
+import Viewer from 'lib/Viewer';
 
 
 describe('environment - mocking', function() {

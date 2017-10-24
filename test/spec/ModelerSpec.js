@@ -1,8 +1,12 @@
 import { readFileSync } from 'fs';
 
-var Modeler = require('lib/Modeler').default;
+import Viewer from 'lib/Viewer';
+import NavigatedViewer from 'lib/NavigatedViewer';
+import Modeler from 'lib/Modeler';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
+
+import { createEvent as globalEvent } from '../util/MockEvents';
 
 
 describe('Modeler', function() {
@@ -171,9 +175,6 @@ describe('Modeler', function() {
 
   describe('bendpoint editing support', function() {
 
-    var createEvent = require('../util/MockEvents').createEvent;
-
-
     it('should allow to edit bendpoints', function(done) {
 
       var xml = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
@@ -190,8 +191,8 @@ describe('Modeler', function() {
         expect(bendpointMove).to.exist;
 
         // when
-        bendpointMove.start(createEvent(canvas, { x: 0, y: 0 }), elementRegistry.get('SequenceFlow_1'), 1);
-        dragging.move(createEvent(canvas, { x: 200, y: 200 }));
+        bendpointMove.start(globalEvent(canvas, { x: 0, y: 0 }), elementRegistry.get('SequenceFlow_1'), 1);
+        dragging.move(globalEvent(canvas, { x: 200, y: 200 }));
 
         done(err);
       });
@@ -389,10 +390,6 @@ describe('Modeler', function() {
 
 
   it('should expose Viewer and NavigatedViewer', function() {
-
-    // given
-    var Viewer = require('lib/Viewer').default;
-    var NavigatedViewer = require('lib/NavigatedViewer').default;
 
     // then
     expect(Modeler.Viewer).to.equal(Viewer);

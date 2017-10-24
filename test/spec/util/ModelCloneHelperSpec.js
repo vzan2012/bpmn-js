@@ -2,13 +2,13 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var coreModule = require('lib/core').default;
+import coreModule from 'lib/core';
 
-var ModelCloneHelper = require('lib/util/model/ModelCloneHelper').default;
+import ModelCloneHelper from 'lib/util/model/ModelCloneHelper';
 
-var camundaPackage = require('../../fixtures/json/model/camunda');
+import camundaPackage from '../../fixtures/json/model/camunda';
 
-var camundaModdleModule = require('./camunda-moddle').default;
+import camundaModdleModule from './camunda-moddle';
 
 function getProp(element, property) {
   return element && element.$model.properties.get(element, property);

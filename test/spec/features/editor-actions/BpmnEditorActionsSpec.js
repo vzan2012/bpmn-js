@@ -2,20 +2,19 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var pick = require('lodash-es/pick').default;
+import pick from 'lodash-es/pick';
 
-var getBBox = require('diagram-js/lib/util/Elements').getBBox;
+import { getBBox } from 'diagram-js/lib/util/Elements';
 
-var getParent = require('lib/features/modeling/util/ModelingUtil').getParent;
+import { getParent } from 'lib/features/modeling/util/ModelingUtil';
 
 
-var bpmnEditorActionsModule = require('lib/features/editor-actions').default,
-    modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import bpmnEditorActionsModule from 'lib/features/editor-actions';
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 var basicXML = readFileSync('test/fixtures/bpmn/nested-subprocesses.bpmn', 'utf-8'),
     collaborationXML = readFileSync('test/fixtures/bpmn/collaboration.bpmn', 'utf-8');
-
 
 
 describe('features/editor-actions', function() {

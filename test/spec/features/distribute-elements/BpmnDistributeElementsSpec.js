@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var bpmnDistributeElements = require('lib/features/distribute-elements').default,
-    modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import bpmnDistributeElements from 'lib/features/distribute-elements';
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 function last(arr) {
   return arr[arr.length - 1];

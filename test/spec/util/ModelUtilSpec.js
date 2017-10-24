@@ -2,17 +2,23 @@ import { readFileSync } from 'fs';
 
 import { bootstrapModeler, inject } from 'test/TestHelper';
 
-var coreModule = require('lib/core').default,
-    modelingModule = require('lib/features/modeling').default;
+import coreModule from 'lib/core';
+import modelingModule from 'lib/features/modeling';
 
-var ModelUtil = require('lib/util/ModelUtil');
+import { is } from 'lib/util/ModelUtil';
 
 
 describe('ModelUtil', function() {
 
   var diagramXML = readFileSync('test/fixtures/bpmn/simple.bpmn', 'utf-8');
 
-  beforeEach(bootstrapModeler(diagramXML, { modules: [ coreModule, modelingModule ] }));
+  beforeEach(bootstrapModeler(diagramXML, {
+    modules: [
+      coreModule,
+      modelingModule
+    ]
+
+  }));
 
 
   it('should work with diagram element', inject(function(elementFactory) {
@@ -21,11 +27,11 @@ describe('ModelUtil', function() {
     var messageFlowConnection = elementFactory.createConnection({ type: 'bpmn:MessageFlow' });
 
     // then
-    expect(ModelUtil.is(messageFlowConnection, 'bpmn:MessageFlow')).to.be.true;
-    expect(ModelUtil.is(messageFlowConnection, 'bpmn:BaseElement')).to.be.true;
+    expect(is(messageFlowConnection, 'bpmn:MessageFlow')).to.be.true;
+    expect(is(messageFlowConnection, 'bpmn:BaseElement')).to.be.true;
 
-    expect(ModelUtil.is(messageFlowConnection, 'bpmn:SequenceFlow')).to.be.false;
-    expect(ModelUtil.is(messageFlowConnection, 'bpmn:Task')).to.be.false;
+    expect(is(messageFlowConnection, 'bpmn:SequenceFlow')).to.be.false;
+    expect(is(messageFlowConnection, 'bpmn:Task')).to.be.false;
   }));
 
 
@@ -35,10 +41,10 @@ describe('ModelUtil', function() {
     var gateway = bpmnFactory.create('bpmn:Gateway');
 
     // then
-    expect(ModelUtil.is(gateway, 'bpmn:Gateway')).to.be.true;
-    expect(ModelUtil.is(gateway, 'bpmn:BaseElement')).to.be.true;
+    expect(is(gateway, 'bpmn:Gateway')).to.be.true;
+    expect(is(gateway, 'bpmn:BaseElement')).to.be.true;
 
-    expect(ModelUtil.is(gateway, 'bpmn:SequenceFlow')).to.be.false;
+    expect(is(gateway, 'bpmn:SequenceFlow')).to.be.false;
   }));
 
 
@@ -48,7 +54,7 @@ describe('ModelUtil', function() {
     var foo = { businessObject: 'BAR' };
 
     // then
-    expect(ModelUtil.is(foo, 'FOO')).to.be.false;
+    expect(is(foo, 'FOO')).to.be.false;
   }));
 
 
@@ -58,7 +64,7 @@ describe('ModelUtil', function() {
     var foo = { };
 
     // then
-    expect(ModelUtil.is(foo, 'FOO')).to.be.false;
+    expect(is(foo, 'FOO')).to.be.false;
   }));
 
 });

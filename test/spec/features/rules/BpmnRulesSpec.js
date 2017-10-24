@@ -9,8 +9,8 @@ import {
 } from './Helper';
 
 
-var modelingModule = require('lib/features/modeling').default,
-    coreModule = require('lib/core').default;
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling/rules - BpmnRules', function() {
