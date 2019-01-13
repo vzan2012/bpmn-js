@@ -1,26 +1,31 @@
-'use strict';
+import {
+  bootstrapModeler,
+  getBpmnJS,
+  inject
+} from 'test/TestHelper';
 
-var getBpmnJS = require('../../../TestHelper').getBpmnJS;
+import TestContainer from 'mocha-test-container-support';
 
-var TestContainer = require('mocha-test-container-support');
+import {
+  query as domQuery,
+  queryAll as domQueryAll
+} from 'min-dom';
 
-var domQuery = require('min-dom/lib/query');
+import {
+  is
+} from 'lib/util/ModelUtil';
 
-var is = require('lib/util/ModelUtil').is;
+import {
+  createCanvasEvent as canvasEvent
+} from '../../../util/MockEvents';
 
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
-
-
-/* global bootstrapModeler, inject */
-
-
-var contextPadModule = require('lib/features/context-pad'),
-    coreModule = require('lib/core'),
-    modelingModule = require('lib/features/modeling'),
-    replaceMenuModule = require('lib/features/popup-menu'),
-    createModule = require('diagram-js/lib/features/create'),
-    customRulesModule = require('../../../util/custom-rules'),
-    autoPlaceModule = require('lib/features/auto-place');
+import contextPadModule from 'lib/features/context-pad';
+import coreModule from 'lib/core';
+import modelingModule from 'lib/features/modeling';
+import replaceMenuModule from 'lib/features/popup-menu';
+import createModule from 'diagram-js/lib/features/create';
+import customRulesModule from '../../../util/custom-rules';
+import autoPlaceModule from 'lib/features/auto-place';
 
 
 describe('features - context-pad', function() {
@@ -98,7 +103,7 @@ describe('features - context-pad', function() {
         contextPad.open(element);
 
         // then
-        expect(deleteAction(element)).to.not.exist;
+        expect(deleteAction(element)).not.to.exist;
       })
     );
 
@@ -156,7 +161,7 @@ describe('features - context-pad', function() {
         contextPad.open(element);
 
         // then
-        expect(deleteAction(element)).to.not.exist;
+        expect(deleteAction(element)).not.to.exist;
       })
     );
 
@@ -462,7 +467,7 @@ describe('features - context-pad', function() {
           dragging.end(canvasEvent({ x: 50, y: 65 }, { ctrlKey: true, metaKey: true }));
 
           // then
-          var replaceMenu = domQuery.all('[data-id$="-boundary"]', popupMenu._current.container);
+          var replaceMenu = domQueryAll('[data-id$="-boundary"]', popupMenu._current.container);
           expect(replaceMenu).to.exist;
           expect(replaceMenu.length).to.eql(13);
         }
@@ -488,7 +493,7 @@ describe('features - context-pad', function() {
           replaceMenu = domQuery('.bpmn-replace', container);
 
           // then
-          expect(replaceMenu).to.not.exist;
+          expect(replaceMenu).not.to.exist;
         }
       ));
 

@@ -1,14 +1,16 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
+import modelingModule from 'lib/features/modeling';
+import paletteModule from 'lib/features/palette';
+import coreModule from 'lib/core';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('lib/features/modeling'),
-    paletteModule = require('lib/features/palette'),
-    coreModule = require('lib/core');
-
-var domQuery = require('min-dom/lib/query');
+import {
+  query as domQuery,
+  queryAll as domQueryAll
+} from 'min-dom';
 
 
 describe('features/palette', function() {
@@ -24,7 +26,7 @@ describe('features/palette', function() {
 
     // when
     var paletteElement = domQuery('.djs-palette', canvas._container);
-    var entries = domQuery.all('.entry', paletteElement);
+    var entries = domQueryAll('.entry', paletteElement);
 
     // then
     expect(entries.length).to.equal(13);

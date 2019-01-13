@@ -1,10 +1,10 @@
-'use strict';
+import inherits from 'inherits';
 
-var inherits = require('inherits');
+import {
+  is as isBpmn
+} from 'lib/util/ModelUtil';
 
-var isBpmn = require('lib/util/ModelUtil').is;
-
-var CommandInterceptor = require('diagram-js/lib/command/CommandInterceptor');
+import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
 
 
 function isCustom(element, type) {
@@ -31,7 +31,7 @@ function ifCustomElement(fn) {
  * A handler responsible for updating the custom element's businessObject
  * once changes on the diagram happen
  */
-function CustomUpdater(eventBus, modeling) {
+export default function CustomUpdater(eventBus, modeling) {
 
   CommandInterceptor.call(this, eventBus);
 
@@ -109,7 +109,5 @@ function CustomUpdater(eventBus, modeling) {
 }
 
 inherits(CustomUpdater, CommandInterceptor);
-
-module.exports = CustomUpdater;
 
 CustomUpdater.$inject = [ 'eventBus', 'modeling' ];

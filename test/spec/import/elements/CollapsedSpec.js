@@ -1,8 +1,7 @@
-'use strict';
-
-require('../../../TestHelper');
-
-/* global bootstrapViewer, inject */
+import {
+  bootstrapViewer,
+  inject
+} from 'test/TestHelper';
 
 
 describe('import - collapsed container', function() {

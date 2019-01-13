@@ -1,12 +1,11 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-var bpmnDistributeElements = require('lib/features/distribute-elements'),
-    modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import bpmnDistributeElements from 'lib/features/distribute-elements';
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 function last(arr) {
   return arr[arr.length - 1];
@@ -104,7 +103,7 @@ describe('features/distribute-elements', function() {
       // then
       expect(rangeGroups).to.have.length(3);
 
-      expect(rangeGroups[1].elements).to.not.include(boundaryEvent);
+      expect(rangeGroups[1].elements).not.to.include(boundaryEvent);
 
     }));
 

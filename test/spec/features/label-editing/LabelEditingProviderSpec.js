@@ -1,39 +1,22 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+import labelEditingModule from 'lib/features/label-editing';
+import coreModule from 'lib/core';
+import draggingModule from 'diagram-js/lib/features/dragging';
+import modelingModule from 'lib/features/modeling';
+import autoPlaceModule from 'lib/features/auto-place';
 
+import {
+  getLabel
+} from 'lib/features/label-editing/LabelUtil';
 
-var labelEditingModule = require('lib/features/label-editing'),
-    coreModule = require('lib/core'),
-    draggingModule = require('diagram-js/lib/features/dragging'),
-    modelingModule = require('lib/features/modeling'),
-    autoPlaceModule = require('lib/features/auto-place');
-
-var LabelUtil = require('lib/features/label-editing/LabelUtil');
-
-var MEDIUM_LINE_HEIGHT = 14;
+var MEDIUM_LINE_HEIGHT = 12 * 1.2;
 
 var DELTA = 3;
 
-function triggerKeyEvent(element, event, code) {
-  var e = document.createEvent('Events');
-
-  if (e.initEvent) {
-    e.initEvent(event, true, true);
-  }
-
-  e.keyCode = code;
-  e.which = code;
-
-  return element.dispatchEvent(e);
-}
-
-function expectBounds(parent, bounds) {
-  expect(parent.offsetLeft).to.be.closeTo(bounds.x, DELTA);
-  expect(parent.offsetTop).to.be.closeTo(bounds.y, DELTA);
-  expect(parent.offsetWidth).to.be.closeTo(bounds.width, DELTA);
-  expect(parent.offsetHeight).to.be.closeTo(bounds.height, DELTA);
-}
 
 describe('features - label-editing', function() {
 
@@ -245,7 +228,7 @@ describe('features - label-editing', function() {
         // given
         var diagramElement = elementRegistry.get('Task_1');
 
-        var oldLabel = LabelUtil.getLabel(diagramElement);
+        var oldLabel = getLabel(diagramElement);
 
         // when
         directEditActivate(diagramElement);
@@ -254,9 +237,41 @@ describe('features - label-editing', function() {
         commandStack.undo();
 
         // then
-        var label = LabelUtil.getLabel(diagramElement);
+        var label = getLabel(diagramElement);
         expect(label).to.eql(oldLabel);
       }));
+
+    });
+
+
+    describe('should unset', function() {
+
+      it('name on empty text', function() {
+
+        // given
+        var diagramElement = elementRegistry.get('SequenceFlow_1');
+
+        // when
+        directEditActivate(diagramElement);
+        directEditComplete(' ');
+
+        // then
+        expect(diagramElement.businessObject.name).not.to.exist;
+      });
+
+
+      it('text on empty text', function() {
+
+        // given
+        var diagramElement = elementRegistry.get('TextAnnotation_1');
+
+        // when
+        directEditActivate(diagramElement);
+        directEditComplete(' ');
+
+        // then
+        expect(diagramElement.businessObject.text).not.to.exist;
+      });
 
     });
 
@@ -317,7 +332,7 @@ describe('features - label-editing', function() {
 
           var diagramElement = elementRegistry.get(elementId);
 
-          var label = LabelUtil.getLabel(diagramElement);
+          var label = getLabel(diagramElement);
 
 
           // when
@@ -334,7 +349,7 @@ describe('features - label-editing', function() {
 
           // then
           // expect update to have happened
-          label = LabelUtil.getLabel(diagramElement);
+          label = getLabel(diagramElement);
           expect(label).to.equal('B');
 
 
@@ -343,7 +358,7 @@ describe('features - label-editing', function() {
           directEditCancel('C');
 
           // expect no label update to have happened
-          label = LabelUtil.getLabel(diagramElement);
+          label = getLabel(diagramElement);
           expect(label).to.equal('B');
         });
       }
@@ -704,3 +719,26 @@ describe('features - label-editing', function() {
   });
 
 });
+
+
+// helpers //////////////////
+
+function triggerKeyEvent(element, event, code) {
+  var e = document.createEvent('Events');
+
+  if (e.initEvent) {
+    e.initEvent(event, true, true);
+  }
+
+  e.keyCode = code;
+  e.which = code;
+
+  return element.dispatchEvent(e);
+}
+
+function expectBounds(parent, bounds) {
+  expect(parent.offsetLeft).to.be.closeTo(bounds.x, DELTA);
+  expect(parent.offsetTop).to.be.closeTo(bounds.y, DELTA);
+  expect(parent.offsetWidth).to.be.closeTo(bounds.width, DELTA);
+  expect(parent.offsetHeight).to.be.closeTo(bounds.height, DELTA);
+}

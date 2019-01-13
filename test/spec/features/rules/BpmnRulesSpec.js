@@ -1,15 +1,17 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-var Helper = require('./Helper');
+import {
+  expectCanConnect,
+  expectCanDrop,
+  expectCanMove,
+  expectCanInsert
+} from './Helper';
 
-var expectCanConnect = Helper.expectCanConnect,
-    expectCanDrop = Helper.expectCanDrop,
-    expectCanMove = Helper.expectCanMove;
-
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling/rules - BpmnRules', function() {
@@ -324,6 +326,17 @@ describe('features/modeling/rules - BpmnRules', function() {
         messageFlow: false,
         association: false,
         dataAssociation: { type: 'bpmn:DataInputAssociation' }
+      });
+    }));
+
+
+    it('connect Task -> Task', inject(function() {
+
+      expectCanConnect('Task', 'Task', {
+        sequenceFlow: true,
+        messageFlow: false,
+        association: false,
+        dataAssociation: false
       });
     }));
 
@@ -911,15 +924,107 @@ describe('features/modeling/rules - BpmnRules', function() {
 
 
     it('drop TextAnnotation_Global -> Participant', inject(function() {
-
       expectCanDrop('TextAnnotation_Global', 'Participant', true);
     }));
 
-    it('drop element -> collapsed Participant', inject(function(canvas) {
+
+    it('drop DataStoreReference -> Collaboration', function() {
+      expectCanDrop('DataStoreReference', 'Collaboration', true);
+    });
+
+
+    it('drop element -> collapsed Participant', inject(function() {
       expectCanDrop('StartEvent_None', 'CollapsedParticipant', false);
       expectCanDrop('SubProcess', 'CollapsedParticipant', false);
       expectCanDrop('Task_in_SubProcess', 'CollapsedParticipant', false);
       expectCanDrop('TextAnnotation_Global', 'CollapsedParticipant', false);
+    }));
+
+
+    describe('drop MessageFlow label', function() {
+
+      var label;
+
+      beforeEach(inject(function(elementRegistry) {
+        label = elementRegistry.get('MessageFlow_labeled').label;
+      }));
+
+
+      it('-> MessageFlow', function() {
+        expectCanDrop(label, 'MessageFlow_labeled', true);
+      });
+
+
+      it('-> CollapsedParticipant', function() {
+        expectCanDrop(label, 'CollapsedParticipant', true);
+      });
+
+
+      it('-> Collaboration', function() {
+        // then
+        expectCanDrop(label, 'Collaboration', true);
+      });
+
+
+      it('-> Task_in_SubProcess', function() {
+        expectCanDrop(label, 'Task_in_SubProcess', true);
+      });
+
+
+      it('-> SequenceFlow', function() {
+        expectCanDrop(label, 'SequenceFlow', true);
+      });
+
+
+      it('-> DataOutputAssociation', function() {
+        expectCanDrop(label, 'DataOutputAssociation', true);
+      });
+
+    });
+
+  });
+
+
+  describe('participants', function() {
+
+    var testXML = require('./BpmnRules.collapsedPools.bpmn');
+
+    beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+    it('connect CollapsedPool_A -> CollapsedPool_B', inject(function() {
+
+      expectCanConnect('CollapsedPool_A', 'CollapsedPool_B', {
+        sequenceFlow: false,
+        messageFlow: true,
+        association: false,
+        dataAssociation: false
+      });
+
+    }));
+
+
+    it('connect CollapsedPool_A -> ExpandedPool', inject(function() {
+
+      expectCanConnect('CollapsedPool_A', 'ExpandedPool', {
+        sequenceFlow: false,
+        messageFlow: true,
+        association: false,
+        dataAssociation: false
+      });
+
+    }));
+
+
+    it('connect ExpandedPool -> CollapsedPool_A', inject(function() {
+
+      expectCanConnect('ExpandedPool', 'CollapsedPool_A', {
+        sequenceFlow: false,
+        messageFlow: true,
+        association: false,
+        dataAssociation: false
+      });
+
     }));
 
   });
@@ -1044,6 +1149,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       });
     }));
   });
+
 
   describe('event move', function() {
 
@@ -1271,6 +1377,41 @@ describe('features/modeling/rules - BpmnRules', function() {
       }
     ));
 
+    it('not attach IntermediateEvent to ReceiveTask after EventBasedGateway', inject(
+      function(canvas, modeling, elementFactory, bpmnRules) {
+
+        // given
+        var rootElement = canvas.getRootElement(),
+            eventBasedGatewayShape = elementFactory.createShape({ type: 'bpmn:EventBasedGateway' }),
+            receiveTaskShape = elementFactory.createShape({ type: 'bpmn:ReceiveTask' }),
+            eventShape = elementFactory.createShape({
+              type: 'bpmn:IntermediateThrowEvent',
+              x: 0, y: 0
+            });
+
+        var boundaryPosition = {
+          x: 175,
+          y: 100 + receiveTaskShape.height
+        };
+
+        // when
+        modeling.createShape(eventBasedGatewayShape, { x: 100, y: 100 }, rootElement);
+        modeling.createShape(receiveTaskShape, { x : 150, y: 100 }, rootElement);
+        modeling.connect(eventBasedGatewayShape, receiveTaskShape, {
+          type: 'bpmn:SequenceFlow'
+        });
+
+        var canAttach = bpmnRules.canAttach(
+          [ eventShape ],
+          receiveTaskShape,
+          null,
+          boundaryPosition
+        );
+
+        // then
+        expect(canAttach).to.be.false;
+      }
+    ));
 
     it('create IntermediateEvent in SubProcess body', inject(
       function(elementFactory, elementRegistry, bpmnRules) {
@@ -1539,26 +1680,105 @@ describe('features/modeling/rules - BpmnRules', function() {
   });
 
 
-  describe('labels', function() {
+  describe('insert', function() {
 
-    var testXML = require('./BpmnRules.process.bpmn');
+    var testXML = require('./BpmnRules.insert.bpmn');
 
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
 
-    it('should filter labels', inject(function(elementRegistry, rules) {
+    it('insert END -> S1', function() {
+      expectCanInsert('END', 'S1', false);
+    });
 
+    it('insert START -> S1', function() {
+      expectCanInsert('START', 'S1', false);
+    });
+
+    it('insert GATEWAY -> S1', function() {
+      expectCanInsert('GATEWAY', 'S1', true);
+    });
+
+  });
+
+
+  describe('integration', function() {
+
+    describe('move Lane', function() {
+
+      var testXML = require('./BpmnRules.moveLane.bpmn');
+
+      beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+      it('should disallow', inject(function(elementRegistry, rules) {
+
+        // given
+        var lane = elementRegistry.get('Lane_1');
+
+        // when
+        var result = rules.allowed('elements.move', {
+          shapes: [ lane ]
+        });
+
+        // then
+        expect(result).to.be.false;
+      }));
+
+    });
+
+  });
+
+  describe('start connection', function() {
+
+    var testXML = require('../../../fixtures/bpmn/simple.bpmn');
+
+    beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+    it('should allow start for given element types', inject(function(elementFactory, rules) {
       // given
-      var startEventShape = elementRegistry.get('StartEvent_None'),
-          startEventLabel = startEventShape.label;
+      var types = [
+        'bpmn:FlowNode',
+        'bpmn:InteractionNode',
+        'bpmn:DataObjectReference',
+        'bpmn:DataStoreReference'
+      ];
 
       // when
-      var allowed = rules.allowed('elements.delete', {
-        elements: [ startEventShape, startEventLabel ]
+      var results = types.map(function(type) {
+        var element = elementFactory.createShape({ type: type });
+        return rules.allowed('connection.start', { source: element });
       });
 
       // then
-      expect(allowed).to.eql([ startEventShape ]);
+      results.forEach(function(result) {
+        expect(result).to.be.true;
+      });
+    }));
+
+
+    it('should ignore label elements', inject(function(elementFactory, rules) {
+      // given
+      var label = elementFactory.createShape({ type: 'bpmn:FlowNode', labelTarget: {} });
+
+      // when
+      var result = rules.allowed('connection.start', { source: label });
+
+      // then
+      expect(result).to.be.null;
+    }));
+
+
+    it('should NOT allow start on unknown element', inject(function(rules) {
+      // given
+      var element = { type: 'bpmn:SomeUnknownType' };
+
+      // when
+      var result = rules.allowed('connection.start', { source: element });
+
+      // then
+      expect(result).to.be.false;
     }));
 
   });

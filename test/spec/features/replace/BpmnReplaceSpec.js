@@ -1,19 +1,23 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
+import modelingModule from 'lib/features/modeling';
+import replaceModule from 'lib/features/replace';
+import moveModule from 'diagram-js/lib/features/move';
+import coreModule from 'lib/core';
 
-/* global bootstrapModeler, inject */
+import {
+  is
+} from 'lib/util/ModelUtil';
 
-var modelingModule = require('lib/features/modeling'),
-    replaceModule = require('lib/features/replace'),
-    moveModule = require('diagram-js/lib/features/move'),
-    coreModule = require('lib/core');
-
-var is = require('lib/util/ModelUtil').is,
-    isExpanded = require('lib/util/DiUtil').isExpanded,
-    isInterrupting = require('lib/util/DiUtil').isInterrupting,
-    isEventSubProcess = require('lib/util/DiUtil').isEventSubProcess,
-    hasErrorEventDefinition = require('lib/util/DiUtil').hasErrorEventDefinition;
+import {
+  isExpanded,
+  isInterrupting,
+  isEventSubProcess,
+  hasErrorEventDefinition
+} from 'lib/util/DiUtil';
 
 
 describe('features/replace - bpmn replace', function() {
@@ -129,70 +133,147 @@ describe('features/replace - bpmn replace', function() {
     }));
 
 
-    it('non interrupting boundary event by interrupting boundary event',
-      inject(function(elementRegistry, modeling, bpmnReplace, canvas) {
+    describe('boundary event', function() {
 
-        // given
-        var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
-            newElementData = {
-              type: 'bpmn:BoundaryEvent',
-              eventDefinitionType: 'bpmn:EscalationEventDefinition'
-            };
+      it('<non-interrupting> with <interrupting>',
+        inject(function(elementRegistry, modeling, bpmnReplace, canvas) {
 
-        // when
-        var newElement = bpmnReplace.replaceElement(boundaryEvent, newElementData);
+          // given
+          var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
+              boundaryBo = boundaryEvent.businessObject,
+              newElementData = {
+                type: 'bpmn:BoundaryEvent',
+                eventDefinitionType: 'bpmn:TimerEventDefinition'
+              };
 
-        // then
-        expect(newElement).to.exist;
-        expect(is(newElement.businessObject, 'bpmn:BoundaryEvent')).to.be.true;
-        expect(newElement.businessObject.eventDefinitions[0].$type).to.equal('bpmn:EscalationEventDefinition');
-        expect(newElement.businessObject.cancelActivity).to.be.true;
-      })
-    );
+          var eventDefinitions = boundaryBo.eventDefinitions.slice();
 
+          // when
+          var newElement = bpmnReplace.replaceElement(boundaryEvent, newElementData);
+          var newBo = newElement.businessObject;
 
-    it('interrupting boundary event by non interrupting boundary event',
-      inject(function(elementRegistry, modeling, bpmnReplace, canvas) {
+          // then
+          expect(newElement).to.exist;
 
-        // given
-        var boundaryEvent = elementRegistry.get('BoundaryEvent_2'),
-            newElementData = {
-              type: 'bpmn:BoundaryEvent',
-              eventDefinitionType: 'bpmn:SignalEventDefinition',
-              cancelActivity: false
-            };
+          expect(is(newBo, 'bpmn:BoundaryEvent')).to.be.true;
 
-        // when
-        var newElement = bpmnReplace.replaceElement(boundaryEvent, newElementData);
+          expect(newBo.eventDefinitions).to.jsonEqual(eventDefinitions, skipId);
 
-        // then
-        expect(newElement).to.exist;
-        expect(is(newElement, 'bpmn:BoundaryEvent')).to.be.true;
-        expect(newElement.businessObject.eventDefinitions[0].$type).to.equal('bpmn:SignalEventDefinition');
-        expect(newElement.businessObject.cancelActivity).to.be.false;
-      })
-    );
+          expect(newBo.cancelActivity).to.be.true;
+        })
+      );
 
 
-    it('boundary event and update host',
-      inject(function(elementRegistry, modeling, bpmnReplace, canvas) {
+      it('<interrupting> with <non-interrupting>',
+        inject(function(elementRegistry, modeling, bpmnReplace, canvas) {
 
-        // given
-        var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
-            host = elementRegistry.get('Task_1'),
-            newElementData = {
-              type: 'bpmn:BoundaryEvent',
-              eventDefinitionType: 'bpmn:ErrorEventDefinition'
-            };
+          // given
+          var boundaryEvent = elementRegistry.get('BoundaryEvent_2'),
+              boundaryBo = boundaryEvent.businessObject,
+              newElementData = {
+                type: 'bpmn:BoundaryEvent',
+                eventDefinitionType: 'bpmn:ConditionalEventDefinition',
+                cancelActivity: false
+              };
 
-        // when
-        var newElement = bpmnReplace.replaceElement(boundaryEvent, newElementData);
+          var eventDefinitions = boundaryBo.eventDefinitions.slice();
 
-        // then
-        expect(newElement.host).to.exist;
-        expect(newElement.host).to.eql(host);
-      })
-    );
+          // when
+          var newElement = bpmnReplace.replaceElement(boundaryEvent, newElementData);
+          var newBo = newElement.businessObject;
+
+          // then
+          expect(newElement).to.exist;
+
+          expect(is(newBo, 'bpmn:BoundaryEvent')).to.be.true;
+
+          expect(newBo.eventDefinitions).to.jsonEqual(eventDefinitions, skipId);
+
+          expect(newBo.cancelActivity).to.be.false;
+        })
+      );
+
+
+      it('<timer> with <signal>',
+        inject(function(elementRegistry, modeling, bpmnReplace, canvas) {
+
+          // given
+          var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
+              newElementData = {
+                type: 'bpmn:BoundaryEvent',
+                eventDefinitionType: 'bpmn:SignalEventDefinition',
+                cancelActivity: false
+              };
+
+          // when
+          var newElement = bpmnReplace.replaceElement(boundaryEvent, newElementData);
+
+          var newBo = newElement.businessObject;
+          var newEventDefinitions = newBo.eventDefinitions;
+          var newEventDefinition = newEventDefinitions[0];
+
+          // then
+          expect(newElement).to.exist;
+          expect(newEventDefinitions).to.have.length(1);
+
+          expect(is(newBo, 'bpmn:BoundaryEvent')).to.be.true;
+          expect(is(newEventDefinition, 'bpmn:SignalEventDefinition')).to.be.true;
+
+          expect(newBo.cancelActivity).to.be.false;
+        })
+      );
+
+
+      it('<conditional> with <timer>',
+        inject(function(elementRegistry, modeling, bpmnReplace, canvas) {
+
+          // given
+          var boundaryEvent = elementRegistry.get('BoundaryEvent_2'),
+              newElementData = {
+                type: 'bpmn:BoundaryEvent',
+                eventDefinitionType: 'bpmn:TimerEventDefinition'
+              };
+
+          // when
+          var newElement = bpmnReplace.replaceElement(boundaryEvent, newElementData);
+
+          var newBo = newElement.businessObject;
+          var newEventDefinitions = newBo.eventDefinitions;
+          var newEventDefinition = newEventDefinitions[0];
+
+          // then
+          expect(newElement).to.exist;
+          expect(newEventDefinitions).to.have.length(1);
+
+          expect(is(newBo, 'bpmn:BoundaryEvent')).to.be.true;
+          expect(is(newEventDefinition, 'bpmn:TimerEventDefinition')).to.be.true;
+
+          expect(newBo.cancelActivity).to.be.true;
+        })
+      );
+
+
+      it('updating host',
+        inject(function(elementRegistry, modeling, bpmnReplace, canvas) {
+
+          // given
+          var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
+              host = elementRegistry.get('Task_1'),
+              newElementData = {
+                type: 'bpmn:BoundaryEvent',
+                eventDefinitionType: 'bpmn:ErrorEventDefinition'
+              };
+
+          // when
+          var newElement = bpmnReplace.replaceElement(boundaryEvent, newElementData);
+
+          // then
+          expect(newElement.host).to.exist;
+          expect(newElement.host).to.eql(host);
+        })
+      );
+
+    });
 
   });
 
@@ -231,6 +312,37 @@ describe('features/replace - bpmn replace', function() {
       // then
       expect(isExpanded(newShape)).to.be.true; // expanded
       expect(newShape.children).to.be.empty;
+    }));
+
+  });
+
+
+  describe('should collapse pool, removing message flows', function() {
+
+    var diagramXML = require('./BpmnReplace.poolMessageFlows.bpmn');
+
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules
+    }));
+
+
+    it('expanded with collapsed pool', inject(function(elementRegistry, bpmnReplace) {
+
+      // given
+      var shape = elementRegistry.get('Participant_1');
+
+      // when
+      var newShape = bpmnReplace.replaceElement(shape, {
+        type: 'bpmn:Participant',
+        isExpanded: false
+      });
+
+      // then
+      expect(isExpanded(newShape)).to.be.false; // collapsed
+      expect(newShape.children).to.be.empty;
+
+      expect(elementRegistry.get('MessageFlow_1')).not.to.exist;
+      expect(elementRegistry.get('MessageFlow_2')).not.to.exist;
     }));
 
   });
@@ -356,7 +468,7 @@ describe('features/replace - bpmn replace', function() {
 
     beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
-    it('should keep interior labels',
+    it('should keep internal labels',
       inject(function(elementRegistry, bpmnReplace) {
 
         // given
@@ -375,7 +487,7 @@ describe('features/replace - bpmn replace', function() {
     );
 
 
-    it('should keep exterior labels',
+    it('should keep external labels',
       inject(function(elementRegistry, bpmnReplace) {
 
         // given
@@ -389,7 +501,6 @@ describe('features/replace - bpmn replace', function() {
         var newElement = bpmnReplace.replaceElement(startEvent, newElementData);
 
         // then
-        expect(newElement.label.hidden).to.equal(false);
         expect(newElement.label.labelTarget).to.equal(newElement);
         expect(newElement.businessObject.name).to.equal('KEEP ME');
       })
@@ -1376,9 +1487,21 @@ describe('features/replace - bpmn replace', function() {
       expect(businessObject.di.fill).to.equal(fill);
       expect(businessObject.di.stroke).to.equal(stroke);
 
-      expect(newElement.colors).to.not.exist;
+      expect(newElement.colors).not.to.exist;
     }));
 
   });
 
 });
+
+
+// helpers ////////////////////////
+
+function skipId(key, value) {
+
+  if (key === 'id') {
+    return;
+  }
+
+  return value;
+}

@@ -1,13 +1,23 @@
-'use strict';
+import {
+  isString,
+  assign
+} from 'min-dash';
 
-function createKeyEvent(element, code, ctrlKey) {
-  var e = document.createEvent('Events') || new document.defaultView.CustomEvent('keyEvent');
+/**
+ * Create a fake key event for testing purposes.
+ *
+ * @param {String|Number} key the key or keyCode/charCode
+ * @param {Object} [attrs]
+ *
+ * @return {Event}
+ */
+export function createKeyEvent(key, attrs) {
+  var event = document.createEvent('Events') || new document.defaultView.CustomEvent('keyEvent');
 
-  e.keyCode = code;
-  e.which = code;
-  e.ctrlKey = ctrlKey;
+  // init and mark as bubbles / cancelable
+  event.initEvent('keydown', false, true);
 
-  return e;
+  var keyAttrs = isString(key) ? { key: key } : { keyCode: key, which: key };
+
+  return assign(event, keyAttrs, attrs || {});
 }
-
-module.exports.createKeyEvent = createKeyEvent;

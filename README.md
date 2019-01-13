@@ -1,5 +1,3 @@
-> The project is still in an early stage. Documentation may be missing and [examples](https://github.com/bpmn-io/bpmn-js-examples) may be broken.
-
 # bpmn-js - BPMN 2.0 for the web
 
 [![Build Status](https://travis-ci.org/bpmn-io/bpmn-js.svg?branch=master)](https://travis-ci.org/bpmn-io/bpmn-js)
@@ -57,10 +55,11 @@ viewer.detach();
 
 ## Resources
 
-*   [Demo](http://demo.bpmn.io)
-*   [Issues](https://github.com/bpmn-io/bpmn-js/issues)
-*   [Examples](https://github.com/bpmn-io/bpmn-js-examples)
-*   [Forum](https://forum.bpmn.io)
+* [Demo](http://demo.bpmn.io)
+* [Issues](https://github.com/bpmn-io/bpmn-js/issues)
+* [Examples](https://github.com/bpmn-io/bpmn-js-examples)
+* [Forum](https://forum.bpmn.io)
+* [Changelog](./CHANGELOG.md)
 
 
 ## Building the Project
@@ -76,7 +75,7 @@ npm run all
 You may need to perform [additional project setup](./docs/project/SETUP.md) when
 building the latest development snapshot.
 
-Please checkout our [contributing guidelines](./CONTRIBUTING.md) if you plan to
+Please checkout our [contributing guidelines](./.github/CONTRIBUTING.md) if you plan to
 file an issue or pull request.
 
 

@@ -1,123 +1,244 @@
-'use strict';
+/* global sinon */
 
-require('../../../../TestHelper');
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
-
-var LabelUtil = require('lib/util/LabelUtil');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('behavior - LabelBehavior', function() {
 
-  var diagramXML = require('../../../../fixtures/bpmn/basic.bpmn');
+  var diagramXML =
+    require('../../../../fixtures/bpmn/features/modeling/behavior/label-behavior.bpmn');
 
   var testModules = [ modelingModule, coreModule ];
 
   beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
 
 
-  describe('add label', function() {
+  describe('updating name property', function() {
 
-    it('should add to sequence flow', inject(function(elementRegistry, modeling) {
+    it('should update label', inject(function(elementRegistry, eventBus, modeling) {
 
       // given
       var startEvent = elementRegistry.get('StartEvent_1'),
-          task = elementRegistry.get('Task_1');
+          spy = sinon.spy();
+
+      eventBus.once('commandStack.element.updateLabel.execute', spy);
 
       // when
-      var connection = modeling.connect(startEvent, task);
+      modeling.updateProperties(startEvent, {
+        name: 'bar'
+      });
 
       // then
-      expect(connection.label).to.exist;
+      expect(startEvent.businessObject.name).to.equal('bar');
+      expect(spy).to.have.been.called;
     }));
 
 
-    it('should add to exclusive gateway', inject(function(elementFactory, elementRegistry, modeling) {
+    it('should create label', inject(function(elementRegistry, eventBus, modeling) {
 
       // given
-      var parentShape = elementRegistry.get('Process_1'),
-          newShapeAttrs = { type: 'bpmn:ExclusiveGateway' };
+      var startEvent = elementRegistry.get('ExclusiveGateway_1'),
+          spy = sinon.spy();
+
+      eventBus.once('commandStack.element.updateLabel.execute', spy);
 
       // when
-      var newShape = modeling.createShape(newShapeAttrs, { x: 50, y: 50 }, parentShape);
+      modeling.updateProperties(startEvent, {
+        name: 'foo'
+      });
 
       // then
-      expect(newShape.label).to.exist;
+      var labelShape = startEvent.label;
+
+      expect(labelShape).to.exist;
+      expect(startEvent.businessObject.name).to.equal('foo');
+      expect(spy).to.have.been.called;
     }));
 
+  });
 
-    it('should not add to task', inject(function(elementFactory, elementRegistry, modeling) {
 
-      // given
-      var parentShape = elementRegistry.get('Process_1'),
-          newShapeAttrs = { type: 'bpmn:Task' };
+  describe('add label', function() {
 
-      // when
-      var newShape = modeling.createShape(newShapeAttrs, { x: 50, y: 50 }, parentShape);
+    it('should add to sequence flow with name', inject(
+      function(bpmnFactory, elementRegistry, modeling) {
 
-      // then
-      expect(newShape.label).not.to.exist;
-    }));
+        // given
+        var startEvent = elementRegistry.get('StartEvent_1'),
+            task = elementRegistry.get('Task_1'),
+            businessObject = bpmnFactory.create('bpmn:SequenceFlow', {
+              name: 'foo'
+            });
+
+        // when
+        var connection = modeling.createConnection(startEvent, task, {
+          type: 'bpmn:SequenceFlow',
+          businessObject: businessObject
+        }, startEvent.parent);
+
+        // then
+        expect(connection.label).to.exist;
+      }
+    ));
+
+
+    it('should NOT add to sequence flow without name', inject(
+      function(elementRegistry, modeling) {
+
+        // given
+        var startEvent = elementRegistry.get('StartEvent_1'),
+            task = elementRegistry.get('Task_1');
+
+        // when
+        var connection = modeling.connect(startEvent, task);
+
+        // then
+        expect(connection.label).not.to.exist;
+      }
+    ));
+
+
+    it('should add to exclusive gateway with name', inject(
+      function(bpmnFactory, elementFactory, elementRegistry, modeling) {
+
+        // given
+        var parentShape = elementRegistry.get('Process_1'),
+            businessObject = bpmnFactory.create('bpmn:ExclusiveGateway', {
+              name: 'foo'
+            }),
+            newShapeAttrs = {
+              type: 'bpmn:ExclusiveGateway',
+              businessObject: businessObject
+            };
+
+        // when
+        var newShape = modeling.createShape(newShapeAttrs, { x: 50, y: 50 }, parentShape);
+
+        // then
+        expect(newShape.label).to.exist;
+      }
+    ));
+
+
+    it('should NOT add to exclusive gateway without name', inject(
+      function(elementFactory, elementRegistry, modeling) {
+
+        // given
+        var parentShape = elementRegistry.get('Process_1'),
+            newShapeAttrs = {
+              type: 'bpmn:ExclusiveGateway'
+            };
+
+        // when
+        var newShape = modeling.createShape(newShapeAttrs, { x: 50, y: 50 }, parentShape);
+
+        // then
+        expect(newShape.label).not.to.exist;
+      }
+    ));
+
+
+    it('should not add to task', inject(
+      function(elementFactory, elementRegistry, modeling) {
+
+        // given
+        var parentShape = elementRegistry.get('Process_1'),
+            newShapeAttrs = { type: 'bpmn:Task' };
+
+        // when
+        var newShape = modeling.createShape(newShapeAttrs, { x: 50, y: 50 }, parentShape);
+
+        // then
+        expect(newShape.label).not.to.exist;
+      }
+    ));
 
 
     describe('on append', function() {
 
-      it('correctly wired and positioned', inject(function(elementRegistry, modeling, commandStack) {
+      it('correctly wired and positioned', inject(
+        function(bpmnFactory, elementRegistry, modeling, commandStack) {
+
+          // given
+          var startEventShape = elementRegistry.get('StartEvent_1'),
+              businessObject = bpmnFactory.create('bpmn:EndEvent', {
+                name: 'foo'
+              });
+
+          // when
+          var targetShape = modeling.appendShape(startEventShape, {
+            type: 'bpmn:EndEvent',
+            businessObject: businessObject
+          });
+
+          var label = targetShape.label;
+
+          // then
+          expect(label).to.exist;
+          expect(elementRegistry.get(label.id)).to.exist;
+
+          expect(label.x).to.within(298, 299);
+          expect(label.y).to.be.within(140, 141);
+          expect(label.width).to.be.within(15, 18);
+          expect(label.height).to.be.within(13, 15);
+        }
+      ));
+
+
+      it('with di', inject(
+        function(bpmnFactory, elementRegistry, modeling, commandStack) {
+
+          // given
+          var startEventShape = elementRegistry.get('StartEvent_1'),
+              businessObject = bpmnFactory.create('bpmn:EndEvent', {
+                name: 'foo'
+              });
+
+          // when
+          var targetShape = modeling.appendShape(startEventShape, {
+                type: 'bpmn:EndEvent',
+                businessObject: businessObject
+              }),
+              target = targetShape.businessObject;
+
+          // then
+          expect(target.di.label).to.exist;
+
+          expect(target.di.label).to.have.bounds(targetShape.label);
+        }
+      ));
+
+    });
+
+
+    it('should add with di', inject(
+      function(bpmnFactory, elementFactory, elementRegistry, modeling) {
 
         // given
-        var startEventShape = elementRegistry.get('StartEvent_1');
+        var startEventShape = elementRegistry.get('StartEvent_1'),
+            businessObject = bpmnFactory.create('bpmn:SequenceFlow', {
+              name: 'foo'
+            });
 
         // when
-        var targetShape = modeling.appendShape(startEventShape, { type: 'bpmn:EndEvent' });
-
-        var label = targetShape.label;
-
-        // then
-        expect(label).to.exist;
-        expect(elementRegistry.get(label.id)).to.exist;
-
-        expect(label.x).to.equal(307);
-        expect(label.y).to.be.within(141, 142);
-        expect(label.width).to.be.equal(0);
-        expect(label.height).to.be.within(12, 14);
-      }));
-
-
-      it('with di', inject(function(elementRegistry, modeling, commandStack) {
-
-        // given
-        var startEventShape = elementRegistry.get('StartEvent_1');
-
-        // when
-        var targetShape = modeling.appendShape(startEventShape, { type: 'bpmn:EndEvent' }),
+        var targetShape = modeling.appendShape(startEventShape, {
+              type: 'bpmn:EndEvent',
+              businessObject: businessObject
+            }),
             target = targetShape.businessObject;
 
         // then
         expect(target.di.label).to.exist;
 
         expect(target.di.label).to.have.bounds(targetShape.label);
-      }));
-
-    });
-
-
-    it('should add with di', inject(function(elementFactory, elementRegistry, modeling) {
-
-      // given
-      var startEventShape = elementRegistry.get('StartEvent_1');
-
-      // when
-      var targetShape = modeling.appendShape(startEventShape, { type: 'bpmn:EndEvent' }),
-          target = targetShape.businessObject;
-
-      // then
-      expect(target.di.label).to.exist;
-
-      expect(target.di.label).to.have.bounds(targetShape.label);
-    }));
+      }
+    ));
 
   });
 
@@ -135,143 +256,119 @@ describe('behavior - LabelBehavior', function() {
       modeling.moveElements([ labelShape ], { x: 10, y: -10 });
 
       // then
-      expect(labelShape).to.have.position({ x: 156, y: 128 });
-      expect(startEvent.di.label).to.have.position({ x: 156, y: 128 });
+      expect(labelShape.x).to.be.within(193, 194);
+      expect(labelShape.y).to.equal(128);
+      expect(startEvent.di.label.bounds.x).to.be.within(193, 194);
+      expect(startEvent.di.label.bounds.y).to.equal(128);
     }));
 
 
     describe('connection labels', function() {
 
-      it('should center position hidden on waypoint change', inject(function(elementRegistry, modeling) {
+      it('should NOT center position visible', inject(
+        function(bpmnFactory, elementRegistry, modeling) {
 
-        // given
-        var startEventShape = elementRegistry.get('StartEvent_1'),
-            taskShape = elementRegistry.get('Task_1');
+          // given
+          var startEventShape = elementRegistry.get('StartEvent_1'),
+              taskShape = elementRegistry.get('Task_1'),
+              businessObject = bpmnFactory.create('bpmn:SequenceFlow', {
+                name: 'foo'
+              });
 
-        var sequenceFlowConnection = modeling.createConnection(startEventShape, taskShape, {
-          type: 'bpmn:SequenceFlow'
-        }, startEventShape.parent);
+          var sequenceFlowConnection = modeling.createConnection(startEventShape, taskShape, {
+            type: 'bpmn:SequenceFlow',
+            businessObject: businessObject
+          }, startEventShape.parent);
 
-        // when
-        modeling.updateWaypoints(sequenceFlowConnection, [
-          sequenceFlowConnection.waypoints[0],
-          {
-            x: sequenceFlowConnection.waypoints[0].x,
-            y: 200
-          },
-          {
-            x: sequenceFlowConnection.waypoints[1].x,
-            y: 200
-          },
-          sequenceFlowConnection.waypoints[1]
-        ]);
+          var oldLabelPosition = {
+            x: sequenceFlowConnection.label.x,
+            y: sequenceFlowConnection.label.y
+          };
 
-        // then
-        var expected = {
-          x: LabelUtil.getExternalLabelMid(sequenceFlowConnection).x - sequenceFlowConnection.label.width / 2,
-          y: LabelUtil.getExternalLabelMid(sequenceFlowConnection).y - sequenceFlowConnection.label.height / 2
-        };
+          // when
+          sequenceFlowConnection.label.hidden = false;
 
-        expect({
-          x: sequenceFlowConnection.label.x,
-          y: sequenceFlowConnection.label.y
-        }).to.eql(expected);
-      }));
+          modeling.updateWaypoints(sequenceFlowConnection, [
+            sequenceFlowConnection.waypoints[0],
+            {
+              x: sequenceFlowConnection.waypoints[0].x,
+              y: 200
+            },
+            {
+              x: sequenceFlowConnection.waypoints[1].x,
+              y: 200
+            },
+            sequenceFlowConnection.waypoints[1]
+          ]);
 
-
-      it('should center position hidden on source move', inject(function(elementRegistry, modeling) {
-
-        // given
-        var startEventShape = elementRegistry.get('StartEvent_1'),
-            taskShape = elementRegistry.get('Task_1');
-
-        var sequenceFlowConnection = modeling.createConnection(startEventShape, taskShape, {
-          type: 'bpmn:SequenceFlow'
-        }, startEventShape.parent);
-
-        // when
-        modeling.moveElements([ startEventShape ], { x: 50, y: 0 });
-
-        // then
-        var expected = {
-          x: LabelUtil.getExternalLabelMid(sequenceFlowConnection).x - sequenceFlowConnection.label.width / 2,
-          y: LabelUtil.getExternalLabelMid(sequenceFlowConnection).y - sequenceFlowConnection.label.height / 2
-        };
-
-        expect({
-          x: sequenceFlowConnection.label.x,
-          y: sequenceFlowConnection.label.y
-        }).to.eql(expected);
-      }));
-
-
-      it('should center position hidden on target move', inject(function(elementRegistry, modeling) {
-
-        // given
-        var startEventShape = elementRegistry.get('StartEvent_1'),
-            taskShape = elementRegistry.get('Task_1');
-
-        var sequenceFlowConnection = modeling.createConnection(startEventShape, taskShape, {
-          type: 'bpmn:SequenceFlow'
-        }, startEventShape.parent);
-
-        // when
-        modeling.moveElements([ taskShape ], { x: 50, y: 0 });
-
-        // then
-        var expected = {
-          x: LabelUtil.getExternalLabelMid(sequenceFlowConnection).x - sequenceFlowConnection.label.width / 2,
-          y: LabelUtil.getExternalLabelMid(sequenceFlowConnection).y - sequenceFlowConnection.label.height / 2
-        };
-
-        expect({
-          x: sequenceFlowConnection.label.x,
-          y: sequenceFlowConnection.label.y
-        }).to.eql(expected);
-      }));
-
-
-      it('should NOT center position visible', inject(function(elementRegistry, modeling) {
-
-        // given
-        var startEventShape = elementRegistry.get('StartEvent_1'),
-            taskShape = elementRegistry.get('Task_1');
-
-        var sequenceFlowConnection = modeling.createConnection(startEventShape, taskShape, {
-          type: 'bpmn:SequenceFlow'
-        }, startEventShape.parent);
-
-        var oldLabelPosition = {
-          x: sequenceFlowConnection.label.x,
-          y: sequenceFlowConnection.label.y
-        };
-
-        // when
-        sequenceFlowConnection.label.hidden = false;
-
-        modeling.updateWaypoints(sequenceFlowConnection, [
-          sequenceFlowConnection.waypoints[0],
-          {
-            x: sequenceFlowConnection.waypoints[0].x,
-            y: 200
-          },
-          {
-            x: sequenceFlowConnection.waypoints[1].x,
-            y: 200
-          },
-          sequenceFlowConnection.waypoints[1]
-        ]);
-
-        // then
-        expect({
-          x: sequenceFlowConnection.label.x,
-          y: sequenceFlowConnection.label.y
-        }).to.eql(oldLabelPosition);
-      }));
+          // then
+          expect({
+            x: sequenceFlowConnection.label.x,
+            y: sequenceFlowConnection.label.y
+          }).to.eql(oldLabelPosition);
+        }
+      ));
 
     });
 
   });
 
+
+  describe('delete label', function() {
+
+    it('should remove name', inject(function(elementRegistry, modeling) {
+
+      // given
+      var startEventShape = elementRegistry.get('StartEvent_1'),
+          startEvent = startEventShape.businessObject,
+          labelShape = startEventShape.label;
+
+      // when
+      modeling.removeShape(labelShape);
+
+      // then
+      expect(startEventShape.label).not.to.exist;
+      expect(startEvent.name).not.to.exist;
+    }));
+
+  });
+
+
+  describe('update properties', function() {
+
+    it('should resize after updating name property', inject(
+      function(elementRegistry, modeling) {
+
+        // given
+        var spy = sinon.spy(modeling, 'resizeShape');
+
+        var startEventShape = elementRegistry.get('StartEvent_1');
+
+        // when
+        modeling.updateProperties(startEventShape, { name: 'bar' });
+
+        // then
+        expect(spy).to.have.been.called;
+      }
+    ));
+
+
+    it('should resize after updating text property', inject(
+      function(elementRegistry, modeling) {
+
+        // given
+        var spy = sinon.spy(modeling, 'resizeShape');
+
+        var textAnnotationShape = elementRegistry.get('TextAnnotation_1');
+
+        // when
+        modeling.updateProperties(textAnnotationShape, { text: 'bar' });
+
+        // then
+        expect(spy).to.have.been.called;
+      }
+    ));
+
+  });
 
 });

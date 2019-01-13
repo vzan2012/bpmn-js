@@ -1,12 +1,10 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - lanes - flowNodeRefs', function() {
@@ -72,7 +70,7 @@ describe('features/modeling - lanes - flowNodeRefs', function() {
       commandStack.redo();
 
       // then
-      expect(sourceLane.flowNodeRef).to.not.contain(task);
+      expect(sourceLane.flowNodeRef).not.to.contain(task);
     }));
 
   });

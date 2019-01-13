@@ -1,9 +1,10 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - remove element behavior', function() {
@@ -35,7 +36,7 @@ describe('features/modeling - remove element behavior', function() {
 
         // SequenceFlow2 should be deleted
         expect(elementRegistry.get(task.id)).to.be.undefined;
-        expect(sequenceFlow1).to.not.be.undefined;
+        expect(sequenceFlow1).not.to.be.undefined;
         expect(elementRegistry.get('SequenceFlow2')).to.be.undefined;
 
         // source and target have one connection each

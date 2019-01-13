@@ -1,8 +1,8 @@
-'use strict';
+import NavigatedViewer from 'lib/NavigatedViewer';
 
-require('../TestHelper');
+import EditorActionsModule from 'lib/features/editor-actions';
 
-var NavigatedViewer = require('lib/NavigatedViewer');
+import TestContainer from 'mocha-test-container-support';
 
 
 describe('NavigatedViewer', function() {
@@ -10,14 +10,13 @@ describe('NavigatedViewer', function() {
   var container;
 
   beforeEach(function() {
-    container = document.createElement('div');
-    document.body.appendChild(container);
+    container = TestContainer.get(this);
   });
 
-
-
   function createViewer(xml, done) {
-    var viewer = new NavigatedViewer({ container: container });
+    var viewer = new NavigatedViewer({
+      container: container
+    });
 
     viewer.importXML(xml, function(err, warnings) {
       done(err, warnings, viewer);
@@ -28,6 +27,49 @@ describe('NavigatedViewer', function() {
   it('should import simple process', function(done) {
     var xml = require('../fixtures/bpmn/simple.bpmn');
     createViewer(xml, done);
+  });
+
+
+  describe('editor actions support', function() {
+
+    it('should not ship per default', function() {
+
+      // given
+      var navigatedViewer = new NavigatedViewer();
+
+      // when
+      var editorActions = navigatedViewer.get('editorActions', false);
+
+      // then
+      expect(editorActions).not.to.exist;
+    });
+
+
+    it('should ship non-modeling actions if included', function() {
+
+      // given
+      var expectedActions = [
+        'stepZoom',
+        'zoom',
+        'moveCanvas',
+        'selectElements'
+      ];
+
+      var navigatedViewer = new NavigatedViewer({
+        additionalModules: [
+          EditorActionsModule
+        ]
+      });
+
+      // when
+      var editorActions = navigatedViewer.get('editorActions');
+
+      // then
+      var actualActions = editorActions.getActions();
+
+      expect(actualActions).to.eql(expectedActions);
+    });
+
   });
 
 

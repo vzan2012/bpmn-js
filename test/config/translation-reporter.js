@@ -1,10 +1,11 @@
-'use strict';
-
 var fs = require('fs');
 var path = require('path');
 
-var unique = require('lodash/array/unique');
-var sortBy = require('lodash/collection/sortBy');
+var {
+  uniqueBy,
+  sortBy
+} = require('min-dash');
+
 
 function TranslationReporter() {
   process.env.TRANSLATIONS = 'enabled';
@@ -37,8 +38,8 @@ function TranslationReporter() {
 
 
   this.onRunComplete = function() {
-    translations = unique(translations);
-    translations = sortBy(translations);
+    translations = uniqueBy(function(e) {return e;}, translations);
+    translations = sortBy(translations, function(e) {return e;});
 
     fs.writeFileSync(outputFile, JSON.stringify(translations, null, 2));
   };

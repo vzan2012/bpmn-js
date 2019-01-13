@@ -1,12 +1,11 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-var alignElementsModule = require('diagram-js/lib/features/align-elements'),
-    modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import alignElementsModule from 'diagram-js/lib/features/align-elements';
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/align-elements', function() {

@@ -1,14 +1,18 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+import Modeler from 'lib/Modeler';
 
-var Modeler = require('lib/Modeler');
+import {
+  createCanvasEvent as canvasEvent
+} from '../util/MockEvents';
 
-var canvasEvent = require('../util/MockEvents').createCanvasEvent;
 
+import customElementsModules from './custom-elements';
 
-var customElementsModules = require('./custom-elements'),
-    noTouchInteractionModule = { touchInteractionEvents: ['value', null ] },
+var noTouchInteractionModule = { touchInteractionEvents: ['value', null ] },
     modelerModules = Modeler.prototype._modules,
     customModules = [ customElementsModules, noTouchInteractionModule ];
 

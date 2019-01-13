@@ -1,29 +1,27 @@
-'use strict';
-
-var forEach = require('lodash/collection/forEach');
+var forEach = require('min-dash').forEach;
 
 
-function DescriptorTree(tree) {
+export default function DescriptorTree(tree) {
+
+  var self = this;
 
   this._tree = {};
   this._length = 0;
 
   forEach(tree, function(branch, depth) {
     if (branch.length) {
-      this._length += 1;
+      self._length += 1;
     }
 
     forEach(branch, function(element) {
 
       element.depth = parseInt(depth, 10);
 
-      this._tree[element.id] = element;
-    }, this);
+      self._tree[element.id] = element;
+    });
 
-  }, this);
+  });
 }
-
-module.exports = DescriptorTree;
 
 DescriptorTree.prototype.getLength = function() {
   return this._length;

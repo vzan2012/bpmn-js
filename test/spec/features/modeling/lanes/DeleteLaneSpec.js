@@ -1,17 +1,14 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../../TestHelper');
+import {
+  pick
+} from 'min-dash';
 
-/* global bootstrapModeler, inject */
-
-var pick = require('lodash/object/pick');
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
-
-function getBounds(element) {
-  return pick(element, [ 'x', 'y', 'width', 'height' ]);
-}
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - delete lane', function() {
@@ -124,3 +121,10 @@ describe('features/modeling - delete lane', function() {
   });
 
 });
+
+
+// helpers ///////////////
+
+function getBounds(element) {
+  return pick(element, [ 'x', 'y', 'width', 'height' ]);
+}

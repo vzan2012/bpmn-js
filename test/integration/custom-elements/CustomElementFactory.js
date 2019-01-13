@@ -1,13 +1,17 @@
-'use strict';
+import {
+  assign
+} from 'min-dash';
 
-var assign = require('lodash/object/assign'),
-    inherits = require('inherits');
+import inherits from 'inherits';
 
-var BpmnElementFactory = require('lib/features/modeling/ElementFactory'),
-    LabelUtil = require('lib/util/LabelUtil');
+import BpmnElementFactory from 'lib/features/modeling/ElementFactory';
+
+import {
+  DEFAULT_LABEL_SIZE
+} from 'lib/util/LabelUtil';
 
 
-function CustomElementFactory(injector) {
+export default function CustomElementFactory(injector) {
   injector.invoke(BpmnElementFactory, this);
 
   var self = this;
@@ -18,7 +22,7 @@ function CustomElementFactory(injector) {
         size;
 
     if (elementType === 'label') {
-      return self.baseCreate(elementType, assign({ type: 'label' }, LabelUtil.DEFAULT_LABEL_SIZE, attrs));
+      return self.baseCreate(elementType, assign({ type: 'label' }, DEFAULT_LABEL_SIZE, attrs));
     }
 
     if (/^custom:/.test(type)) {
@@ -37,8 +41,6 @@ function CustomElementFactory(injector) {
 }
 
 inherits(CustomElementFactory, BpmnElementFactory);
-
-module.exports = CustomElementFactory;
 
 CustomElementFactory.$inject = [ 'injector' ];
 

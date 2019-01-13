@@ -1,20 +1,22 @@
-'use strict';
+import {
+  getBpmnJS
+} from 'test/TestHelper';
 
-var TestHelper = require('../../../TestHelper');
+import {
+  map,
+  forEach
+} from 'min-dash';
 
-var map = require('lodash/collection/map');
-
-// polyfill, because Math.sign is not available in PhantomJS, IE and Safari
-// https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Math/sign
-Math.sign = Math.sign || function(x) {
+function sign(x) {
   x = +x; // convert to a number
   if (x === 0 || isNaN(x)) {
     return x;
   }
   return x > 0 ? 1 : -1;
-};
+}
 
-function move(elementIds, delta, targetId, isAttach) {
+
+export function move(elementIds, delta, targetId, isAttach) {
 
   if (typeof elementIds === 'string') {
     elementIds = [ elementIds ];
@@ -31,7 +33,7 @@ function move(elementIds, delta, targetId, isAttach) {
     targetId = null;
   }
 
-  return TestHelper.getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
+  return getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
 
     function getElement(id) {
 
@@ -57,12 +59,10 @@ function move(elementIds, delta, targetId, isAttach) {
   });
 }
 
-module.exports.move = move;
 
+export function add(attrs, position, target, isAttach) {
 
-function add(attrs, position, target, isAttach) {
-
-  return TestHelper.getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
+  return getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
 
     function getElement(id) {
 
@@ -84,12 +84,10 @@ function add(attrs, position, target, isAttach) {
   });
 }
 
-module.exports.add = add;
 
+export function connect(source, target) {
 
-function connect(source, target) {
-
-  return TestHelper.getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
+  return getBpmnJS().invoke(function(canvas, elementRegistry, modeling) {
 
     function getElement(id) {
 
@@ -112,13 +110,10 @@ function connect(source, target) {
   });
 }
 
-module.exports.connect = connect;
 
-function attach(attrs, position, target) {
+export function attach(attrs, position, target) {
   return add(attrs, position, target, true);
 }
-
-module.exports.attach = attach;
 
 
 function getAncestors(element) {
@@ -139,7 +134,7 @@ function compareZOrder(a, b) {
   var elementA,
       elementB;
 
-  TestHelper.getBpmnJS().invoke(function(elementRegistry) {
+  getBpmnJS().invoke(function(elementRegistry) {
 
     function getElement(id) {
 
@@ -195,13 +190,11 @@ function compareZOrder(a, b) {
   var aIndex = sharedRoot.parent.children.indexOf(sharedRoot.a),
       bIndex = sharedRoot.parent.children.indexOf(sharedRoot.b);
 
-  return Math.sign(aIndex - bIndex);
+  return sign(aIndex - bIndex);
 }
 
 
-var forEach = require('lodash/collection/forEach');
-
-function expectZOrder() {
+export function expectZOrder() {
 
   var elements = Array.prototype.slice.call(arguments);
 
@@ -211,12 +204,12 @@ function expectZOrder() {
 
     next = elements[idx + 1];
 
-    if (next) {
-      expect(compareZOrder(e, next)).to.eql(-1);
+    if (next && compareZOrder(e, next) !== -1) {
+      throw new Error(
+        'expected <element#' + next + '> to be in front of <element#' + e + '>'
+      );
     }
   });
 
   return true;
 }
-
-module.exports.expectZOrder = expectZOrder;

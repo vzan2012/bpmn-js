@@ -1,12 +1,11 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('lib/features/modeling'),
-    replaceModule = require('lib/features/replace'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import replaceModule from 'lib/features/replace';
+import coreModule from 'lib/core';
 
 
 

@@ -1,22 +1,31 @@
-'use strict';
+import {
+  bootstrapModeler,
+  getBpmnJS,
+  inject
+} from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
+import {
+  createEvent as globalEvent
+} from '../../../util/MockEvents';
 
-var TestHelper = require('../../../TestHelper');
+import coreModule from 'lib/core';
+import modelingModule from 'lib/features/modeling';
+import replaceMenuProviderModule from 'lib/features/popup-menu';
+import customRulesModule from '../../../util/custom-rules';
 
-var globalEvent = require('../../../util/MockEvents').createEvent;
+import {
+  query as domQuery,
+  classes as domClasses
+} from 'min-dom';
 
-var coreModule = require('lib/core'),
-    modelingModule = require('lib/features/modeling'),
-    replaceMenuProviderModule = require('lib/features/popup-menu'),
-    customRulesModule = require('../../../util/custom-rules');
+import {
+  find,
+  matchPattern
+} from 'min-dash';
 
-var domQuery = require('min-dom/lib/query'),
-    domClasses = require('min-dom/lib/classes'),
-    find = require('lodash/collection/find');
+import { is } from 'lib/util/ModelUtil';
 
-var is = require('lib/util/ModelUtil').is,
-    isExpanded = require('lib/util/DiUtil').isExpanded;
+import { isExpanded } from 'lib/util/DiUtil';
 
 function queryEntry(popupMenu, id) {
   return queryPopup(popupMenu, '[data-id="' + id + '"]');
@@ -40,7 +49,7 @@ function getEntries(popupMenu) {
 }
 
 function triggerAction(entries, id) {
-  var entry = find(entries, { id: id });
+  var entry = find(entries, matchPattern({ id: id }));
 
   if (!entry) {
     throw new Error('entry "'+ id +'" not found in replace menu');
@@ -65,11 +74,11 @@ describe('features/popup-menu - replace menu provider', function() {
   var openPopup = function(element, offset) {
     offset = offset || 100;
 
-    TestHelper.getBpmnJS().invoke(function(popupMenu) {
+    getBpmnJS().invoke(function(popupMenu) {
 
-      popupMenu.create('bpmn-replace', element);
-
-      popupMenu.open({ x: element.x + offset, y: element.y + offset });
+      popupMenu.open(element, 'bpmn-replace', {
+        x: element.x + offset, y: element.y + offset
+      });
 
     });
   };
@@ -956,7 +965,7 @@ describe('features/popup-menu - replace menu provider', function() {
             defaultFlowEntry = queryEntry(popupMenu, 'replace-with-default-flow');
 
         // then
-        expect(sequenceFlowEntry).to.not.exist;
+        expect(sequenceFlowEntry).not.to.exist;
         expect(defaultFlowEntry).to.exist;
       }));
 
@@ -973,7 +982,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
         // then
         expect(sequenceFlowEntry).to.exist;
-        expect(defaultFlowEntry).to.not.exist;
+        expect(defaultFlowEntry).not.to.exist;
       }));
 
     });
@@ -999,7 +1008,7 @@ describe('features/popup-menu - replace menu provider', function() {
             defaultFlowEntry = queryEntry(popupMenu, 'replace-with-default-flow');
 
         // then
-        expect(sequenceFlowEntry).to.not.exist;
+        expect(sequenceFlowEntry).not.to.exist;
         expect(defaultFlowEntry).to.exist;
       }));
 
@@ -1016,7 +1025,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
         // then
         expect(sequenceFlowEntry).to.exist;
-        expect(defaultFlowEntry).to.not.exist;
+        expect(defaultFlowEntry).not.to.exist;
       }));
 
     });
@@ -1104,7 +1113,7 @@ describe('features/popup-menu - replace menu provider', function() {
         var collapsedSubProcessEntry = queryEntry(popupMenu, 'replace-with-collapsed-subprocess');
 
         // then
-        expect(collapsedSubProcessEntry).to.not.exist;
+        expect(collapsedSubProcessEntry).not.to.exist;
       }));
 
     });
@@ -1180,7 +1189,7 @@ describe('features/popup-menu - replace menu provider', function() {
         var task = elementRegistry.get('Task_1ei94kl');
 
         // then
-        expect(task.businessObject.default).to.not.exist;
+        expect(task.businessObject.default).not.to.exist;
       }));
 
 
@@ -1234,7 +1243,7 @@ describe('features/popup-menu - replace menu provider', function() {
         triggerAction(entries, 'replace-with-conditional-flow');
 
         // then
-        expect(task.businessObject.default).to.not.exist;
+        expect(task.businessObject.default).not.to.exist;
       }));
 
 
@@ -1284,7 +1293,7 @@ describe('features/popup-menu - replace menu provider', function() {
           commandStack.undo();
 
           // then
-          expect(gateway.businessObject.default).to.not.exist;
+          expect(gateway.businessObject.default).not.to.exist;
         })
       );
 
@@ -1307,7 +1316,7 @@ describe('features/popup-menu - replace menu provider', function() {
           var task = elementRegistry.get('Task_1ei94kl');
 
           // then
-          expect(task.businessObject.default).to.not.exist;
+          expect(task.businessObject.default).not.to.exist;
         })
       );
 
@@ -1363,7 +1372,7 @@ describe('features/popup-menu - replace menu provider', function() {
           var gateway = elementRegistry.get('ExclusiveGateway_1');
 
           // then
-          expect(gateway.businessObject.default).to.not.exist;
+          expect(gateway.businessObject.default).not.to.exist;
         })
       );
 
@@ -1427,7 +1436,7 @@ describe('features/popup-menu - replace menu provider', function() {
             var gateway = elementRegistry.get('ExclusiveGateway_1');
 
             // then
-            expect(gateway.businessObject.default).to.not.exist;
+            expect(gateway.businessObject.default).not.to.exist;
           })
         );
       });
@@ -1534,7 +1543,7 @@ describe('features/popup-menu - replace menu provider', function() {
         var entries = getEntries(popupMenu);
 
         // trigger DefaultFlow replacement
-        var replaceDefaultFlow = find(entries, { id: 'replace-with-default-flow' });
+        var replaceDefaultFlow = find(entries, matchPattern({ id: 'replace-with-default-flow' }));
 
         replaceDefaultFlow.action();
 
@@ -1576,9 +1585,13 @@ describe('features/popup-menu - replace menu provider', function() {
           var sequenceFlow = elementRegistry.get('SequenceFlow_3'),
               exclusiveGateway = elementRegistry.get('ExclusiveGateway_1');
 
-          var conditionExpression = moddle.create('bpmn:FormalExpression', { body: '' });
+          var conditionExpression = moddle.create('bpmn:FormalExpression', {
+            body: ''
+          });
 
-          modeling.updateProperties(sequenceFlow, { conditionExpression: conditionExpression });
+          modeling.updateProperties(sequenceFlow, {
+            conditionExpression: conditionExpression
+          });
 
           // when
           openPopup(sequenceFlow);
@@ -1590,7 +1603,7 @@ describe('features/popup-menu - replace menu provider', function() {
 
           // then
           expect(exclusiveGateway.businessObject.default).to.equal(sequenceFlow.businessObject);
-          expect(sequenceFlow.businessObject.conditionExpression).to.not.exist;
+          expect(sequenceFlow.businessObject.conditionExpression).not.to.exist;
         })
       );
 
@@ -1617,7 +1630,7 @@ describe('features/popup-menu - replace menu provider', function() {
           commandStack.undo();
 
           // then
-          expect(exclusiveGateway.businessObject.default).to.not.exist;
+          expect(exclusiveGateway.businessObject.default).not.to.exist;
           expect(sequenceFlow.businessObject.conditionExpression).to.equal(conditionExpression);
         })
       );
@@ -1650,22 +1663,24 @@ describe('features/popup-menu - replace menu provider', function() {
       }));
 
 
-      it('should morph into a ConditionalFlow -> undo', inject(function(elementRegistry, popupMenu, commandStack) {
-        // given
-        var sequenceFlow = elementRegistry.get('SequenceFlow_2');
+      it('should morph into a ConditionalFlow -> undo', inject(
+        function(elementRegistry, popupMenu, commandStack) {
+          // given
+          var sequenceFlow = elementRegistry.get('SequenceFlow_2');
 
-        // when
-        openPopup(sequenceFlow);
+          // when
+          openPopup(sequenceFlow);
 
-        var entries = getEntries(popupMenu);
+          var entries = getEntries(popupMenu);
 
-        triggerAction(entries, 'replace-with-conditional-flow');
+          triggerAction(entries, 'replace-with-conditional-flow');
 
-        commandStack.undo();
+          commandStack.undo();
 
-        // then
-        expect(sequenceFlow.businessObject.conditionExpression).to.not.exist;
-      }));
+          // then
+          expect(sequenceFlow.businessObject.conditionExpression).not.to.exist;
+        }
+      ));
 
 
       it('should morph back into a SequenceFlow', inject(function(elementRegistry, popupMenu) {
@@ -1688,7 +1703,7 @@ describe('features/popup-menu - replace menu provider', function() {
         triggerAction(entries, 'replace-with-sequence-flow');
 
         // then
-        expect(sequenceFlow.businessObject.conditionExpression).to.not.exist;
+        expect(sequenceFlow.businessObject.conditionExpression).not.to.exist;
       }));
 
 
@@ -1713,7 +1728,7 @@ describe('features/popup-menu - replace menu provider', function() {
           ]);
 
           // then
-          expect(sequenceFlow.businessObject.conditionExpression).to.not.exist;
+          expect(sequenceFlow.businessObject.conditionExpression).not.to.exist;
         })
       );
 
@@ -1773,7 +1788,7 @@ describe('features/popup-menu - replace menu provider', function() {
             ]);
 
             // then
-            expect(sequenceFlow.businessObject.conditionExpression).to.not.exist;
+            expect(sequenceFlow.businessObject.conditionExpression).not.to.exist;
           })
         );
 

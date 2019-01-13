@@ -1,13 +1,12 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../../TestHelper');
+import { is } from 'lib/util/ModelUtil';
 
-/* global bootstrapModeler, inject */
-
-var is = require('lib/util/ModelUtil').is;
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - remove participant behavior', function() {
@@ -68,7 +67,7 @@ describe('features/modeling - remove participant behavior', function() {
         modeling.removeShape(participantShape);
 
         // then
-        expect(participant.$parent).to.not.be.ok;
+        expect(participant.$parent).not.to.be.ok;
 
         var newRootShape = canvas.getRootElement(),
             newRootBusinessObject = newRootShape.businessObject;
@@ -76,8 +75,8 @@ describe('features/modeling - remove participant behavior', function() {
         expect(newRootBusinessObject.$instanceOf('bpmn:Process')).to.be.true;
 
         // collaboration DI is unwired
-        expect(participantDi.$parent).to.not.be.ok;
-        expect(collaboration.di).to.not.be.ok;
+        expect(participantDi.$parent).not.to.be.ok;
+        expect(collaboration.di).not.to.be.ok;
 
         expect(bpmnDefinitions.rootElements).not.to.include(process);
         expect(bpmnDefinitions.rootElements).not.to.include(collaboration);

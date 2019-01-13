@@ -1,18 +1,18 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../../TestHelper');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
-
-var is = require('lib/util/ModelUtil').is;
+import { is } from 'lib/util/ModelUtil';
 
 var testModules = [
   modelingModule,
   coreModule
 ];
+
 
 describe('features/modeling - collapse and expand elements', function() {
 
@@ -95,7 +95,7 @@ describe('features/modeling - collapse and expand elements', function() {
         // then
         expect(is(expandedAdHocSubProcess, 'bpmn:AdHocSubProcess')).to.eql(true);
         var businessObject = expandedAdHocSubProcess.businessObject;
-        expect(businessObject.loopCharacteristics).to.not.be.undefined;
+        expect(businessObject.loopCharacteristics).not.to.be.undefined;
       })
     );
 
@@ -381,7 +381,7 @@ describe('features/modeling - collapse and expand elements', function() {
         // then
         expect(is(collapsedSubProcess, 'bpmn:AdHocSubProcess')).to.eql(true);
         var businessObject = collapsedSubProcess.businessObject;
-        expect(businessObject.loopCharacteristics).to.not.be.undefined;
+        expect(businessObject.loopCharacteristics).not.to.be.undefined;
       })
     );
 

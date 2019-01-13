@@ -1,20 +1,32 @@
-'use strict';
+import Modeler from 'lib/Modeler';
+import Viewer from 'lib/Viewer';
+import NavigatedViewer from 'lib/NavigatedViewer';
 
-var Modeler = require('lib/Modeler');
+import TestContainer from 'mocha-test-container-support';
 
-var TestContainer = require('mocha-test-container-support');
+import {
+  createEvent
+} from '../util/MockEvents';
+
 
 describe('Modeler', function() {
 
   var container;
 
+  var modeler;
+
   beforeEach(function() {
     container = TestContainer.get(this);
   });
 
-
   function createModeler(xml, done) {
-    var modeler = new Modeler({ container: container });
+
+    modeler = new Modeler({
+      container: container,
+      keyboard: {
+        bindTo: document
+      }
+    });
 
     modeler.importXML(xml, function(err, warnings) {
       done(err, warnings, modeler);
@@ -149,8 +161,8 @@ describe('Modeler', function() {
         });
 
         // then
-        expect(overlays.get({ element: 'SubProcess_1', type: 'badge' }).length).to.equal(1);
-        expect(overlays.get({ element: 'StartEvent_1', type: 'badge' }).length).to.equal(1);
+        expect(overlays.get({ element: 'SubProcess_1', type: 'badge' })).to.have.length(1);
+        expect(overlays.get({ element: 'StartEvent_1', type: 'badge' })).to.have.length(1);
 
         done(err);
       });
@@ -160,10 +172,49 @@ describe('Modeler', function() {
   });
 
 
+  describe('editor actions support', function() {
+
+    it('should ship all actions', function() {
+
+      // given
+      var expectedActions = [
+        'undo',
+        'redo',
+        'copy',
+        'paste',
+        'stepZoom',
+        'zoom',
+        'removeSelection',
+        'moveCanvas',
+        'moveSelection',
+        'selectElements',
+        'spaceTool',
+        'lassoTool',
+        'handTool',
+        'globalConnectTool',
+        'distributeElements',
+        'alignElements',
+        'setColor',
+        'directEditing',
+        'find',
+        'moveToOrigin'
+      ];
+
+      var modeler = new Modeler();
+
+      // when
+      var editorActions = modeler.get('editorActions');
+
+      // then
+      var actualActions = editorActions.getActions();
+
+      expect(actualActions).to.eql(expectedActions);
+    });
+
+  });
+
+
   describe('bendpoint editing support', function() {
-
-    var createEvent = require('../util/MockEvents').createEvent;
-
 
     it('should allow to edit bendpoints', function(done) {
 
@@ -181,7 +232,11 @@ describe('Modeler', function() {
         expect(bendpointMove).to.exist;
 
         // when
-        bendpointMove.start(createEvent(canvas, { x: 0, y: 0 }), elementRegistry.get('SequenceFlow_1'), 1);
+        bendpointMove.start(
+          createEvent(canvas, { x: 0, y: 0 }),
+          elementRegistry.get('SequenceFlow_1'),
+          1
+        );
         dragging.move(createEvent(canvas, { x: 200, y: 200 }));
 
         done(err);
@@ -408,16 +463,45 @@ describe('Modeler', function() {
 
     });
 
+    it('should inject mandatory modules', function(done) {
+
+      // given
+      var xml = require('../fixtures/bpmn/simple.bpmn');
+
+      // when
+      createModeler(xml, function(err, warnings, modeler) {
+
+        // then
+        expect(modeler.get('alignElements')).to.exist;
+        expect(modeler.get('autoPlace')).to.exist;
+        expect(modeler.get('bpmnAutoResize')).to.exist;
+        expect(modeler.get('autoScroll')).to.exist;
+        expect(modeler.get('bendpoints')).to.exist;
+        expect(modeler.get('bpmnCopyPaste')).to.exist;
+        expect(modeler.get('bpmnSearch')).to.exist;
+        expect(modeler.get('contextPad')).to.exist;
+        expect(modeler.get('copyPaste')).to.exist;
+        expect(modeler.get('alignElements')).to.exist;
+        expect(modeler.get('distributeElements')).to.exist;
+        expect(modeler.get('editorActions')).to.exist;
+        expect(modeler.get('keyboard')).to.exist;
+        expect(modeler.get('keyboardMoveSelection')).to.exist;
+        expect(modeler.get('labelEditingProvider')).to.exist;
+        expect(modeler.get('modeling')).to.exist;
+        expect(modeler.get('move')).to.exist;
+        expect(modeler.get('paletteProvider')).to.exist;
+        expect(modeler.get('resize')).to.exist;
+        expect(modeler.get('snapping')).to.exist;
+
+        done(err);
+      });
+
+    });
+
   });
 
 
   it('should expose Viewer and NavigatedViewer', function() {
-
-    // given
-    var Viewer = require('lib/Viewer');
-    var NavigatedViewer = require('lib/NavigatedViewer');
-
-    // then
     expect(Modeler.Viewer).to.equal(Viewer);
     expect(Modeler.NavigatedViewer).to.equal(NavigatedViewer);
   });

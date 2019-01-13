@@ -1,9 +1,10 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-/* global bootstrapModeler, inject */
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - update label', function() {
@@ -29,12 +30,11 @@ describe('features/modeling - update label', function() {
 
       // then
       expect(startEvent_1.businessObject.name).to.equal('bar');
-      expect(startEvent_1.label.hidden).to.be.false;
     }
   ));
 
 
-  it('should change name of start event with hidden label', inject(
+  it('should create label name of start event', inject(
     function(modeling, elementRegistry) {
 
       // given
@@ -45,25 +45,45 @@ describe('features/modeling - update label', function() {
 
       // then
       expect(startEvent_2.businessObject.name).to.equal('bar');
-      expect(startEvent_2.label.hidden).to.be.false;
+      expect(startEvent_2.label).to.exist;
     }
   ));
 
 
-  it('should hide label when setting empty string', inject(
-    function(modeling, elementRegistry) {
+  describe('should delete label', function() {
 
-      // given
-      var startEvent_1 = elementRegistry.get('StartEvent_1');
+    it('when setting null', inject(
+      function(modeling, elementRegistry) {
 
-      // when
-      modeling.updateLabel(startEvent_1, '');
+        // given
+        var startEvent_1 = elementRegistry.get('StartEvent_1');
 
-      // then
-      expect(startEvent_1.businessObject.name).to.equal('');
-      expect(startEvent_1.label.hidden).to.be.true;
-    }
-  ));
+        // when
+        modeling.updateLabel(startEvent_1, null);
+
+        // then
+        expect(startEvent_1.businessObject.name).not.to.exist;
+        expect(startEvent_1.label).not.to.exist;
+      }
+    ));
+
+
+    it('when setting empty string', inject(
+      function(modeling, elementRegistry) {
+
+        // given
+        var startEvent_1 = elementRegistry.get('StartEvent_1');
+
+        // when
+        modeling.updateLabel(startEvent_1, '');
+
+        // then
+        expect(startEvent_1.businessObject.name).to.equal('');
+        expect(startEvent_1.label).not.to.exist;
+      }
+    ));
+
+  });
 
 
   it('should change name of start event when editing label', inject(
@@ -78,7 +98,6 @@ describe('features/modeling - update label', function() {
 
       // then
       expect(startEvent_1.businessObject.name).to.equal('bar');
-      expect(startEvent_1.label.hidden).to.be.false;
     }
   ));
 

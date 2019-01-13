@@ -1,4 +1,4 @@
-'use strict';
+var coverage = process.env.COVERAGE;
 
 var path = require('path');
 
@@ -22,10 +22,12 @@ var browsers =
         if (process.platform === 'linux') {
           return 'ChromeHeadless_Linux';
         }
-      } else {
-        return browser;
       }
+
+      return browser;
     });
+
+var suite = coverage ? 'test/all.js' : 'test/suite.js';
 
 
 module.exports = function(karma) {
@@ -34,20 +36,19 @@ module.exports = function(karma) {
     basePath: basePath,
 
     frameworks: [
-      'browserify',
       'mocha',
       'sinon-chai'
     ],
 
     files: [
-      'test/{spec,integration}/**/*Spec.js'
+      suite
     ],
 
     preprocessors: {
-      'test/{spec,integration}/**/*Spec.js': [ 'browserify', 'env' ]
+      [ suite ]: [ 'webpack', 'env' ]
     },
 
-    reporters: [ 'spec' ],
+    reporters: [ 'progress' ].concat(coverage ? 'coverage' : []),
 
     customLaunchers: {
       ChromeHeadless_Linux: {
@@ -60,6 +61,12 @@ module.exports = function(karma) {
       }
     },
 
+    coverageReporter: {
+      reporters: [
+        { type: 'lcov', subdir: '.' }
+      ]
+    },
+
     browsers: browsers,
 
     browserNoActivityTimeout: 30000,
@@ -67,13 +74,38 @@ module.exports = function(karma) {
     singleRun: true,
     autoWatch: false,
 
-    // browserify configuration
-    browserify: {
-      debug: true,
-      paths: [ absoluteBasePath ],
-      transform: [
-        [ 'stringify', { global: true, extensions: [ '.bpmn', '.xml', '.css' ] } ]
-      ]
+    webpack: {
+      mode: 'development',
+      module: {
+        rules: [
+          {
+            test: /\.css|\.bpmn$/,
+            use: 'raw-loader'
+          }
+        ].concat(coverage ?
+          {
+            test: /\.js$/,
+            use: {
+              loader: 'istanbul-instrumenter-loader',
+              options: { esModules: true }
+            },
+            include: /lib\.*/,
+            exclude: /node_modules/
+          } : []
+        )
+      },
+      resolve: {
+        mainFields: [
+          'dev:module',
+          'browser',
+          'module',
+          'main'
+        ],
+        modules: [
+          'node_modules',
+          absoluteBasePath
+        ]
+      }
     }
   });
 };

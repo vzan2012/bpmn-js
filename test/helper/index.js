@@ -1,9 +1,7 @@
-'use strict';
-
 /**
  * A helper file that may be used in test cases for bpmn-js and extensions.
  *
- * Publishes the globals
+ * Provides the globals
  *
  * * bootstrapModeler(): bootstrap a modeler instance
  * * bootstrapViewer(): bootstrap a viewer instance
@@ -19,31 +17,36 @@
  * and perform custom bootstrapping (CSS, ...) in that utility.
  *
  * ```
- * var TestHelper = module.exports = require('bpmn-js/test/helper');
+ * export * from 'bpmn-js/test/helper';
+ *
+ * import {
+ *   insertCSS
+ * } from 'bpmn-js/test/helper';
  *
  * var fs = require('fs');
  *
  * // insert diagram.css
- * TestHelper.insertCSS('diagram.css', fs.readFileSync('some-css.css', 'utf8'));
+ * insertCSS('diagram.css', fs.readFileSync('some-css.css', 'utf8'));
  * ```
  */
 
-var unique = require('lodash/array/unique'),
-    isFunction = require('lodash/lang/isFunction'),
-    merge = require('lodash/object/merge'),
-    forEach = require('lodash/collection/forEach');
+import {
+  isFunction,
+  forEach,
+  merge
+} from 'min-dash';
 
-var TestContainer = require('mocha-test-container-support');
+import TestContainer from 'mocha-test-container-support';
 
-var Modeler = require('../../lib/Modeler'),
-    Viewer = require('../../lib/Viewer');
+import Modeler from '../../lib/Modeler';
+import Viewer from '../../lib/Viewer';
 
 var OPTIONS, BPMN_JS;
 
-var translationModule = require('./TranslationCollector');
+import translationModule from './TranslationCollector';
 
 
-function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
+export function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
 
   return function(done) {
     var testContainer;
@@ -96,16 +99,16 @@ function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
       _options.modules = [].concat(_options.modules || [], [ mockModule ]);
     }
 
-    _options.modules = unique(_options.modules);
-
-    if (!_options.modules.length) {
+    if (_options.modules && !_options.modules.length) {
       _options.modules = undefined;
     }
 
     // used to extract translations used during tests
     if (window.__env__ && window.__env__.TRANSLATIONS === 'enabled') {
-      _options.additionalModules = [].concat(_options.additionalModules || [], [ translationModule ]);
-      _options.additionalModules = unique(_options.additionalModules);
+      _options.additionalModules = [].concat(
+        _options.additionalModules || [],
+        [ translationModule ]
+      );
     }
 
     // clean up old bpmn-js instance
@@ -144,7 +147,7 @@ function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
  * @param  {Object|Function} locals  the local overrides to be used by the diagram or a function that produces them
  * @return {Function}         a function to be passed to beforeEach
  */
-function bootstrapModeler(diagram, options, locals) {
+export function bootstrapModeler(diagram, options, locals) {
   return bootstrapBpmnJS(Modeler, diagram, options, locals);
 }
 
@@ -172,7 +175,7 @@ function bootstrapModeler(diagram, options, locals) {
  * @param  {Object|Function} locals  the local overrides to be used by the diagram or a function that produces them
  * @return {Function}         a function to be passed to beforeEach
  */
-function bootstrapViewer(diagram, options, locals) {
+export function bootstrapViewer(diagram, options, locals) {
   return bootstrapBpmnJS(Viewer, diagram, options, locals);
 }
 
@@ -199,11 +202,14 @@ function bootstrapViewer(diagram, options, locals) {
  * @param  {Function} fn the function to inject to
  * @return {Function} a function that can be passed to it to carry out the injection
  */
-function inject(fn) {
+export function inject(fn) {
   return function() {
 
     if (!BPMN_JS) {
-      throw new Error('no bootstraped bpmn-js instance, ensure you created it via #boostrap(Modeler|Viewer)');
+      throw new Error(
+        'no bootstraped bpmn-js instance, ' +
+        'ensure you created it via #boostrap(Modeler|Viewer)'
+      );
     }
 
     BPMN_JS.invoke(fn);
@@ -211,23 +217,17 @@ function inject(fn) {
 }
 
 
-module.exports.bootstrapBpmnJS = (window || global).bootstrapBpmnJS = bootstrapBpmnJS;
-module.exports.bootstrapModeler = (window || global).bootstrapModeler = bootstrapModeler;
-module.exports.bootstrapViewer = (window || global).bootstrapViewer = bootstrapViewer;
-module.exports.inject = (window || global).inject = inject;
-
-
 /**
  * Returns the current active BpmnJS instance.
  *
  * @return {BpmnJS}
  */
-module.exports.getBpmnJS = function() {
+export function getBpmnJS() {
   return BPMN_JS;
-};
+}
 
 
-function insertCSS(name, css) {
+export function insertCSS(name, css) {
   if (document.querySelector('[data-css-file="' + name + '"]')) {
     return;
   }
@@ -245,5 +245,3 @@ function insertCSS(name, css) {
 
   head.appendChild(style);
 }
-
-module.exports.insertCSS = insertCSS;

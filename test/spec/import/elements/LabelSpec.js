@@ -1,16 +1,8 @@
-'use strict';
+import {
+  bootstrapViewer,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
-
-/* global bootstrapViewer, inject */
-
-
-function getCenter(element) {
-  return {
-    x: element.x + Math.ceil(element.width / 2),
-    y: element.y + Math.ceil(element.height / 2)
-  };
-}
 
 describe('import - labels', function() {
 
@@ -55,7 +47,7 @@ describe('import - labels', function() {
 
           // then
           expect(eventLabelCenter.x).to.be.within(270, 272);
-          expect(eventLabelCenter.y).to.be.within(268, 270);
+          expect(eventLabelCenter.y).to.be.within(269, 271);
           expect(eventLabel.width).to.be.above(65);
           expect(eventLabel.height).to.be.above(20);
 
@@ -79,3 +71,13 @@ describe('import - labels', function() {
   });
 
 });
+
+
+// helper ////////////////
+
+function getCenter(element) {
+  return {
+    x: element.x + Math.ceil(element.width / 2),
+    y: element.y + Math.ceil(element.height / 2)
+  };
+}

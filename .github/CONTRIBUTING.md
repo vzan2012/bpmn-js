@@ -19,30 +19,6 @@ Great to see you! Help us out by [filing bugs or feature requests](#working-with
 We use our [issue tracker](https://github.com/bpmn-io/bpmn-js/issues) for project communication, discussion and planning.
 
 
-### Creating an Issue
-
-Help others to understand your request:
-
-* Be clear whether you [file a bug](#reporting-a-bug) or [suggest a new feature/improvement](#suggesting-a-feature)
-* Be descriptive when reporting (what, where, when and how)
-
-
-#### Reporting a Bug
-
-Help us to understand and reproduce your issue:
-
-* Attach your environment (browser, bpmn-js version)
-* Attach steps to reproduce
-* Attach code samples, configuration options or stack traces that provide the necessary context
-
-If possible, try to build an example that reproduces your problem. You can use our playgrounds for [viewer](https://jsfiddle.net/kxqy09gf/) or [modeler](https://jsfiddle.net/08p147e9/) as a starting point or put a demo up on [GitHub](https://github.com/) for inspection.
-
-
-#### Suggesting a Feature
-
-* Provide the necessary context that allows us to understand how your proposal improves our library
-
-
 ### Helping out
 
 * Share your perspective on issues
@@ -82,6 +58,16 @@ For details consult our in depth [setup guide](https://github.com/bpmn-io/bpmn-j
 Create a [pull request](#creating-a-pull-request) if you would like to have an in-depth discussion about some piece of code.
 
 
+### Code Style
+
+In addition to our automatically enforced [lint rules](https://github.com/bpmn-io/eslint-plugin-bpmn-io), please adhere to the following conventions:
+
+* Use modules (`import` / `export (default)`)
+* __Do NOT__ use ES language constructs (`class`, `const`, ...) in sources
+
+__Rationale:__ People should be able to consume parts of the library with an ES module aware bundler such as [Webpack](https://webpack.js.org/) or [Rollup](https://rollupjs.org) without the need to use a transpiler such as [Babel](https://babeljs.io/).
+
+
 ### Creating a Pull Request
 
 We use pull requests for feature additions and bug fixes. If you are not yet familiar on how to create a pull request, [read this great guide](https://gun.io/blog/how-to-github-fork-branch-and-pull-request).
@@ -95,7 +81,7 @@ Some things that make it easier for us to accept your pull requests
 * The code is tested
 * The `npm run all` build passes (executes tests + linting)
 * The work is combined into a single commit
-* The commit messages adhere to our [guideline](https://github.com/bpmn-io/bpmn-js/blob/master/docs/project/COMMIT_MESSAGES.md)
+* The commit messages adhere to the [conventional commits guidelines](https://www.conventionalcommits.org)
 
 
 We'd be glad to assist you if you do not get these things right in the first place.

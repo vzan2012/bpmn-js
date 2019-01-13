@@ -1,15 +1,16 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
+import coreModule from 'lib/core';
+import modelingModule from 'lib/features/modeling';
+import moveModule from 'diagram-js/lib/features/move';
+import snappingModule from 'lib/features/snapping';
 
-/* global bootstrapModeler, inject */
-
-var coreModule = require('lib/core'),
-    modelingModule = require('lib/features/modeling'),
-    moveModule = require('diagram-js/lib/features/move'),
-    snappingModule = require('lib/features/snapping');
-
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
+import {
+  createCanvasEvent as canvasEvent
+} from '../../../util/MockEvents';
 
 
 describe('features/modeling - move', function() {
@@ -51,7 +52,7 @@ describe('features/modeling - move', function() {
     expect(subProcess.attachers).to.include(boundaryEvent);
 
     expect(boundaryEvent.host).to.eql(subProcess);
-    expect(label.host).to.not.exist;
+    expect(label.host).not.to.exist;
   }));
 
 
@@ -81,7 +82,7 @@ describe('features/modeling - move', function() {
       expect(subProcess.attachers).to.include(boundaryEvent);
 
       expect(boundaryEvent.host).to.eql(subProcess);
-      expect(label.host).to.not.exist;
+      expect(label.host).not.to.exist;
     })
   );
 
@@ -112,7 +113,7 @@ describe('features/modeling - move', function() {
     expect(subProcess.attachers).to.include(boundaryEvent);
 
     expect(boundaryEvent.host).to.eql(subProcess);
-    expect(label.host).to.not.exist;
+    expect(label.host).not.to.exist;
   }));
 
 
@@ -145,7 +146,7 @@ describe('features/modeling - move', function() {
       expect(subProcess.attachers).to.include(boundaryEvent);
 
       expect(boundaryEvent.host).to.eql(subProcess);
-      expect(label.host).to.not.exist;
+      expect(label.host).not.to.exist;
     })
   );
 

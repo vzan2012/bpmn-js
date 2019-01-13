@@ -1,9 +1,14 @@
-'use strict';
-
-var any = require('lodash/collection/any');
+import {
+  some
+} from 'min-dash';
 
 var ALLOWED_TYPES = {
-  FailedJobRetryTimeCycle: [ 'bpmn:StartEvent', 'bpmn:BoundaryEvent', 'bpmn:IntermediateCatchEvent', 'bpmn:Activity' ],
+  FailedJobRetryTimeCycle: [
+    'bpmn:StartEvent',
+    'bpmn:BoundaryEvent',
+    'bpmn:IntermediateCatchEvent',
+    'bpmn:Activity'
+  ],
   Connector: [ 'bpmn:EndEvent', 'bpmn:IntermediateThrowEvent' ],
   Field: [ 'bpmn:EndEvent', 'bpmn:IntermediateThrowEvent' ]
 };
@@ -18,13 +23,13 @@ function exists(element) {
 }
 
 function includesType(collection, type) {
-  return exists(collection) && any(collection, function(element) {
+  return exists(collection) && some(collection, function(element) {
     return is(element, type);
   });
 }
 
 function anyType(element, types) {
-  return any(types, function(type) {
+  return some(types, function(type) {
     return is(element, type);
   });
 }
@@ -50,7 +55,8 @@ function CamundaModdleExtension(eventBus) {
 
 CamundaModdleExtension.$inject = [ 'eventBus' ];
 
-CamundaModdleExtension.prototype.canCloneProperty = function(newElement, refTopLevelProperty, propDescriptor) {
+CamundaModdleExtension.prototype.canCloneProperty = function(
+    newElement, refTopLevelProperty, propDescriptor) {
 
   if (isAllowed('camunda:FailedJobRetryTimeCycle', propDescriptor, newElement)) {
     return includesType(newElement.eventDefinitions, 'bpmn:TimerEventDefinition') ||
@@ -64,7 +70,8 @@ CamundaModdleExtension.prototype.canCloneProperty = function(newElement, refTopL
   }
 };
 
-module.exports = {
+
+export default {
   __init__: [ 'camundaModdleExtension' ],
   camundaModdleExtension: [ 'type', CamundaModdleExtension ]
 };

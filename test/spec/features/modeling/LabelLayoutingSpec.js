@@ -1,17 +1,17 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
+import coreModule from 'lib/core';
+import bendpointsModule from 'diagram-js/lib/features/bendpoints';
+import modelingModule from 'lib/features/modeling';
+import labelEditingModule from 'lib/features/label-editing';
+import spaceTool from 'diagram-js/lib/features/space-tool';
 
-/* global bootstrapModeler, inject */
-
-
-var coreModule = require('lib/core'),
-    bendpointsModule = require('diagram-js/lib/features/bendpoints'),
-    modelingModule = require('lib/features/modeling'),
-    labelEditingModule = require('lib/features/label-editing'),
-    spaceTool = require('diagram-js/lib/features/space-tool');
-
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
+import {
+  createCanvasEvent as canvasEvent
+} from '../../../util/MockEvents';
 
 var testModules = [
   coreModule,
@@ -42,9 +42,11 @@ describe('modeling - label layouting', function() {
       // when
       var connection = modeling.connect(element1, element2);
 
+      modeling.updateLabel(connection, 'foo');
+
       // then
-      expect(connection.label.x).to.be.equal(472);
-      expect(connection.label.y).to.be.within(335, 336);
+      expect(connection.label.x).to.be.within(463, 465);
+      expect(connection.label.y).to.be.within(335, 340);
     }));
 
 
@@ -57,9 +59,11 @@ describe('modeling - label layouting', function() {
       // when
       var connection = modeling.connect(element1, element2);
 
+      modeling.updateLabel(connection, 'foo');
+
       // then
-      expect(connection.label.x).to.be.equal(337);
-      expect(connection.label.y).to.be.within(222, 224);
+      expect(connection.label.x).to.be.within(328, 330);
+      expect(connection.label.y).to.be.within(225, 230);
     }));
 
   });
@@ -74,30 +78,6 @@ describe('modeling - label layouting', function() {
     }));
 
     describe('on segment move', function() {
-
-      it('label name not set -> move label to waypoints mid', inject(
-        function(modeling, elementRegistry, connectionSegmentMove, dragging) {
-
-          // given
-          var connection = elementRegistry.get('SequenceFlow_C'),
-              labelPosition = getLabelPosition(connection);
-
-          connection.label.businessObject.name = false;
-          connection.label.hidden = true;
-
-          // when
-          connectionSegmentMove.start(canvasEvent({ x: 0, y: 0 }), connection, 2);
-
-          dragging.move(canvasEvent({ x: 0, y: 50 }));
-
-          dragging.end();
-
-          // then
-          expect(connection.label.y - labelPosition.y).to.be.within(13, 16);
-          expect(connection.label.x - labelPosition.x).to.be.within(-87, -85);
-        }
-      ));
-
 
       it('left - no relayout', inject(function(elementRegistry, connectionSegmentMove, dragging) {
 
@@ -217,7 +197,6 @@ describe('modeling - label layouting', function() {
       ));
 
 
-      // TODO(@janstuemmel): solve by connectionSegmentMove refactoring
       it('up - remove two bendpoints - redundant waypoints', inject(
         function(elementRegistry, connectionSegmentMove, dragging, bendpointMove) {
 
@@ -240,7 +219,7 @@ describe('modeling - label layouting', function() {
           dragging.end();
 
           // then
-          expect(getLabelPosition(connection)).to.not.eql(labelPosition);
+          expect(getLabelPosition(connection)).not.to.eql(labelPosition);
 
         }
       ));
@@ -261,7 +240,7 @@ describe('modeling - label layouting', function() {
 
         // then
         expect(Math.round(connection.label.x)).to.be.within(570, 575);
-        expect(Math.round(connection.label.y)).to.be.within(138, 139);
+        expect(Math.round(connection.label.y)).to.be.within(136, 138);
 
       }));
 
@@ -527,7 +506,7 @@ describe('modeling - label layouting', function() {
           dragging.end();
 
           // then
-          expect(connection.label.y - labelPosition.y).to.be.within(-76, -70);
+          expect(connection.label.y - labelPosition.y).to.be.within(-77, -73);
           expect(connection.label.x - labelPosition.x).to.be.within(-54, -51);
 
         }

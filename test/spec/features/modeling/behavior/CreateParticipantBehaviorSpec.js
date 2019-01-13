@@ -1,12 +1,10 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - create participant', function() {
@@ -145,7 +143,7 @@ describe('features/modeling - create participant', function() {
 
         // then
         expect(participantShape.children.length).to.equal(0);
-        expect(processShape.children.length).to.equal(9);
+        expect(processShape.children.length).to.equal(7);
 
         // children di is wired
         expect(startEventDi.$parent).to.eql(rootShapeDi);
@@ -165,7 +163,7 @@ describe('features/modeling - create participant', function() {
               rootShapeDi = rootElement.businessObject.di;
 
           // then
-          expect(startEventDi.$parent).to.not.be.ok;
+          expect(startEventDi.$parent).not.to.be.ok;
           expect(rootShapeDi.planeElement).not.to.include(startEventDi);
         }
       ));
@@ -217,7 +215,7 @@ describe('features/modeling - create participant', function() {
       // then
       expect(collaborationRoot.children).not.to.include(participantShape);
 
-      expect(participant.$parent).to.not.be.ok;
+      expect(participant.$parent).not.to.be.ok;
       expect(collaboration.participants).not.to.include(participant);
     }));
 

@@ -1,28 +1,33 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
+import replacePreviewModule from 'lib/features/replace-preview';
+import moveModule from 'diagram-js/lib/features/move';
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
-/* global bootstrapModeler, inject */
+import {
+  createCanvasEvent as canvasEvent
+} from '../../../util/MockEvents';
 
-var replacePreviewModule = require('lib/features/replace-preview'),
-    moveModule = require('diagram-js/lib/features/move'),
-    modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import {
+  assign
+} from 'min-dash';
 
-var canvasEvent = require('../../../util/MockEvents').createCanvasEvent;
-
-var assign = require('lodash/object/assign');
-
-var svgAttr = require('tiny-svg/lib/attr'),
-    svgClone = require('tiny-svg/lib/clone'),
-    innerSVG = require('tiny-svg/lib/innerSVG');
+import {
+  attr as svgAttr,
+  clone as svgClone,
+  innerSVG
+} from 'tiny-svg';
 
 
 describe('features/replace-preview', function() {
 
-  var diagramXML = require('../../../fixtures/bpmn/event-sub-processes.bpmn');
+  var diagramXML = require('./BpmnReplacePreview.bpmn');
 
-  var startEvent_1,
+  var startEvent1,
       rootElement;
 
   var getGfx,
@@ -39,7 +44,7 @@ describe('features/replace-preview', function() {
 
   beforeEach(inject(function(canvas, elementRegistry, elementFactory, move, dragging) {
 
-    startEvent_1 = elementRegistry.get('StartEvent_1');
+    startEvent1 = elementRegistry.get('StartEvent.1');
     rootElement = canvas.getRootElement();
 
     /**
@@ -64,7 +69,10 @@ describe('features/replace-preview', function() {
     };
 
     moveShape = function(shape, target, position) {
-      var startPosition = { x: shape.x + 10 + (shape.width / 2), y: shape.y + 30 + (shape.height / 2) };
+      var startPosition = {
+        x: shape.x + 10 + (shape.width / 2),
+        y: shape.y + 30 + (shape.height / 2)
+      };
 
       move.start(canvasEvent(startPosition), shape);
 
@@ -79,10 +87,10 @@ describe('features/replace-preview', function() {
   }));
 
 
-  it('should replace visuals at the same position as the replaced visual', inject(function(dragging) {
+  it('should draw replaced visuals at correct position', inject(function(dragging) {
 
     // when
-    moveShape(startEvent_1, rootElement, { x: 280, y: 120 });
+    moveShape(startEvent1, rootElement, { x: 280, y: 120 });
 
     // then
     var dragGroup = dragging.context().data.context.dragGroup;
@@ -96,40 +104,42 @@ describe('features/replace-preview', function() {
   it('should add dragger to context.visualReplacements once', inject(function(dragging) {
 
     // when
-    moveShape(startEvent_1, rootElement, { x: 275, y: 120 });
-    moveShape(startEvent_1, rootElement, { x: 280, y: 120 });
-    moveShape(startEvent_1, rootElement, { x: 285, y: 120 });
+    moveShape(startEvent1, rootElement, { x: 275, y: 120 });
+    moveShape(startEvent1, rootElement, { x: 280, y: 120 });
+    moveShape(startEvent1, rootElement, { x: 285, y: 120 });
 
     // then
     var visualReplacements = dragging.context().data.context.visualReplacements;
 
-    expect(visualReplacements[startEvent_1.id]).to.exist;
+    expect(visualReplacements[startEvent1.id]).to.exist;
     expect(Object.keys(visualReplacements).length).to.equal(1);
 
   }));
 
 
-  it('should remove dragger from context.visualReplacements', inject(function(elementRegistry, dragging) {
+  it('should remove dragger from context.visualReplacements', inject(
+    function(elementRegistry, dragging) {
 
-    // given
-    var subProcess_2 = elementRegistry.get('SubProcess_2');
+      // given
+      var subProcess2 = elementRegistry.get('SubProcess_2');
 
-    // when
-    moveShape(startEvent_1, rootElement, { x: 275, y: 120 });
-    moveShape(startEvent_1, rootElement, { x: 280, y: 120 });
-    moveShape(startEvent_1, subProcess_2, { x: 350, y: 120 });
+      // when
+      moveShape(startEvent1, rootElement, { x: 275, y: 120 });
+      moveShape(startEvent1, rootElement, { x: 280, y: 120 });
+      moveShape(startEvent1, subProcess2, { x: 350, y: 120 });
 
-    // then
-    var visualReplacements = dragging.context().data.context.visualReplacements;
+      // then
+      var visualReplacements = dragging.context().data.context.visualReplacements;
 
-    expect(visualReplacements).to.be.empty;
-  }));
+      expect(visualReplacements).to.be.empty;
+    }
+  ));
 
 
   it('should hide the replaced visual', inject(function(dragging) {
 
     // when
-    moveShape(startEvent_1, rootElement, { x: 280, y: 120 });
+    moveShape(startEvent1, rootElement, { x: 280, y: 120 });
 
     // then
     var dragGroup = dragging.context().data.context.dragGroup;
@@ -142,10 +152,10 @@ describe('features/replace-preview', function() {
     inject(function(dragging, elementRegistry) {
 
       // given
-      var subProcess_1 = elementRegistry.get('SubProcess_1');
+      var subProcess1 = elementRegistry.get('SubProcess.1');
 
       // when
-      moveShape(startEvent_1, subProcess_1, { x: 210, y: 180 });
+      moveShape(startEvent1, subProcess1, { x: 210, y: 180 });
 
       var context = dragging.context().data.context;
 
@@ -166,7 +176,7 @@ describe('features/replace-preview', function() {
     inject(function(dragging, elementRegistry) {
 
       // when
-      moveShape(startEvent_1, rootElement, { x: 280, y: 120 });
+      moveShape(startEvent1, rootElement, { x: 280, y: 120 });
 
       var context = dragging.context().data.context;
 
@@ -183,10 +193,10 @@ describe('features/replace-preview', function() {
     inject(function(dragging, elementRegistry) {
 
       // given
-      var subProcess_2 = elementRegistry.get('SubProcess_2');
+      var subProcess2 = elementRegistry.get('SubProcess_2');
 
       // when
-      moveShape(startEvent_1, subProcess_2, { x: 350, y: 120 });
+      moveShape(startEvent1, subProcess2, { x: 350, y: 120 });
 
       var context = dragging.context().data.context;
 
@@ -207,10 +217,10 @@ describe('features/replace-preview', function() {
     inject(function(dragging, elementRegistry) {
 
       // given
-      var subProcess_3 = elementRegistry.get('SubProcess_3');
+      var subProcess3 = elementRegistry.get('SubProcess_3');
 
       // when
-      moveShape(startEvent_1, subProcess_3, { x: 600, y: 120 });
+      moveShape(startEvent1, subProcess3, { x: 600, y: 120 });
 
       var context = dragging.context().data.context;
 
@@ -227,13 +237,13 @@ describe('features/replace-preview', function() {
     inject(function(move, dragging, elementRegistry, selection) {
 
       // given
-      var startEvent_2 = elementRegistry.get('StartEvent_2'),
-          startEvent_3 = elementRegistry.get('StartEvent_3');
+      var startEvent2 = elementRegistry.get('StartEvent.2'),
+          startEvent3 = elementRegistry.get('StartEvent.3');
 
       // when
-      selection.select([ startEvent_1, startEvent_2, startEvent_3 ]);
+      selection.select([ startEvent1, startEvent2, startEvent3 ]);
 
-      moveShape(startEvent_1, rootElement, { x: 150, y: 250 });
+      moveShape(startEvent1, rootElement, { x: 150, y: 250 });
 
       var context = dragging.context().data.context;
 
@@ -252,9 +262,9 @@ describe('features/replace-preview', function() {
     inject(function(move, dragging, elementRegistry, selection) {
 
       // given
-      var startEvent_2 = elementRegistry.get('StartEvent_2'),
-          startEvent_3 = elementRegistry.get('StartEvent_3'),
-          subProcess_2 = elementRegistry.get('SubProcess_2');
+      var startEvent2 = elementRegistry.get('StartEvent.2'),
+          startEvent3 = elementRegistry.get('StartEvent.3'),
+          subProcess2 = elementRegistry.get('SubProcess_2');
 
       var messageStartEventGfx = getGfx({
         type: 'bpmn:StartEvent',
@@ -271,9 +281,9 @@ describe('features/replace-preview', function() {
       var startEventGfx = getGfx({ type: 'bpmn:StartEvent' });
 
       // when
-      selection.select([ startEvent_1, startEvent_2, startEvent_3 ]);
+      selection.select([ startEvent1, startEvent2, startEvent3 ]);
 
-      moveShape(startEvent_1, subProcess_2, { x: 350, y: 120 });
+      moveShape(startEvent1, subProcess2, { x: 350, y: 120 });
 
       var context = dragging.context().data.context;
 
@@ -289,18 +299,23 @@ describe('features/replace-preview', function() {
     inject(function(move, dragging, elementRegistry, elementFactory, selection, modeling) {
 
       // given
-      var startEvent_1 = elementRegistry.get('StartEvent_1'),
-          subProcess_3 = elementRegistry.get('SubProcess_3');
+      var startEvent1 = elementRegistry.get('StartEvent.1'),
+          subProcess3 = elementRegistry.get('SubProcess_3');
 
       var intermediateEvent = elementFactory.createShape({ type: 'bpmn:IntermediateThrowEvent' });
 
-      var boundaryEvent = modeling.createShape(intermediateEvent, { x: 550, y: 180 }, subProcess_3, true);
+      var boundaryEvent = modeling.createShape(
+        intermediateEvent,
+        { x: 550, y: 180 },
+        subProcess3,
+        true
+      );
 
       // when
-      selection.select([ startEvent_1 ]);
+      selection.select([ startEvent1 ]);
 
-      moveShape(boundaryEvent, subProcess_3, { x: 580, y: 210 });
-      moveShape(boundaryEvent, subProcess_3, { x: 580, y: 180 });
+      moveShape(boundaryEvent, subProcess3, { x: 580, y: 210 });
+      moveShape(boundaryEvent, subProcess3, { x: 580, y: 180 });
 
       // then
       // expect not to throw TypeError: Cannot read property 'oldElementId' of undefined

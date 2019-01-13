@@ -1,10 +1,10 @@
-'use strict';
+import {
+  assign
+} from 'min-dash';
 
-var assign = require('lodash/object/assign');
-
-var EventBus = require('diagram-js/lib/core/EventBus');
-
-var TestHelper = require('../TestHelper');
+import {
+  getBpmnJS
+} from 'test/TestHelper';
 
 
 /**
@@ -17,9 +17,9 @@ var TestHelper = require('../TestHelper');
  *
  * @return {Event} event, scoped to the given canvas
  */
-function createCanvasEvent(position, data) {
+export function createCanvasEvent(position, data) {
 
-  return TestHelper.getBpmnJS().invoke(function(canvas) {
+  return getBpmnJS().invoke(function(canvas) {
 
     var target = canvas._svg;
 
@@ -34,26 +34,20 @@ function createCanvasEvent(position, data) {
   });
 }
 
-module.exports.createCanvasEvent = createCanvasEvent;
 
+export function createEvent(target, position, data) {
 
-function createEvent(target, position, data) {
+  return getBpmnJS().invoke(function(eventBus) {
+    data = assign({
+      target: target,
+      x: position.x,
+      y: position.y,
+      clientX: position.x,
+      clientY: position.y,
+      offsetX: position.x,
+      offsetY: position.y
+    }, data || {});
 
-  data = assign({
-    target: target,
-    x: position.x,
-    y: position.y,
-    clientX: position.x,
-    clientY: position.y,
-    offsetX: position.x,
-    offsetY: position.y
-  }, data || {});
-
-  var event = new EventBus.Event();
-
-  event.init(data);
-
-  return event;
+    return eventBus.createEvent(data);
+  });
 }
-
-module.exports.createEvent = createEvent;

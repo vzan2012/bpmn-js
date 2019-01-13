@@ -1,14 +1,13 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-var autoPlaceModule = require('lib/features/auto-place'),
-    modelingModule = require('lib/features/modeling'),
-    selectionModule = require('diagram-js/lib/features/selection'),
-    labelEditingModule = require('lib/features/label-editing'),
-    coreModule = require('lib/core');
+import autoPlaceModule from 'lib/features/auto-place';
+import modelingModule from 'lib/features/modeling';
+import selectionModule from 'diagram-js/lib/features/selection';
+import labelEditingModule from 'lib/features/label-editing';
+import coreModule from 'lib/core';
 
 
 describe('features/auto-place', function() {
@@ -217,6 +216,11 @@ describe('features/auto-place', function() {
       expectedBounds: { x: 242, y: -27, width: 100, height: 80 }
     }));
 
+    it('should place top right of BOUNDARY_TOP_RIGHT without infinite loop', autoPlace({
+      element: 'bpmn:Task',
+      behind: 'BOUNDARY_TOP_RIGHT',
+      expectedBounds: { x: 473, y: -27, width: 100, height: 80 }
+    }));
 
     it('should place top right of BOUNDARY_SUBPROCESS_TOP', autoPlace({
       element: 'bpmn:Task',

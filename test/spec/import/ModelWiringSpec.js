@@ -1,11 +1,9 @@
-'use strict';
+import {
+  bootstrapViewer,
+  inject
+} from 'test/TestHelper';
 
-require('../../TestHelper');
-
-/* global bootstrapViewer, inject */
-
-
-var is = require('lib/util/ModelUtil').is;
+import { is } from 'lib/util/ModelUtil';
 
 
 describe('import - model wiring', function() {
@@ -42,7 +40,7 @@ describe('import - model wiring', function() {
       expect(startEventShape.type).to.equal('bpmn:StartEvent');
       expect(startEventShape.parent).to.eql(subProcessShape);
 
-      expect(subProcessShape.children.length).to.equal(5);
+      expect(subProcessShape.children.length).to.equal(4);
     }));
 
 

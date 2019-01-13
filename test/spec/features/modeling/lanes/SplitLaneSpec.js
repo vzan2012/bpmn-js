@@ -1,13 +1,12 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../../TestHelper');
+var pick = require('min-dash').pick;
 
-/* global bootstrapModeler, inject */
-
-var pick = require('lodash/object/pick');
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 var getChildLanes = require('lib/features/modeling/util/LaneUtil').getChildLanes;
 

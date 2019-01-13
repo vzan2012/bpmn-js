@@ -1,12 +1,10 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - update properties', function() {
@@ -167,22 +165,6 @@ describe('features/modeling - update properties', function() {
     ));
 
 
-    it('setting name', inject(function(elementRegistry, modeling) {
-
-      // given
-      var flowConnection = elementRegistry.get('SequenceFlow_4');
-
-      // when
-      modeling.updateProperties(flowConnection, { name: 'FOO BAR' });
-
-      // then
-      expect(flowConnection.businessObject.name).to.equal('FOO BAR');
-
-      // flow label is now shown
-      expect(flowConnection.label.hidden).to.be.false;
-    }));
-
-
     it('updating name', inject(function(elementRegistry, modeling) {
 
       // given
@@ -209,9 +191,6 @@ describe('features/modeling - update properties', function() {
 
       // then
       expect(flowConnection.businessObject.name).not.to.exist;
-
-      // flow label is now hidden
-      expect(flowConnection.label.hidden).to.be.true;
     }));
 
 

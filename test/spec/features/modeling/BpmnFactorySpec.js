@@ -1,12 +1,10 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features - bpmn-factory', function() {
@@ -41,6 +39,13 @@ describe('features - bpmn-factory', function() {
 
       expect(plane.$type).to.equal('bpmndi:BPMNPlane');
       expect(plane.id).to.match(/^BPMNPlane_/g);
+    }));
+
+
+    it('should assign bpmn:LaneSet id', inject(function(bpmnFactory) {
+      var set = bpmnFactory.create('bpmn:LaneSet');
+
+      expect(set.id).to.exist;
     }));
 
   });

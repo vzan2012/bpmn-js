@@ -1,12 +1,10 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../TestHelper');
-
-/* global bootstrapModeler, inject */
-
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('features/modeling - move shape', function() {
@@ -197,7 +195,7 @@ describe('features/modeling - move shape', function() {
   });
 
 
-  describe('label suport', function() {
+  describe('label support', function() {
 
     it('should move label with shape', inject(function(elementRegistry, modeling) {
 
@@ -212,12 +210,12 @@ describe('features/modeling - move shape', function() {
       };
 
       // when
-      modeling.moveElements([ startEventElement ], { x: 40, y: -80 });
+      modeling.moveElements([ startEventElement ], { x: 40, y: 80 });
 
       // then
       expect(label).to.have.position({
         x: labelPosition.x + 40,
-        y: labelPosition.y - 80
+        y: labelPosition.y + 80
       });
     }));
 
@@ -307,7 +305,7 @@ describe('features/modeling - move shape', function() {
           y: label.y
         };
 
-        modeling.moveElements([ startEventElement ], { x: 40, y: -80 });
+        modeling.moveElements([ startEventElement ], { x: 40, y: 80 });
         commandStack.undo();
 
         // when
@@ -316,7 +314,7 @@ describe('features/modeling - move shape', function() {
         // then
         expect(label).to.have.position({
           x: labelPosition.x + 40,
-          y: labelPosition.y - 80
+          y: labelPosition.y + 80
         });
       }));
 

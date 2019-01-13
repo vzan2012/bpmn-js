@@ -1,19 +1,27 @@
-'use strict';
+import TestContainer from 'mocha-test-container-support';
 
-var TestContainer = require('mocha-test-container-support');
+import Diagram from 'diagram-js/lib/Diagram';
+import BpmnModdle from 'bpmn-moddle';
 
-var Diagram = require('diagram-js/lib/Diagram'),
-    BpmnModdle = require('bpmn-moddle'),
-    importBpmnDiagram = require('lib/import/Importer').importBpmnDiagram,
-    Viewer = require('lib/Viewer');
+import {
+  importBpmnDiagram
+} from 'lib/import/Importer';
 
-var domMatches = require('min-dom/lib/matches');
+import Viewer from 'lib/Viewer';
 
-var getChildrenGfx = require('diagram-js/lib/util/GraphicsUtil').getChildren;
+import {
+  matches as domMatches
+} from 'min-dom';
 
-var find = require('lodash/collection/find');
+import {
+  getChildren as getChildrenGfx
+} from 'diagram-js/lib/util/GraphicsUtil';
 
-var is = require('lib/util/ModelUtil').is;
+import {
+  find
+} from 'min-dash';
+
+import { is } from 'lib/util/ModelUtil';
 
 
 describe('import - Importer', function() {
@@ -303,6 +311,69 @@ describe('import - Importer', function() {
           { type: 'add', semantic: 'BoundaryEvent_1', di: '_BPMNShape_BoundaryEvent_2', diagramElement: 'BoundaryEvent_1' },
           { type: 'add', semantic: 'SequenceFlow_1', di: 'BPMNEdge_SequenceFlow_1', diagramElement: 'SequenceFlow_1' }
         ]);
+
+        done(err);
+      });
+    });
+
+
+    it('should import data store as child of participant', function(done) {
+
+      // given
+      var xml = require('../../fixtures/bpmn/import/data-store.inside-participant.bpmn');
+
+      var events = {};
+
+      // log events
+      diagram.get('eventBus').on('bpmnElement.added', function(e) {
+
+        events[e.element.id] = e.element;
+      });
+
+      runImport(diagram, xml, function(err, warnings) {
+        expect(events.DataStoreReference.parent).to.equal(events.Participant);
+
+        done(err);
+      });
+
+    });
+
+    it('should import data store in particpant as child of collaboration', function(done) {
+
+      // given
+      var xml = require('../../fixtures/bpmn/import/data-store.outside-participant.participant.bpmn');
+
+      var events = {};
+
+      // log events
+      diagram.get('eventBus').on('bpmnElement.added', function(e) {
+
+        events[e.element.id] = e.element;
+      });
+
+      runImport(diagram, xml, function(err, warnings) {
+        expect(events.DataStoreReference.parent).to.equal(events.Collaboration);
+
+        done(err);
+      });
+    });
+
+
+    it('should import data store in subprocess as child of collaboration', function(done) {
+
+      // given
+      var xml = require('../../fixtures/bpmn/import/data-store.outside-participant.subprocess.bpmn');
+
+      var events = {};
+
+      // log events
+      diagram.get('eventBus').on('bpmnElement.added', function(e) {
+
+        events[e.element.id] = e.element;
+      });
+
+      runImport(diagram, xml, function(err, warnings) {
+        expect(events.DataStoreReference.parent).to.equal(events.Collaboration);
 
         done(err);
       });

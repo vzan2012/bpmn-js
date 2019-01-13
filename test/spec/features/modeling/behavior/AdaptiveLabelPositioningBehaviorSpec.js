@@ -1,13 +1,14 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../../TestHelper');
+import {
+  getOrientation
+} from 'diagram-js/lib/layout/LayoutUtil';
 
-/* global bootstrapModeler, inject */
-
-var getOrientation = require('diagram-js/lib/layout/LayoutUtil').getOrientation;
-
-var modelingModule = require('lib/features/modeling'),
-    coreModule = require('lib/core');
+import modelingModule from 'lib/features/modeling';
+import coreModule from 'lib/core';
 
 
 describe('modeling/behavior - AdaptiveLabelPositioningBehavior', function() {
@@ -199,6 +200,27 @@ describe('modeling/behavior - AdaptiveLabelPositioningBehavior', function() {
   });
 
 
+  describe('on source move / layout', function() {
+
+    it('should move label from BOTTOM to TOP', inject(
+      function(elementRegistry, modeling) {
+
+        // given
+        var source = elementRegistry.get('LabelTop'),
+            target = elementRegistry.get('LabelBottom_3');
+
+        // when
+        modeling.moveElements([ target ], { x: 20, y: -300 });
+
+        // then
+        expectLabelOrientation(source, 'bottom');
+        expectLabelOrientation(target, 'top');
+      }
+    ));
+
+  });
+
+
   describe('on waypoints update', function() {
 
     it('should move label from RIGHT to TOP', inject(function(elementRegistry, modeling) {
@@ -237,5 +259,22 @@ describe('modeling/behavior - AdaptiveLabelPositioningBehavior', function() {
 
   });
 
+
+  describe('on label creation', function() {
+
+    it('should create label at TOP', inject(
+      function(elementRegistry, modeling) {
+
+        // given
+        var element = elementRegistry.get('NoLabel');
+
+        // when
+        modeling.updateProperties(element, { name: 'FOO BAR' });
+
+        // then
+        expectLabelOrientation(element, 'top');
+      }
+    ));
+  });
 
 });

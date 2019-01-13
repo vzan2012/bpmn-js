@@ -1,12 +1,13 @@
-'use strict';
+import {
+  bootstrapModeler,
+  inject
+} from 'test/TestHelper';
 
-require('../../../../TestHelper');
+import {
+  find
+} from 'min-dash';
 
-/* global inject, bootstrapModeler */
-
-var find = require('lodash/collection/find');
-
-var modelingModule = require('lib/features/modeling');
+import modelingModule from 'lib/features/modeling';
 
 
 describe('modeling/behavior - fix DataInputAssociation#targetRef', function() {
@@ -52,8 +53,8 @@ describe('modeling/behavior - fix DataInputAssociation#targetRef', function() {
     commandStack.undo();
 
     // then
-    expect(dataInputAssociation.targetRef).to.not.exist;
-    expect(getTargetRefProp(taskShape)).to.not.exist;
+    expect(dataInputAssociation.targetRef).not.to.exist;
+    expect(getTargetRefProp(taskShape)).not.to.exist;
   }));
 
 
@@ -110,7 +111,7 @@ describe('modeling/behavior - fix DataInputAssociation#targetRef', function() {
     // then
     expect(getTargetRefProp(oldTarget)).not.to.exist;
 
-    expect(dataInputAssociation.targetRef).to.not.exist;
+    expect(dataInputAssociation.targetRef).not.to.exist;
   }));
 
 
