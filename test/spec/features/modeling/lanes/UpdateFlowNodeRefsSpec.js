@@ -5,15 +5,24 @@ import {
 
 import modelingModule from 'lib/features/modeling';
 import coreModule from 'lib/core';
+import copyPasteModule from 'lib/features/copy-paste';
+
+import {
+  find
+} from 'min-dash';
 
 
 describe('features/modeling - lanes - flowNodeRefs', function() {
 
-  var diagramXML = require('./flowNodeRefs.bpmn');
+  var diagramXML = require('./UpdateFlowNodeRefs.basic.bpmn');
 
-  var testModules = [ coreModule, modelingModule ];
-
-  beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+  beforeEach(bootstrapModeler(diagramXML, {
+    modules: [
+      coreModule,
+      modelingModule,
+      copyPasteModule
+    ]
+  }));
 
 
   describe('should unwire during move', function() {
@@ -200,7 +209,7 @@ describe('features/modeling - lanes - flowNodeRefs', function() {
           parentLane = parentLaneShape.businessObject;
 
       // when
-      taskShape = modeling.createShape({ type: 'bpmn:Task' }, { x: 200, y: 300 }, parentLaneShape);
+      taskShape = modeling.createShape({ type: 'bpmn:Task' }, { x: 500, y: 150 }, parentLaneShape);
       task = taskShape.businessObject;
 
       // then
@@ -215,7 +224,7 @@ describe('features/modeling - lanes - flowNodeRefs', function() {
           parentLaneShape = elementRegistry.get('Lane'),
           parentLane = parentLaneShape.businessObject;
 
-      taskShape = modeling.createShape({ type: 'bpmn:Task' }, { x: 200, y: 300 }, parentLaneShape);
+      taskShape = modeling.createShape({ type: 'bpmn:Task' }, { x: 500, y: 150 }, parentLaneShape);
       task = taskShape.businessObject;
 
       // when
@@ -233,7 +242,7 @@ describe('features/modeling - lanes - flowNodeRefs', function() {
           parentLaneShape = elementRegistry.get('Lane'),
           parentLane = parentLaneShape.businessObject;
 
-      taskShape = modeling.createShape({ type: 'bpmn:Task' }, { x: 200, y: 300 }, parentLaneShape);
+      taskShape = modeling.createShape({ type: 'bpmn:Task' }, { x: 500, y: 150 }, parentLaneShape);
       task = taskShape.businessObject;
 
       // when
@@ -265,5 +274,69 @@ describe('features/modeling - lanes - flowNodeRefs', function() {
     expect(sourceLane.flowNodeRef).not.to.contain(task);
     expect(sourceLane.flowNodeRef).not.to.contain(event);
   }));
+
+
+  it('should not create duplicate refs on attaching / detaching', inject(function(elementRegistry, modeling) {
+
+    // given
+    var eventID = 'IntermediateThrowEvent',
+        throwEvent = elementRegistry.get(eventID),
+        task1 = elementRegistry.get('Task_C'),
+        task2 = elementRegistry.get('Task_D'),
+        lane1 = elementRegistry.get('Participant_C_Lane_1').businessObject,
+        lane2 = elementRegistry.get('Participant_C_Lane_2').businessObject;
+
+    // when
+    modeling.moveElements([ throwEvent ], { x: -280, y: 30 }, task1, { attach: true });
+
+    var boundaryEvent = elementRegistry.get(eventID);
+
+    modeling.moveElements([ boundaryEvent ], { x: 0, y: 150 }, task2, { attach: true });
+
+    // then
+    expect(lane1.flowNodeRef).not.to.contain(boundaryEvent.businessObject);
+    expect(lane2.flowNodeRef).to.contain(boundaryEvent.businessObject);
+    expect(lane1.flowNodeRef).to.have.length(1);
+    expect(lane2.flowNodeRef).to.have.length(2);
+  }));
+
+
+  describe('should wire once during paste', function() {
+
+    it('execute', inject(function(canvas, eventBus, elementRegistry, copyPaste) {
+
+      // given
+      var participant = elementRegistry.get('Participant_D');
+
+      var updateRefsSpy = sinon.spy();
+
+      eventBus.on('commandStack.lane.updateRefs.execute', updateRefsSpy);
+
+      // when
+      copyPaste.copy(participant);
+
+      var pastedElements = copyPaste.paste({
+        element: canvas.getRootElement(),
+        point: {
+          x: 350,
+          y: 150
+        }
+      });
+
+      var pastedLane = find(pastedElements, function(e) {
+        return e.businessObject.name === 'Lane_D_1_1';
+      });
+
+      var pastedTask = find(pastedElements, function(e) {
+        return e.businessObject.name === 'Task_E';
+      });
+
+      // then
+      expect(updateRefsSpy).to.have.been.calledOnce;
+
+      expect(pastedLane.businessObject.flowNodeRef).to.include(pastedTask.businessObject);
+    }));
+
+  });
 
 });

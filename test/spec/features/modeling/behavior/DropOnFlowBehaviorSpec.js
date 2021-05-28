@@ -17,6 +17,8 @@ import {
   createCanvasEvent as canvasEvent
 } from '../../../../util/MockEvents';
 
+import { getMid } from 'diagram-js/lib/layout/LayoutUtil';
+
 
 describe('modeling/behavior - drop on connection', function() {
 
@@ -60,7 +62,6 @@ describe('modeling/behavior - drop on connection', function() {
           );
 
           // then
-
           var targetConnection = newShape.outgoing[0];
 
           // new incoming connection
@@ -169,6 +170,7 @@ describe('modeling/behavior - drop on connection', function() {
 
       it('should connect start -> target -> end (with bendpointBefore inside bbox)', inject(
         function(modeling, elementRegistry, elementFactory) {
+
           // given
           var taskShape = elementFactory.createShape({ type: 'bpmn:Task' }),
               sequenceFlow = elementRegistry.get('SequenceFlow_1'),
@@ -214,6 +216,62 @@ describe('modeling/behavior - drop on connection', function() {
         }
       ));
 
+
+      it('should handle shape created with bounds', inject(
+        function(elementFactory, elementRegistry, modeling) {
+
+          // given
+          var intermediateThrowEvent = elementFactory.createShape({
+            type: 'bpmn:IntermediateThrowEvent'
+          });
+
+          var startEvent = elementRegistry.get('StartEvent'),
+              sequenceFlow = elementRegistry.get('SequenceFlow_1'),
+              task = elementRegistry.get('Task_1');
+
+          var originalWaypoints = sequenceFlow.waypoints;
+
+          var dropBounds = { x: 322, y: 102, width: 36, height: 36 }; // first bendpoint
+
+          // when
+          var newShape = modeling.createShape(
+            intermediateThrowEvent,
+            dropBounds,
+            sequenceFlow
+          );
+
+          // then
+          var targetConnection = newShape.outgoing[0];
+
+          // new incoming connection
+          expect(newShape.incoming.length).to.equal(1);
+          expect(newShape.incoming[0]).to.eql(sequenceFlow);
+
+          // new outgoing connection
+          expect(newShape.outgoing.length).to.equal(1);
+          expect(targetConnection).to.exist;
+          expect(targetConnection.type).to.equal('bpmn:SequenceFlow');
+
+          expect(startEvent.outgoing[0]).to.equal(newShape.incoming[0]);
+          expect(task.incoming[1]).to.equal(newShape.outgoing[0]);
+
+          // split target at insertion point
+          expect(sequenceFlow).to.have.waypoints(flatten([
+            originalWaypoints.slice(0, 1),
+            { x: 322, y: 120 }
+          ]));
+
+          expect(sequenceFlow).to.have.endDocking(getMid(dropBounds));
+
+          expect(targetConnection).to.have.waypoints(flatten([
+            { x: 340, y: 138 },
+            originalWaypoints.slice(2)
+          ]));
+
+          expect(targetConnection).to.have.startDocking(getMid(dropBounds));
+        }
+      ));
+
     });
 
 
@@ -222,6 +280,7 @@ describe('modeling/behavior - drop on connection', function() {
       beforeEach(inject(function(dragging) {
         dragging.setOptions({ manual: true });
       }));
+
 
       it('should connect start -> target -> end', inject(
         function(dragging, move, elementRegistry, selection) {
@@ -246,7 +305,7 @@ describe('modeling/behavior - drop on connection', function() {
             gfx: sequenceFlowGfx
           });
 
-          dragging.move(canvasEvent({ x: 150, y: 0 }));
+          dragging.move(canvasEvent({ x: 149, y: 0 }));
 
           dragging.end();
 
@@ -268,17 +327,17 @@ describe('modeling/behavior - drop on connection', function() {
           // split target at insertion point
           expect(sequenceFlow).to.have.waypoints(flatten([
             originalWaypoints.slice(0, 2),
-            { x: 341, y: 192 }
+            { x: 340, y: 192 }
           ]));
 
-          expect(sequenceFlow).to.have.endDocking({ x: 341, y: 210 });
+          expect(sequenceFlow).to.have.endDocking({ x: 340, y: 210 });
 
           expect(targetConnection).to.have.waypoints(flatten([
-            { x: 341, y: 228 },
+            { x: 340, y: 228 },
             originalWaypoints.slice(2)
           ]));
 
-          expect(targetConnection).to.have.startDocking({ x: 341, y: 210 });
+          expect(targetConnection).to.have.startDocking({ x: 340, y: 210 });
         }
       ));
 
@@ -307,7 +366,7 @@ describe('modeling/behavior - drop on connection', function() {
             gfx: rootElementGfx
           });
 
-          dragging.move(canvasEvent({ x: 150, y: 0 }));
+          dragging.move(canvasEvent({ x: 149, y: 0 }));
           dragging.end();
 
           // then
@@ -328,23 +387,24 @@ describe('modeling/behavior - drop on connection', function() {
           // split target at insertion point
           expect(sequenceFlow).to.have.waypoints(flatten([
             originalWaypoints.slice(0, 2),
-            { x: 341, y: 192 }
+            { x: 340, y: 192 }
           ]));
 
-          expect(sequenceFlow).to.have.endDocking({ x: 341, y: 210 });
+          expect(sequenceFlow).to.have.endDocking({ x: 340, y: 210 });
 
           expect(targetConnection).to.have.waypoints(flatten([
-            { x: 341, y: 228 },
+            { x: 340, y: 228 },
             originalWaypoints.slice(2)
           ]));
 
-          expect(targetConnection).to.have.startDocking({ x: 341, y: 210 });
+          expect(targetConnection).to.have.startDocking({ x: 340, y: 210 });
         }
       ));
 
 
       it('should connect start -> target -> end (with bendpointBefore inside bbox)', inject(
         function(elementRegistry, selection, move, dragging) {
+
           // given
           var task3 = elementRegistry.get('Task_3'),
               sequenceFlow = elementRegistry.get('SequenceFlow_1'),
@@ -361,23 +421,24 @@ describe('modeling/behavior - drop on connection', function() {
             gfx: sequenceFlowGfx
           });
 
-          dragging.move(canvasEvent({ x: 150, y: -130 }));
+          dragging.move(canvasEvent({ x: 149, y: -130 }));
           dragging.end();
 
           // then
           // split target but don't keep insertion point
           expect(sequenceFlow).to.have.waypoints(flatten([
             originalWaypoints.slice(0, 2),
-            { x: 341, y: 241 }
+            { x: 340, y: 241 }
           ]));
 
-          expect(sequenceFlow).to.have.endDocking({ x: 341, y: 281 });
+          expect(sequenceFlow).to.have.endDocking({ x: 340, y: 281 });
         }
       ));
 
 
       it('should connect start -> target -> end (with bendpointAfter inside bbox)', inject(
         function(elementRegistry, selection, move, dragging) {
+
           // given
           var task3 = elementRegistry.get('Task_3'),
               sequenceFlow = elementRegistry.get('SequenceFlow_1'),
@@ -405,6 +466,36 @@ describe('modeling/behavior - drop on connection', function() {
           ]));
 
           expect(sequenceFlow).to.have.endDocking({ x: 340, y: 299 });
+        }
+      ));
+
+
+      it('should connect start -> target -> end (keeping target outgoing flows)', inject(
+        function(elementRegistry, selection, move, dragging) {
+
+          // given
+          var gateway_C = elementRegistry.get('Gateway_C'),
+              task_B = elementRegistry.get('task_B'),
+              sequenceFlow = elementRegistry.get('SequenceFlow_D'),
+              sequenceFlowGfx = elementRegistry.getGraphics(sequenceFlow);
+
+          // when
+          selection.select(gateway_C);
+
+          move.start(canvasEvent({ x: 0, y: 0 }), gateway_C);
+
+          dragging.hover({
+            element: sequenceFlow,
+            gfx: sequenceFlowGfx
+          });
+
+          dragging.move(canvasEvent({ x: 160, y: -130 }));
+          dragging.end();
+
+          // then
+          expect(gateway_C.outgoing).to.have.length(2);
+
+          expect(gateway_C.outgoing[0].gateway_C).to.eql(task_B);
         }
       ));
 

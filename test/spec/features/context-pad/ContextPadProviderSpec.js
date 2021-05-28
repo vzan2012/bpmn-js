@@ -220,7 +220,7 @@ describe('features - context-pad', function() {
         'append.receive-task',
         'append.message-intermediate-event',
         'append.timer-intermediate-event',
-        'append.condtion-intermediate-event',
+        'append.condition-intermediate-event',
         'append.signal-intermediate-event',
         'append.text-annotation',
         '!append.task'
@@ -265,7 +265,7 @@ describe('features - context-pad', function() {
       expectContextPadEntries('DataStoreReference', [
         'connect',
         'append.text-annotation',
-        '!replace',
+        'replace',
         '!append.end-event'
       ]);
     }));
@@ -276,8 +276,29 @@ describe('features - context-pad', function() {
       expectContextPadEntries('DataObjectReference', [
         'connect',
         'append.text-annotation',
-        '!replace',
+        'replace',
         '!append.end-event'
+      ]);
+    }));
+
+
+    it('should provide Group entries', inject(function() {
+
+      expectContextPadEntries('Group_1', [
+        'append.text-annotation',
+        'delete',
+        '!replace'
+      ]);
+    }));
+
+
+    it('should provide Text Annotation entries', inject(function() {
+
+      expectContextPadEntries('TextAnnotation_1', [
+        'connect',
+        'delete',
+        '!replace',
+        '!append.text-annotation'
       ]);
     }));
 
@@ -469,20 +490,21 @@ describe('features - context-pad', function() {
           // then
           var replaceMenu = domQueryAll('[data-id$="-boundary"]', popupMenu._current.container);
           expect(replaceMenu).to.exist;
-          expect(replaceMenu.length).to.eql(13);
+          expect(replaceMenu.length).to.eql(12);
         }
       ));
 
 
       it('should not open non-existing replace menu', inject(
         function(create, dragging, canvas, elementFactory) {
+
           // given
           var rootShape = canvas.getRootElement(),
-              dataObject = elementFactory.createShape({ type: 'bpmn:DataObjectReference' }),
+              group = elementFactory.createShape({ type: 'bpmn:Group' }),
               replaceMenu;
 
           // when
-          create.start(canvasEvent({ x: 0, y: 0 }), dataObject);
+          create.start(canvasEvent({ x: 0, y: 0 }), group);
 
           dragging.move(canvasEvent({ x: 50, y: 50 }));
           dragging.hover({ element: rootShape });
@@ -493,6 +515,31 @@ describe('features - context-pad', function() {
           replaceMenu = domQuery('.bpmn-replace', container);
 
           // then
+          expect(replaceMenu).not.to.exist;
+        }
+      ));
+
+
+      it('should NOT open replace menu if context pad NOT open', inject(
+        function(canvas, create, dragging, elementFactory) {
+
+          // given
+          var rootShape = canvas.getRootElement(),
+              startEvent = elementFactory.createShape({ type: 'bpmn:StartEvent' }),
+              task = elementFactory.createShape({ type: 'bpmn:Task' });
+
+          // when
+          create.start(canvasEvent({ x: 0, y: 0 }), [ startEvent, task ]);
+
+          dragging.move(canvasEvent({ x: 50, y: 50 }));
+          dragging.hover({ element: rootShape });
+          dragging.move(canvasEvent({ x: 75, y: 75 }));
+
+          dragging.end(canvasEvent({ x: 75, y: 75 }, { ctrlKey: true, metaKey: true }));
+
+          // then
+          var replaceMenu = domQuery('.bpmn-replace', container);
+
           expect(replaceMenu).not.to.exist;
         }
       ));

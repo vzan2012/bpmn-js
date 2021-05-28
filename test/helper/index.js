@@ -39,16 +39,26 @@ import {
 import TestContainer from 'mocha-test-container-support';
 
 import Modeler from '../../lib/Modeler';
+import NavigatedViewer from '../../lib/NavigatedViewer';
 import Viewer from '../../lib/Viewer';
 
 var OPTIONS, BPMN_JS;
 
 import translationModule from './TranslationCollector';
 
+export var collectTranslations = window.__env__ && window.__env__.COLLECT_TRANSLATIONS;
+
+// inject logging translation module into default modules
+if (collectTranslations) {
+
+  [ Modeler, Viewer, NavigatedViewer ].forEach(function(constructor) {
+    constructor.prototype._modules.push(translationModule);
+  });
+}
 
 export function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
 
-  return function(done) {
+  return function() {
     var testContainer;
 
     // Make sure the test container is an optional dependency and we fall back
@@ -57,14 +67,15 @@ export function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
     // This is needed if other libraries rely on this helper for testing
     // while not adding the mocha-test-container-support as a dependency.
     try {
+
       // 'this' is the current test context
       testContainer = TestContainer.get(this);
     } catch (e) {
       testContainer = document.createElement('div');
+      testContainer.classList.add('test-content-container');
+
       document.body.appendChild(testContainer);
     }
-
-    testContainer.classList.add('test-container');
 
     var _options = options,
         _locals = locals;
@@ -104,21 +115,24 @@ export function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
     }
 
     // used to extract translations used during tests
-    if (window.__env__ && window.__env__.TRANSLATIONS === 'enabled') {
+    if (collectTranslations) {
       _options.additionalModules = [].concat(
         _options.additionalModules || [],
         [ translationModule ]
       );
     }
 
-    // clean up old bpmn-js instance
-    if (BPMN_JS) {
-      BPMN_JS.destroy();
-    }
+    clearBpmnJS();
 
-    BPMN_JS = new BpmnJS(_options);
+    var instance = new BpmnJS(_options);
 
-    BPMN_JS.importXML(diagram, done);
+    setBpmnJS(instance);
+
+    return instance.importXML(diagram).then(function(result) {
+      return { error: null, warnings: result.warnings };
+    }).catch(function(err) {
+      return { error: err, warnings: err.warnings };
+    });
   };
 }
 
@@ -142,7 +156,7 @@ export function bootstrapBpmnJS(BpmnJS, diagram, options, locals) {
  *
  * });
  *
- * @param  {String} xml document to display
+ * @param  {string} xml document to display
  * @param  {Object} (options) optional options to be passed to the diagram upon instantiation
  * @param  {Object|Function} locals  the local overrides to be used by the diagram or a function that produces them
  * @return {Function}         a function to be passed to beforeEach
@@ -170,7 +184,7 @@ export function bootstrapModeler(diagram, options, locals) {
  *
  * });
  *
- * @param  {String} xml document to display
+ * @param  {string} xml document to display
  * @param  {Object} (options) optional options to be passed to the diagram upon instantiation
  * @param  {Object|Function} locals  the local overrides to be used by the diagram or a function that produces them
  * @return {Function}         a function to be passed to beforeEach
@@ -212,7 +226,7 @@ export function inject(fn) {
       );
     }
 
-    BPMN_JS.invoke(fn);
+    return BPMN_JS.invoke(fn);
   };
 }
 
@@ -226,6 +240,36 @@ export function getBpmnJS() {
   return BPMN_JS;
 }
 
+export function clearBpmnJS() {
+
+  // clean up old bpmn-js instance
+  if (BPMN_JS) {
+    BPMN_JS.destroy();
+
+    BPMN_JS = null;
+  }
+}
+
+// This method always resolves.
+// It helps us to do done(err) within the same block.
+export function createViewer(container, viewerInstance, xml, diagramId) {
+
+  clearBpmnJS();
+
+  var viewer = new viewerInstance({ container: container });
+
+  setBpmnJS(viewer);
+
+  return viewer.importXML(xml, diagramId).then(function(result) {
+    return { warnings: result.warnings, viewer: viewer };
+  }).catch(function(err) {
+    return { error: err, viewer: viewer, warnings: err.warnings };
+  });
+}
+
+export function setBpmnJS(instance) {
+  BPMN_JS = instance;
+}
 
 export function insertCSS(name, css) {
   if (document.querySelector('[data-css-file="' + name + '"]')) {

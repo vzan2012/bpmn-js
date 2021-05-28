@@ -5,9 +5,11 @@ import {
 
 import {
   expectCanConnect,
+  expectCanCopy,
+  expectCanCreate,
   expectCanDrop,
-  expectCanMove,
-  expectCanInsert
+  expectCanInsert,
+  expectCanMove
 } from './Helper';
 
 import modelingModule from 'lib/features/modeling';
@@ -17,6 +19,186 @@ import coreModule from 'lib/core';
 describe('features/modeling/rules - BpmnRules', function() {
 
   var testModules = [ coreModule, modelingModule ];
+
+
+  describe('create elements', function() {
+
+    var testXML = require('./BpmnRules.process.bpmn');
+
+    beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+    it('create tasks -> process', inject(function(elementFactory) {
+
+      // given
+      var task1 = elementFactory.createShape({ type: 'bpmn:Task' }),
+          task2 = elementFactory.createShape({ type: 'bpmn:Task' });
+
+      // then
+      expectCanCreate([ task1, task2 ], 'Process', true);
+    }));
+
+
+    it('create tasks -> task', inject(function(elementFactory) {
+
+      // given
+      var task1 = elementFactory.createShape({ type: 'bpmn:Task' }),
+          task2 = elementFactory.createShape({ type: 'bpmn:Task' });
+
+      // then
+      expectCanCreate([ task1, task2 ], 'Task', false);
+    }));
+
+
+    it('create tasks and sequence flow -> process', inject(function(elementFactory) {
+
+      // given
+      var task1 = elementFactory.createShape({ type: 'bpmn:Task' }),
+          task2 = elementFactory.createShape({ type: 'bpmn:Task' }),
+          sequenceFlow = elementFactory.createConnection({
+            type: 'bpmn:SequenceFlow',
+            source: task1,
+            target: task2
+          });
+
+      // then
+      expectCanCreate([ task1, task2, sequenceFlow ], 'Process', true);
+    }));
+
+
+    it('create tasks and message flow -> process', inject(function(elementFactory) {
+
+      // given
+      var task1 = elementFactory.createShape({ type: 'bpmn:Task' }),
+          task2 = elementFactory.createShape({ type: 'bpmn:Task' }),
+          sequenceFlow = elementFactory.createConnection({
+            type: 'bpmn:MessageFlow',
+            source: task1,
+            target: task2
+          });
+
+      // then
+      expectCanCreate([ task1, task2, sequenceFlow ], 'Process', false);
+    }));
+
+
+    it('create task and non-interrupting boundary event', inject(function(elementFactory) {
+
+      // given
+      var task = elementFactory.createShape({ type: 'bpmn:Task' }),
+          boundaryEvent = elementFactory.createShape({
+            type: 'bpmn:BoundaryEvent',
+            eventDefinitionType: 'bpmn:EscalationEventDefinition',
+            cancelActivity: false,
+            host: task
+          });
+
+      // then
+      expectCanCreate([ task, boundaryEvent ], 'Process', true);
+    }));
+
+
+    it('create task and interrupting boundary event', inject(function(elementFactory) {
+
+      // given
+      var task = elementFactory.createShape({ type: 'bpmn:Task' }),
+          boundaryEvent = elementFactory.createShape({
+            type: 'bpmn:BoundaryEvent',
+            eventDefinitionType: 'bpmn:EscalationEventDefinition',
+            host: task
+          });
+
+      // then
+      expectCanCreate([ task, boundaryEvent ], 'Process', true);
+    }));
+
+
+    it('can\'t create multiple elements on flow', inject(function(elementFactory) {
+
+      // given
+      var task1 = elementFactory.createShape({ type: 'bpmn:Task' }),
+          task2 = elementFactory.createShape({ type: 'bpmn:Task' });
+
+      // then
+      expectCanCreate([task1, task2], 'SequenceFlow', false);
+    }));
+
+  });
+
+
+  describe('copy elements', function() {
+
+    var testXML = require('./BpmnRules.process.bpmn');
+
+    beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+    it('copy task', inject(function(elementFactory) {
+
+      // given
+      var task1 = elementFactory.createShape({ type: 'bpmn:Task' });
+
+      // then
+      expectCanCopy(task1, [ task1 ], true);
+    }));
+
+
+    it('copy label', inject(function(elementFactory) {
+
+      // given
+      var task = elementFactory.createShape({ type: 'bpmn:Task' }),
+          label = elementFactory.createLabel({ labelTarget: task });
+
+      // then
+      // copying labels should always be allowed
+      expectCanCopy(label, [], true);
+    }));
+
+
+    it('copy lane with parent participant', inject(function(elementFactory) {
+
+      // given
+      var participant = elementFactory.createShape({ type: 'bpmn:Participant' }),
+          lane = elementFactory.createShape({ type: 'bpmn:Lane', parent: participant });
+
+      // then
+      expectCanCopy(lane, [ participant ], true);
+    }));
+
+
+    it('copy lane without parent participant', inject(function(elementFactory) {
+
+      // given
+      var participant = elementFactory.createShape({ type: 'bpmn:Participant' }),
+          lane = elementFactory.createShape({ type: 'bpmn:Lane', parent: participant });
+
+      // then
+      expectCanCopy(lane, [], false);
+    }));
+
+
+    it('copy boundary event with host', inject(function(elementFactory) {
+
+      // given
+      var task = elementFactory.createShape({ type: 'bpmn:Task' }),
+          boundaryEvent = elementFactory.createShape({ type: 'bpmn:BoundaryEvent', host: task });
+
+      // then
+      expectCanCopy(boundaryEvent, [ task ], true);
+    }));
+
+
+    it('copy boundary event without host', inject(function(elementFactory) {
+
+      // given
+      var task = elementFactory.createShape({ type: 'bpmn:Task' }),
+          boundaryEvent = elementFactory.createShape({ type: 'bpmn:BoundaryEvent', host: task });
+
+      // then
+      expectCanCopy(boundaryEvent, [ boundaryEvent ], true);
+    }));
+
+  });
 
 
   describe('on process diagram', function() {
@@ -126,7 +308,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('StartEvent_None', 'DataObjectReference', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataOutputAssociation' }
       });
     }));
@@ -137,7 +319,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('DataObjectReference', 'EndEvent_None', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataInputAssociation' }
       });
     }));
@@ -159,7 +341,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('Task', 'DataObjectReference', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataOutputAssociation' }
       });
     }));
@@ -170,7 +352,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('DataObjectReference', 'Task', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataInputAssociation' }
       });
     }));
@@ -181,7 +363,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('SubProcess', 'DataObjectReference', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataOutputAssociation' }
       });
     }));
@@ -192,7 +374,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('DataObjectReference', 'SubProcess', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataInputAssociation' }
       });
     }));
@@ -253,12 +435,34 @@ describe('features/modeling/rules - BpmnRules', function() {
     }));
 
 
+    it('connect Group -> TextAnnotation', inject(function() {
+
+      expectCanConnect('Group', 'TextAnnotation', {
+        sequenceFlow: false,
+        messageFlow: false,
+        association: true,
+        dataAssociation: false
+      });
+    }));
+
+
+    it('connect TextAnnotation -> Group', inject(function() {
+
+      expectCanConnect('TextAnnotation', 'Group', {
+        sequenceFlow: false,
+        messageFlow: false,
+        association: true,
+        dataAssociation: false
+      });
+    }));
+
+
     it('connect StartEvent_None -> DataStoreReference', inject(function() {
 
       expectCanConnect('StartEvent_None', 'DataStoreReference', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataOutputAssociation' }
       });
     }));
@@ -269,7 +473,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('DataStoreReference', 'EndEvent_None', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataInputAssociation' }
       });
     }));
@@ -291,7 +495,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('Task', 'DataStoreReference', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataOutputAssociation' }
       });
     }));
@@ -302,7 +506,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('DataStoreReference', 'Task', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataInputAssociation' }
       });
     }));
@@ -313,7 +517,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('SubProcess', 'DataStoreReference', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataOutputAssociation' }
       });
     }));
@@ -324,7 +528,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       expectCanConnect('DataStoreReference', 'SubProcess', {
         sequenceFlow: false,
         messageFlow: false,
-        association: false,
+        association: true,
         dataAssociation: { type: 'bpmn:DataInputAssociation' }
       });
     }));
@@ -464,142 +668,199 @@ describe('features/modeling/rules - BpmnRules', function() {
 
       expectCanConnect('Task_in_OtherProcess', 'BoundaryEvent_on_SubProcess', {
         sequenceFlow: false,
+        messageFlow: false,
+        association: false,
+        dataAssociation: false
+      });
+    }));
+
+
+    it('connect Task_in_OtherProcess -> MessageBoundaryEvent_onSubProcess', inject(function() {
+
+      expectCanConnect('Task_in_OtherProcess', 'MessageBoundaryEvent_onSubProcess', {
+        sequenceFlow: false,
         messageFlow: true,
         association: false,
         dataAssociation: false
       });
     }));
 
+
+    it('drop BoundaryEvent -> Task', function() {
+      expectCanDrop('BoundaryEvent_on_SubProcess', 'Task_in_OtherProcess', false);
+    });
   });
 
 
   describe('event based gateway', function() {
 
-    var testXML = require('./BpmnRules.eventBasedGateway.bpmn');
+    describe('EventBasedGateway -> EventBasedGateway targets', function() {
 
-    beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+      var testXML = require('./BpmnRules.eventBasedGatewayBasic.bpmn');
+
+      beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+      it('connect EventBasedGateway -> IntermediateCatchEvent_Message', inject(function() {
+
+        expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Message', {
+          sequenceFlow: true,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
 
 
-    it('connect EventBasedGateway -> IntermediateCatchEvent_Message', inject(function() {
+      it('connect EventBasedGateway -> IntermediateCatchEvent_Signal', inject(function() {
 
-      expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Message', {
-        sequenceFlow: true,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
+        expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Signal', {
+          sequenceFlow: true,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
+
+
+      it('connect EventBasedGateway -> IntermediateCatchEvent_Condition', inject(function() {
+
+        expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Condition', {
+          sequenceFlow: true,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
+
+
+      it('connect EventBasedGateway -> IntermediateCatchEvent_Timer', inject(function() {
+
+        expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Timer', {
+          sequenceFlow: true,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
+
+
+      it('connect EventBasedGateway -> IntermediateCatchEvent', inject(function() {
+
+        expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
+
+
+      it('connect EventBasedGateway -> IntermediateThrowEvent_Message', inject(function() {
+
+        expectCanConnect('EventBasedGateway', 'IntermediateThrowEvent_Message', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
+
+
+      it('connect EventBasedGateway -> ReceiveTask', inject(function() {
+
+        expectCanConnect('EventBasedGateway', 'ReceiveTask', {
+          sequenceFlow: true,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
+
+
+      it('connect EventBasedGateway -> Task_None', inject(function() {
+
+        expectCanConnect('EventBasedGateway', 'Task_None', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
+
+
+      it('connect EventBasedGateway -> ParallelGateway', inject(function() {
+
+        expectCanConnect('EventBasedGateway', 'ParallelGateway', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      }));
+
+    });
+
+    describe('Task -> EventBasedGateway target with incoming sequence flow', function() {
+
+      var testXML = require('./BpmnRules.eventBasedGatewayConfiguration.bpmn');
+
+      beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+      it('connect Task -> ReceiveTask', function() {
+
+        expectCanConnect('Task', 'ReceiveTask', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
       });
-    }));
 
 
-    it('connect EventBasedGateway -> IntermediateCatchEvent_Message', inject(function() {
+      it('connect Task -> IntermediateCatchEvent_Message', function() {
 
-      expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Message', {
-        sequenceFlow: true,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
+        expectCanConnect('Task', 'IntermediateCatchEvent_Message', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
       });
-    }));
 
 
-    it('connect EventBasedGateway -> IntermediateCatchEvent_Signal', inject(function() {
+      it('connect Task -> IntermediateCatchEvent_Timer', function() {
 
-      expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Signal', {
-        sequenceFlow: true,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
+        expectCanConnect('Task', 'IntermediateCatchEvent_Timer', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
       });
-    }));
 
 
-    it('connect EventBasedGateway -> IntermediateCatchEvent_Condition', inject(function() {
+      it('connect Task -> IntermediateCatchEvent_Condition', function() {
 
-      expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Condition', {
-        sequenceFlow: true,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
+        expectCanConnect('Task', 'IntermediateCatchEvent_Condition', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
       });
-    }));
 
 
-    it('connect EventBasedGateway -> IntermediateCatchEvent_Timer', inject(function() {
+      it('connect Task -> IntermediateCatchEvent_Signal', function() {
 
-      expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent_Timer', {
-        sequenceFlow: true,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
+        expectCanConnect('Task', 'IntermediateCatchEvent_Signal', {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
       });
-    }));
 
-
-    it('connect EventBasedGateway -> IntermediateCatchEvent', inject(function() {
-
-      expectCanConnect('EventBasedGateway', 'IntermediateCatchEvent', {
-        sequenceFlow: false,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
-      });
-    }));
-
-
-    it('connect EventBasedGateway -> IntermediateThrowEvent_Message', inject(function() {
-
-      expectCanConnect('EventBasedGateway', 'IntermediateThrowEvent_Message', {
-        sequenceFlow: false,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
-      });
-    }));
-
-
-    it('connect EventBasedGateway -> ReceiveTask', inject(function() {
-
-      expectCanConnect('EventBasedGateway', 'ReceiveTask', {
-        sequenceFlow: true,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
-      });
-    }));
-
-
-    it('connect EventBasedGateway -> Task_None', inject(function() {
-
-      expectCanConnect('EventBasedGateway', 'Task_None', {
-        sequenceFlow: false,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
-      });
-    }));
-
-
-    it('connect EventBasedGateway -> ParallelGateway', inject(function() {
-
-      expectCanConnect('EventBasedGateway', 'ParallelGateway', {
-        sequenceFlow: false,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
-      });
-    }));
-
-
-    it('connect EventBasedGateway -> ParallelGateway', inject(function() {
-
-      expectCanConnect('EventBasedGateway', 'ParallelGateway', {
-        sequenceFlow: false,
-        messageFlow: false,
-        association: false,
-        dataAssociation: false
-      });
-    }));
-
+    });
   });
 
 
@@ -961,6 +1222,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
 
       it('-> Collaboration', function() {
+
         // then
         expectCanDrop(label, 'Collaboration', true);
       });
@@ -979,6 +1241,117 @@ describe('features/modeling/rules - BpmnRules', function() {
       it('-> DataOutputAssociation', function() {
         expectCanDrop(label, 'DataOutputAssociation', true);
       });
+
+
+      it('-> Group', function() {
+        expectCanDrop(label, 'Group', true);
+      });
+
+    });
+
+
+    describe('create Group', function() {
+
+      var group;
+
+      beforeEach(inject(function(elementFactory) {
+        group = elementFactory.createShape({
+          type: 'bpmn:Group',
+          x: 413, y: 254
+        });
+      }));
+
+
+      it('-> MessageFlow', function() {
+        expectCanCreate(group, 'MessageFlow_labeled', true);
+      });
+
+
+      it('-> CollapsedParticipant', function() {
+        expectCanCreate(group, 'CollapsedParticipant', true);
+      });
+
+
+      it('-> Collaboration', function() {
+
+        // then
+        expectCanCreate(group, 'Collaboration', true);
+      });
+
+
+      it('-> Task_in_SubProcess', function() {
+        expectCanCreate(group, 'Task_in_SubProcess', true);
+      });
+
+
+      it('-> SequenceFlow', function() {
+        expectCanCreate(group, 'SequenceFlow', true);
+      });
+
+
+      it('-> DataOutputAssociation', function() {
+        expectCanCreate(group, 'DataOutputAssociation', true);
+      });
+
+
+      it('-> Group', function() {
+        expectCanCreate(group, 'Group', true);
+      });
+
+    });
+
+
+    describe('reject create on Group', function() {
+
+      it('DataStoreReference ->', inject(function(elementFactory) {
+        var dataStoreReference = elementFactory.createShape({
+          type: 'bpmn:DataStoreReference',
+          x: 413, y: 254
+        });
+
+        expectCanCreate(dataStoreReference, 'Group', false);
+      }));
+
+
+      it('Task ->', inject(function(elementFactory) {
+        var task = elementFactory.createShape({
+          type: 'bpmn:Task',
+          x: 413, y: 254
+        });
+
+        expectCanCreate(task, 'Group', false);
+      }));
+
+    });
+
+
+    describe('reject create on label', function() {
+
+      var label;
+
+      beforeEach(inject(function(elementRegistry) {
+        label = elementRegistry.get('MessageFlow_labeled').label;
+      }));
+
+
+      it('DataStoreReference ->', inject(function(elementFactory) {
+        var dataStoreReference = elementFactory.createShape({
+          type: 'bpmn:DataStoreReference',
+          x: 413, y: 254
+        });
+
+        expectCanCreate(dataStoreReference, label, false);
+      }));
+
+
+      it('Task ->', inject(function(elementFactory) {
+        var task = elementFactory.createShape({
+          type: 'bpmn:Task',
+          x: 413, y: 254
+        });
+
+        expectCanCreate(task, label, false);
+      }));
 
     });
 
@@ -1148,6 +1521,7 @@ describe('features/modeling/rules - BpmnRules', function() {
         move: true
       });
     }));
+
   });
 
 
@@ -1158,59 +1532,9 @@ describe('features/modeling/rules - BpmnRules', function() {
     beforeEach(bootstrapModeler(testXML, { modules: testModules }));
 
 
-    it('attach/move BoundaryEvent -> Process', inject(function(elementRegistry) {
-
-      // when
-      var boundaryEvent = elementRegistry.get('BoundaryEvent_1');
-
-      var elements = [ boundaryEvent ];
-
-      // then
-      expectCanMove(elements, 'Process_1', {
-        attach: false,
-        move: false
-      });
-
-    }));
-
-
-    it('attach/move BoundaryEvent -> Task', inject(function(elementRegistry) {
-
-      // when
-      var boundaryEvent = elementRegistry.get('BoundaryEvent_1');
-
-      var elements = [ boundaryEvent ];
-
-      // then
-      expectCanMove(elements, 'Task_2', {
-        attach: 'attach',
-        move: false
-      });
-
-    }));
-
-
-    it('attach/move BoundaryEvent label -> SubProcess', inject(
-      function(elementRegistry) {
-
-        // when
-        var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
-            label = boundaryEvent.label;
-
-        var elements = [ label ];
-
-        // then
-        expectCanMove(elements, 'SubProcess_1', {
-          attach: false,
-          move: true
-        });
-
-      }
-    ));
-
-
     it('attach/move multiple BoundaryEvents -> SubProcess_1', inject(
       function(elementRegistry) {
+
         // when
         var boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
             boundaryEvent2 = elementRegistry.get('BoundaryEvent_2');
@@ -1222,7 +1546,7 @@ describe('features/modeling/rules - BpmnRules', function() {
         // then
         expectCanMove(elements, 'SubProcess_1', {
           attach: false,
-          move: false
+          move: true
         });
       }
     ));
@@ -1230,6 +1554,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
     it('attach/move SubProcess, BoundaryEvent and label -> Process', inject(
       function(elementRegistry) {
+
         // when
         var subProcess = elementRegistry.get('SubProcess_1'),
             boundaryEvent = elementRegistry.get('BoundaryEvent_1'),
@@ -1242,11 +1567,75 @@ describe('features/modeling/rules - BpmnRules', function() {
         // then
         expectCanMove(elements, 'Process_1', {
           attach: false,
-          move: false
+          move: true
         });
       }
     ));
 
+  });
+
+
+  describe('event attaching', function() {
+
+    var testXML = require('./BpmnRules.attaching.bpmn');
+
+    beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+    it('should allow to attach attachable events to SubProcess', inject(function(elementRegistry) {
+
+      // given
+      var attachableEvents = [
+        'IntermediateThrowEvent',
+        'MessageCatchEvent',
+        'TimerCatchEvent',
+        'SignalCatchEvent',
+        'ConditionalCatchEvent',
+        'IntermediateThrowEventWithConnections'
+      ];
+
+      var events = attachableEvents.map(function(eventId) {
+        return elementRegistry.get(eventId);
+      });
+
+      // then
+      events.forEach(function(event) {
+
+        expectCanMove([ event ], 'SubProcess_1', {
+          attach: 'attach',
+          move: true
+        });
+      });
+    }));
+
+
+    it('should not allow to attach non-attachable events to SubProcess',
+      inject(function(elementRegistry) {
+
+        // given
+        var nonAttachableEvents = [
+          'MessageThrowEvent',
+          'EscalationThrowEvent',
+          'LinkCatchEvent',
+          'LinkThrowEvent',
+          'CompensateThrowEvent',
+          'SignalThrowEvent'
+        ];
+
+        var events = nonAttachableEvents.map(function(eventId) {
+          return elementRegistry.get(eventId);
+        });
+
+        // then
+        events.forEach(function(event) {
+
+          expectCanMove([ event ], 'SubProcess_1', {
+            attach: false,
+            move: true
+          });
+        });
+      })
+    );
   });
 
 
@@ -1377,6 +1766,7 @@ describe('features/modeling/rules - BpmnRules', function() {
       }
     ));
 
+
     it('not attach IntermediateEvent to ReceiveTask after EventBasedGateway', inject(
       function(canvas, modeling, elementFactory, bpmnRules) {
 
@@ -1412,6 +1802,7 @@ describe('features/modeling/rules - BpmnRules', function() {
         expect(canAttach).to.be.false;
       }
     ));
+
 
     it('create IntermediateEvent in SubProcess body', inject(
       function(elementFactory, elementRegistry, bpmnRules) {
@@ -1524,10 +1915,35 @@ describe('features/modeling/rules - BpmnRules', function() {
         );
 
         // then
-        expect(canAttach).to.be.false;
+        expect(canAttach).to.eql('attach');
         expect(canCreate).to.be.false;
       }
     ));
+
+  });
+
+
+  describe('groups', function() {
+
+    var testXML = require('./BpmnRules.groups.bpmn');
+
+    beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+    describe('should resize', function() {
+
+      it('Group', inject(function(bpmnRules, elementRegistry) {
+
+        // given
+        var groupElement = elementRegistry.get('Group_1');
+
+        // when
+        var canResize = bpmnRules.canResize(groupElement);
+
+        // then
+        expect(canResize).to.be.true;
+      }));
+
+    });
 
   });
 
@@ -1702,6 +2118,112 @@ describe('features/modeling/rules - BpmnRules', function() {
   });
 
 
+  describe('connect on create', function() {
+
+    var testXML = require('./BpmnRules.connectOnCreate.bpmn');
+
+    beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+    it('should handle target without parent', inject(function(elementFactory) {
+
+      // given
+      var types = [
+        'bpmn:Task',
+        'bpmn:StartEvent',
+        'bpmn:EndEvent',
+        'bpmn:Gateway'
+      ];
+
+      types.forEach(function(type) {
+
+        // when
+        var element = elementFactory.createShape({ type: type });
+
+        // then
+        expectCanConnect('Task_A', element, {
+          sequenceFlow: false,
+          messageFlow: false,
+          association: false,
+          dataAssociation: false
+        });
+      });
+
+    }));
+
+  });
+
+
+  describe('data input / output', function() {
+
+    describe('in process', function() {
+
+      var testXML = require('./BpmnRules.dataInputOutput.process.bpmn');
+
+      beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+      it('should move', inject(function(elementRegistry) {
+
+        // when
+        var elements = [
+          'Task',
+          'DataInput',
+          'DataOutput'
+        ];
+
+        // then
+        expectCanDrop('DataInput', 'Process', true);
+        expectCanDrop('DataOutput', 'Process', true);
+
+        expectCanMove(elements, 'Process', {
+          attach: false,
+          move: true
+        });
+      }));
+
+    });
+
+
+    describe('in collaboration', function() {
+
+      var testXML = require('./BpmnRules.dataInputOutput.collaboration.bpmn');
+
+      beforeEach(bootstrapModeler(testXML, { modules: testModules }));
+
+
+      it('should move', inject(function(elementRegistry) {
+
+        // when
+        var elements = [
+          'Task',
+          'DataInput',
+          'DataOutput'
+        ];
+
+        // then
+        expectCanDrop('DataInput', 'Participant_A', true);
+        expectCanDrop('DataInput', 'Participant_B', false);
+
+        expectCanDrop('DataOutput', 'Participant_A', true);
+        expectCanDrop('DataOutput', 'Participant_B', false);
+
+        expectCanMove(elements, 'Participant_A', {
+          attach: false,
+          move: true
+        });
+
+        expectCanMove(elements, 'Participant_B', {
+          attach: false,
+          move: false
+        });
+      }));
+
+    });
+
+  });
+
+
   describe('integration', function() {
 
     describe('move Lane', function() {
@@ -1729,6 +2251,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
   });
 
+
   describe('start connection', function() {
 
     var testXML = require('../../../fixtures/bpmn/simple.bpmn');
@@ -1737,12 +2260,15 @@ describe('features/modeling/rules - BpmnRules', function() {
 
 
     it('should allow start for given element types', inject(function(elementFactory, rules) {
+
       // given
       var types = [
         'bpmn:FlowNode',
         'bpmn:InteractionNode',
         'bpmn:DataObjectReference',
-        'bpmn:DataStoreReference'
+        'bpmn:DataStoreReference',
+        'bpmn:Group',
+        'bpmn:TextAnnotation'
       ];
 
       // when
@@ -1759,6 +2285,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
 
     it('should ignore label elements', inject(function(elementFactory, rules) {
+
       // given
       var label = elementFactory.createShape({ type: 'bpmn:FlowNode', labelTarget: {} });
 
@@ -1771,6 +2298,7 @@ describe('features/modeling/rules - BpmnRules', function() {
 
 
     it('should NOT allow start on unknown element', inject(function(rules) {
+
       // given
       var element = { type: 'bpmn:SomeUnknownType' };
 

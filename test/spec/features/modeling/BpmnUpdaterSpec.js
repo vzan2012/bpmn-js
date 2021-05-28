@@ -89,6 +89,65 @@ describe('features - bpmn-updater', function() {
   });
 
 
+  describe('connection cropping', function() {
+
+    var diagramXML = require('./BpmnUpdater.bpmn');
+
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules
+    }));
+
+    afterEach(sinon.restore);
+
+
+    it('should crop connection only once per reconnect', inject(
+      function(modeling, elementRegistry, connectionDocking) {
+
+        // given
+        var sequenceFlow = elementRegistry.get('SequenceFlow_1'),
+            target = elementRegistry.get('EndEvent_2'),
+            cropSpy = sinon.spy(connectionDocking, 'getCroppedWaypoints');
+
+        // when
+        modeling.reconnectEnd(sequenceFlow, target, { x: 418, y: 260 });
+
+        // then
+        expect(cropSpy).to.have.been.calledOnce;
+        expect(cropSpy).to.have.been.calledWith(sequenceFlow);
+      }
+    ));
+
+
+    it('should not crop connection after pasting', inject(
+      function(canvas, copyPaste, elementRegistry, connectionDocking) {
+
+        // given
+        var sequenceFlow = elementRegistry.get('SequenceFlow_5'),
+            target = elementRegistry.get('Task_2'),
+            cropSpy = sinon.spy(connectionDocking, 'getCroppedWaypoints');
+
+        copyPaste.copy([
+          target,
+          sequenceFlow
+        ]);
+
+        // when
+        copyPaste.paste({
+          element: canvas.getRootElement(),
+          point: {
+            x: 500,
+            y: 500
+          }
+        });
+
+        // then
+        expect(cropSpy).not.to.have.been.calledOnce;
+      }
+    ));
+
+  });
+
+
   describe('incomplete DI', function() {
 
     var diagramXML = require('./BpmnUpdater.incompleteDi.bpmn');

@@ -1,22 +1,38 @@
-/* global sinon */
-
 import {
   bootstrapModeler,
   inject
 } from 'test/TestHelper';
 
+import {
+  resizeBounds
+} from 'diagram-js/lib/features/resize/ResizeUtil';
+
+import {
+  DEFAULT_LABEL_SIZE,
+  getExternalLabelMid
+} from 'lib/util/LabelUtil';
+
+import {
+  assign,
+  map,
+  pick
+} from 'min-dash';
+
 import modelingModule from 'lib/features/modeling';
 import coreModule from 'lib/core';
+import gridSnappingModule from 'lib/features/grid-snapping';
 
 
 describe('behavior - LabelBehavior', function() {
 
-  var diagramXML =
-    require('../../../../fixtures/bpmn/features/modeling/behavior/label-behavior.bpmn');
+  var diagramXML = require('./LabelBehavior.bpmn');
 
-  var testModules = [ modelingModule, coreModule ];
-
-  beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+  beforeEach(bootstrapModeler(diagramXML, {
+    modules: [
+      modelingModule,
+      coreModule
+    ]
+  }));
 
 
   describe('updating name property', function() {
@@ -144,6 +160,31 @@ describe('behavior - LabelBehavior', function() {
     ));
 
 
+    it('should add to group', inject(
+      function(bpmnFactory, elementRegistry, modeling) {
+
+        // given
+        var parentShape = elementRegistry.get('Process_1'),
+            categoryValue = bpmnFactory.create('bpmn:CategoryValue', {
+              value: 'foo'
+            }),
+            businessObject = bpmnFactory.create('bpmn:Group', {
+              categoryValueRef: categoryValue
+            }),
+            newShapeAttrs = {
+              type: 'bpmn:Group',
+              businessObject: businessObject
+            };
+
+        // when
+        var newShape = modeling.createShape(newShapeAttrs, { x: 50, y: 50 }, parentShape);
+
+        // then
+        expect(newShape.label).to.exist;
+      }
+    ));
+
+
     it('should not add to task', inject(
       function(elementFactory, elementRegistry, modeling) {
 
@@ -158,6 +199,47 @@ describe('behavior - LabelBehavior', function() {
         expect(newShape.label).not.to.exist;
       }
     ));
+
+
+    it('should not add label if created shape is label', inject(
+      function(bpmnFactory, elementFactory, elementRegistry, modeling, textRenderer) {
+
+        // given
+        var parentShape = elementRegistry.get('Process_1');
+
+        var createLabelSpy = sinon.spy(modeling, 'createLabel');
+
+        var exclusiveGatewayBo = bpmnFactory.create('bpmn:ExclusiveGateway', {
+          name: 'Foo'
+        });
+
+        var exclusiveGateway = elementFactory.createShape({
+          type: 'bpmn:ExclusiveGateway',
+          businessObject: exclusiveGatewayBo
+        });
+
+        modeling.createElements([ exclusiveGateway ], { x: 50, y: 50 }, parentShape, {
+          createElementsBehavior: false
+        });
+
+        var externalLabelMid = getExternalLabelMid(exclusiveGateway);
+
+        var externalLabelBounds = textRenderer.getExternalLabelBounds(DEFAULT_LABEL_SIZE, 'Foo');
+
+        var label = elementFactory.createLabel({
+          businessObject: exclusiveGatewayBo,
+          labelTarget: exclusiveGateway,
+          width: externalLabelBounds.width,
+          height: externalLabelBounds.height
+        });
+
+        // when
+        modeling.createElements([ label ], externalLabelMid, parentShape);
+
+        // then
+        expect(createLabelSpy).not.to.have.been.called;
+      })
+    );
 
 
     describe('on append', function() {
@@ -240,6 +322,29 @@ describe('behavior - LabelBehavior', function() {
       }
     ));
 
+
+    it('should NOT add label if hint createElementsBehavior=false', inject(
+      function(bpmnFactory, elementFactory, elementRegistry, modeling) {
+
+        // given
+        var parentShape = elementRegistry.get('Process_1'),
+            newShape = elementFactory.createShape({
+              type: 'bpmn:ExclusiveGateway',
+              businessObject: bpmnFactory.create('bpmn:ExclusiveGateway', {
+                name: 'foo'
+              })
+            });
+
+        // when
+        newShape = modeling.createShape(newShape, { x: 50, y: 50 }, parentShape, {
+          createElementsBehavior: false
+        });
+
+        // then
+        expect(newShape.label).not.to.exist;
+      }
+    ));
+
   });
 
 
@@ -309,6 +414,28 @@ describe('behavior - LabelBehavior', function() {
         }
       ));
 
+
+      it('should NOT move label if labelBehavior=false', inject(function(elementRegistry, modeling) {
+
+        // given
+        var connection = elementRegistry.get('SequenceFlow_1'),
+            waypoints = copyWaypoints(connection),
+            label = connection.label,
+            oldLabelPosition = pick(label, [ 'x', 'y' ]);
+
+        var newWaypoints = [
+          waypoints[ 0 ],
+          { x: 0, y: 0 },
+          waypoints[ 1 ]
+        ];
+
+        // when
+        modeling.updateWaypoints(connection, newWaypoints, { labelBehavior: false });
+
+        // then
+        expect(pick(label, [ 'x', 'y' ])).to.eql(oldLabelPosition);
+      }));
+
     });
 
   });
@@ -371,4 +498,321 @@ describe('behavior - LabelBehavior', function() {
 
   });
 
+
+  describe('resize label target', function() {
+
+    describe('should move label (outside)', function() {
+
+      it('to the top', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_2'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'se', {
+            x: 0,
+            y: -50
+          })
+        );
+
+        // then
+        expect(label.x).to.equal(labelBounds.x);
+        expect(label.y).to.be.below(labelBounds.y);
+
+      }));
+
+
+      it('to the right', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_1'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'se', {
+            x: 50,
+            y: 0
+          })
+        );
+
+        // then
+        expect(label.x).to.be.above(labelBounds.x);
+        expect(label.y).to.equal(labelBounds.y);
+
+      }));
+
+
+      it('to the bottom', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_2'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'se', {
+            x: 0,
+            y: 50
+          })
+        );
+
+        // then
+        expect(label.x).to.equal(labelBounds.x);
+        expect(label.y).to.be.above(labelBounds.y);
+
+      }));
+
+
+      it('to the left', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_3'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'sw', {
+            x: -50,
+            y: 0
+          })
+        );
+
+        // then
+        expect(label.x).to.be.below(labelBounds.x);
+        expect(label.y).to.equal(labelBounds.y);
+
+      }));
+
+
+      it('NOT if reference point not affected', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_2'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'ne', {
+            x: 0,
+            y: -50
+          })
+        );
+
+        // then
+        expect(getBounds(label)).to.eql(labelBounds);
+
+      }));
+
+    });
+
+
+    describe('should move label (inside)', function() {
+
+      it('to the top', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_4'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'nw', {
+            x: 0,
+            y: -50
+          })
+        );
+
+        // then
+        expect(label.x).to.equal(labelBounds.x);
+        expect(label.y).to.be.below(labelBounds.y);
+
+      }));
+
+
+      it('to the right', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_4'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'ne', {
+            x: 50,
+            y: 0
+          })
+        );
+
+        // then
+        expect(label.x).to.be.above(labelBounds.x);
+        expect(label.y).to.equal(labelBounds.y);
+
+      }));
+
+
+      it('to the bottom', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_5'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'sw', {
+            x: 0,
+            y: 50
+          })
+        );
+
+        // then
+        expect(label.x).to.equal(labelBounds.x);
+        expect(label.y).to.be.above(labelBounds.y);
+
+      }));
+
+
+
+      it('to the left', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_4'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'sw', {
+            x: -50,
+            y: 0
+          })
+        );
+
+        // then
+        expect(label.x).to.be.below(labelBounds.x);
+        expect(label.y).to.equal(labelBounds.y);
+
+      }));
+
+
+      it('NOT if reference point not affected', inject(function(elementRegistry, modeling) {
+
+        // given
+        var groupShape = elementRegistry.get('Group_4'),
+            label = groupShape.label,
+            labelBounds = getBounds(label);
+
+        // when
+        modeling.resizeShape(
+          groupShape,
+          resizeBounds(groupShape, 'se', {
+            x: 0,
+            y: 50
+          })
+        );
+
+        // then
+        expect(getBounds(label)).to.eql(labelBounds);
+
+      }));
+
+    });
+
+  });
+
 });
+
+
+describe('behavior - LabelBehavior', function() {
+
+  describe('copy/paste integration', function() {
+
+    var diagramXML = require('./LabelBehavior.copyPaste.bpmn');
+
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: [
+        modelingModule,
+        coreModule,
+        gridSnappingModule
+      ]
+    }));
+
+
+    it('should skip adjustment during creation', inject(
+      function(elementRegistry, copyPaste, canvas, dragging) {
+
+        // given
+        var elements = [
+          elementRegistry.get('Source'),
+          elementRegistry.get('Target'),
+          elementRegistry.get('SequenceFlow'),
+          elementRegistry.get('SequenceFlow').label
+        ];
+
+        var rootElement = canvas.getRootElement();
+
+        copyPaste.copy(elements);
+
+        // when
+        var pastedElements = copyPaste.paste({
+          element: rootElement,
+          point: {
+            x: 700,
+            y: 300
+          }
+        });
+
+        var label = pastedElements[3];
+
+        // then
+        expect(label).to.exist;
+
+        expect(label).to.have.position({ x: 681, y: 287 });
+      }
+    ));
+
+  });
+
+});
+
+// helpers //////////
+
+function copyWaypoint(waypoint) {
+  return assign({}, waypoint);
+}
+
+function copyWaypoints(connection) {
+  return map(connection.waypoints, function(waypoint) {
+
+    waypoint = copyWaypoint(waypoint);
+
+    if (waypoint.original) {
+      waypoint.original = copyWaypoint(waypoint.original);
+    }
+
+    return waypoint;
+  });
+}
+
+function getBounds(element) {
+  return pick(element, [ 'x', 'y', 'width', 'height' ]);
+}

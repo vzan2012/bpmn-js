@@ -1,5 +1,3 @@
-/* global sinon */
-
 import {
   bootstrapModeler,
   inject
@@ -352,6 +350,7 @@ describe('features/modeling/behavior - data store', function() {
       beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
 
       beforeEach(inject(function(elementRegistry, modeling) {
+
         // given
         var participantElement = elementRegistry.get('Participant'),
             participant2Element = elementRegistry.get('Participant_2'),

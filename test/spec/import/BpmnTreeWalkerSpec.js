@@ -1,5 +1,3 @@
-/* global sinon */
-
 import BpmnTreeWalker from 'lib/import/BpmnTreeWalker';
 
 import BpmnModdle from 'bpmn-moddle';
@@ -24,7 +22,7 @@ describe('import - BpmnTreeWalker', function() {
   });
 
 
-  it('should walk bpmn:Definitions', function(done) {
+  it('should walk bpmn:Definitions', function() {
 
     // given
     var elementSpy = sinon.spy(),
@@ -37,7 +35,9 @@ describe('import - BpmnTreeWalker', function() {
       error: errorSpy
     });
 
-    createModdle(simpleXML, function(err, definitions, context, moddle) {
+    return createModdle(simpleXML).then(function(result) {
+
+      var definitions = result.rootElement;
 
       // when
       walker.handleDefinitions(definitions);
@@ -46,13 +46,11 @@ describe('import - BpmnTreeWalker', function() {
       expect(elementSpy.callCount).to.equal(8);
       expect(rootSpy.calledOnce).to.be.true;
       expect(errorSpy.notCalled).to.be.true;
-
-      done();
     });
   });
 
 
-  it('should walk bpmn:SubProcess', function(done) {
+  it('should walk bpmn:SubProcess', function() {
 
     // given
     var elementSpy = sinon.spy(),
@@ -65,7 +63,10 @@ describe('import - BpmnTreeWalker', function() {
       error: errorSpy
     });
 
-    createModdle(simpleXML, function(err, definitions, context, moddle) {
+    return createModdle(simpleXML).then(function(result) {
+
+      var definitions = result.rootElement;
+
       var subProcess = findElementWithId(definitions, 'SubProcess_1');
 
       var plane = definitions.diagrams[0].plane,
@@ -84,12 +85,11 @@ describe('import - BpmnTreeWalker', function() {
       expect(rootSpy.notCalled).to.be.true;
       expect(errorSpy.notCalled).to.be.true;
 
-      done();
     });
   });
 
 
-  it('should error', function(done) {
+  it('should error', function() {
 
     // given
     var elementSpy = sinon.spy(),
@@ -102,7 +102,9 @@ describe('import - BpmnTreeWalker', function() {
       error: errorSpy
     });
 
-    createModdle(simpleXML, function(err, definitions, context, moddle) {
+    return createModdle(simpleXML).then(function(result) {
+
+      var definitions = result.rootElement;
 
       var element = findElementWithId(definitions, 'SubProcess_1');
 
@@ -116,8 +118,6 @@ describe('import - BpmnTreeWalker', function() {
       expect(elementSpy.callCount).to.equal(8);
       expect(rootSpy.calledOnce).to.be.true;
       expect(errorSpy.calledOnce).to.be.true;
-
-      done();
     });
   });
 
@@ -126,12 +126,10 @@ describe('import - BpmnTreeWalker', function() {
 
 // helpers //////////
 
-function createModdle(xml, done) {
+function createModdle(xml) {
   var moddle = new BpmnModdle();
 
-  moddle.fromXML(xml, 'bpmn:Definitions', function(err, definitions, context) {
-    done(err, definitions, context, moddle);
-  });
+  return moddle.fromXML(xml, 'bpmn:Definitions');
 }
 
 function createWalker(listeners) {

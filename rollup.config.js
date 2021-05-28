@@ -1,6 +1,6 @@
-import { uglify } from 'rollup-plugin-uglify';
-import nodeResolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import { terser } from 'rollup-plugin-terser';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import json from 'rollup-plugin-json';
 import license from 'rollup-plugin-license';
 import replace from 'rollup-plugin-replace';
@@ -56,7 +56,7 @@ const configs = distros.reduce(function(configs, distro) {
       },
       plugins: pgl([
         banner(output, true),
-        uglify({
+        terser({
           output: {
             comments: /license|@preserve/
           }
@@ -98,9 +98,11 @@ function pgl(plugins=[]) {
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
     nodeResolve({
-      module: true,
-      main: true,
-      browser: true
+      mainFields: [
+        'browser',
+        'module',
+        'main'
+      ]
     }),
     commonjs(),
     json(),

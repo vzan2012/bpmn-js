@@ -28,25 +28,17 @@ CustomRules.prototype.init = function() {
     return canConnect(source, target);
   });
 
-  this.addRule('connection.reconnectStart', HIGH_PRIORITY, function(context) {
+  this.addRule('connection.reconnect', HIGH_PRIORITY, function(context) {
 
     var connection = context.connection,
-        source = context.hover || context.source,
+        source = context.source,
         target = connection.target;
 
     return canConnect(source, target, connection);
   });
 
-  this.addRule('connection.reconnectEnd', HIGH_PRIORITY, function(context) {
-
-    var connection = context.connection,
-        source = connection.source,
-        target = context.hover || context.target;
-
-    return canConnect(source, target, connection);
-  });
-
   this.addRule('connection.updateWaypoints', HIGH_PRIORITY, function(context) {
+
     // OK! but visually ignore
     return null;
   });
@@ -78,20 +70,7 @@ CustomRules.prototype.init = function() {
 };
 
 function canConnect(source, target) {
-  if (isType(target, 'custom:triangle')) {
-    return true;
-  }
-
-  if (isType(target, 'custom:circle')) {
-    if (isType(source, 'custom:triangle')) {
-      return true;
-    }
-    return false;
-  }
-
-  if (isCustom(source)) {
-    return true;
-  }
+  return !isCustom(source) && !isCustom(target);
 }
 
 function canCreate(shape, target) {

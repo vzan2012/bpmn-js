@@ -60,6 +60,7 @@ describe('features/modeling - remove element behavior', function() {
 
         // then
         var waypoints = elementRegistry.get('SequenceFlow7').waypoints;
+
         // connection has two vertically equal waypoints
         expect(waypoints).to.have.length(2);
         expect(waypoints[0].x).to.eql(waypoints[1].x);
@@ -183,6 +184,64 @@ describe('features/modeling - remove element behavior', function() {
         var intersec = waypoints[1];
         expect(intersec).to.eql(point(mid));
 
+      }));
+
+    });
+
+
+    describe('connection layouting', function() {
+
+      var processDiagramXML = require('./RemoveElementBehavior.diagonal.bpmn');
+
+      beforeEach(bootstrapModeler(processDiagramXML, { modules: testModules }));
+
+
+      it('should execute', inject(function(modeling, elementRegistry) {
+
+        // given
+        var task = elementRegistry.get('Task1');
+        var sequenceFlow1 = elementRegistry.get('SequenceFlow1');
+
+        // when
+        modeling.removeShape(task);
+
+        // then
+        var waypoints = sequenceFlow1.waypoints;
+
+        // SequenceFlow2 should be deleted
+        expect(elementRegistry.get('SequenceFlow2')).to.be.undefined;
+        expect(elementRegistry.get(task.id)).to.be.undefined;
+
+        // source and target have one connection each
+        expect(elementRegistry.get('StartEvent1').outgoing.length).to.be.equal(1);
+        expect(elementRegistry.get('EndEvent1').incoming.length).to.be.equal(1);
+
+        // connection has Manhattan layout
+        expect(waypoints).to.have.length(4);
+        expect(waypoints[0].y).to.eql(waypoints[1].y);
+        expect(waypoints[1].x).to.eql(waypoints[2].x);
+        expect(waypoints[2].y).to.eql(waypoints[3].y);
+
+      }));
+
+
+      it('should redo', inject(function(commandStack, modeling, elementRegistry) {
+
+        // given
+        var task = elementRegistry.get('Task1'),
+            connection = elementRegistry.get('SequenceFlow1'),
+            newWaypoints;
+
+        // when
+        modeling.removeShape(task);
+
+        newWaypoints = connection.waypoints.slice();
+
+        commandStack.undo();
+        commandStack.redo();
+
+        // then
+        expect(connection).to.have.waypoints(newWaypoints);
       }));
 
     });

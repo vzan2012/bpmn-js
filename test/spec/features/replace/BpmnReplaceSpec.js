@@ -3,10 +3,18 @@ import {
   inject
 } from 'test/TestHelper';
 
+import {
+  assign,
+  pick
+} from 'min-dash';
+
 import modelingModule from 'lib/features/modeling';
 import replaceModule from 'lib/features/replace';
 import moveModule from 'diagram-js/lib/features/move';
 import coreModule from 'lib/core';
+
+import camundaModdleModule from 'camunda-bpmn-moddle/lib';
+import camundaPackage from 'camunda-bpmn-moddle/resources/camunda.json';
 
 import {
   is
@@ -23,10 +31,11 @@ import {
 describe('features/replace - bpmn replace', function() {
 
   var testModules = [
+    camundaModdleModule,
     coreModule,
     modelingModule,
-    replaceModule,
-    moveModule
+    moveModule,
+    replaceModule
   ];
 
 
@@ -34,7 +43,12 @@ describe('features/replace - bpmn replace', function() {
 
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
-    beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
+    }));
 
 
     it('task', inject(function(elementRegistry, bpmnReplace) {
@@ -283,7 +297,10 @@ describe('features/replace - bpmn replace', function() {
     var diagramXML = require('./BpmnReplace.collaboration.bpmn');
 
     beforeEach(bootstrapModeler(diagramXML, {
-      modules: testModules
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
     }));
 
 
@@ -292,12 +309,26 @@ describe('features/replace - bpmn replace', function() {
       // given
       var shape = elementRegistry.get('Participant_1');
 
+      var messageFlow = elementRegistry.get('MessageFlow_B_to_A');
+
+      var collapsedBounds = assign({}, getBounds(shape), { height: 60 });
+
       // when
-      var newShape = bpmnReplace.replaceElement(shape, { type: 'bpmn:Participant', isExpanded: false });
+      var newShape = bpmnReplace.replaceElement(shape, {
+        type: 'bpmn:Participant',
+        isExpanded: false
+      });
 
       // then
       expect(isExpanded(newShape)).to.be.false; // collapsed
       expect(newShape.children).to.be.empty;
+
+      expect(newShape).to.have.bounds(collapsedBounds);
+
+      expect(messageFlow).to.have.waypoints([
+        { x: 368, y: 436 },
+        { x: 368, y: newShape.y + collapsedBounds.height }
+      ]);
     }));
 
 
@@ -306,23 +337,33 @@ describe('features/replace - bpmn replace', function() {
       // given
       var shape = elementRegistry.get('Participant_2');
 
+      var expandedBounds = assign({}, getBounds(shape), { height: 250 });
+
       // when
-      var newShape = bpmnReplace.replaceElement(shape, { type: 'bpmn:Participant', isExpanded: true });
+      var newShape = bpmnReplace.replaceElement(shape, {
+        type: 'bpmn:Participant',
+        isExpanded: true
+      });
 
       // then
       expect(isExpanded(newShape)).to.be.true; // expanded
       expect(newShape.children).to.be.empty;
+
+      expect(newShape).to.have.bounds(expandedBounds);
     }));
 
   });
 
 
-  describe('should collapse pool, removing message flows', function() {
+  describe('should collapse pool, reconnecting message flows', function() {
 
     var diagramXML = require('./BpmnReplace.poolMessageFlows.bpmn');
 
     beforeEach(bootstrapModeler(diagramXML, {
-      modules: testModules
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
     }));
 
 
@@ -341,8 +382,8 @@ describe('features/replace - bpmn replace', function() {
       expect(isExpanded(newShape)).to.be.false; // collapsed
       expect(newShape.children).to.be.empty;
 
-      expect(elementRegistry.get('MessageFlow_1')).not.to.exist;
-      expect(elementRegistry.get('MessageFlow_2')).not.to.exist;
+      expect(elementRegistry.get('MessageFlow_1')).to.exist;
+      expect(elementRegistry.get('MessageFlow_2')).to.exist;
     }));
 
   });
@@ -353,7 +394,10 @@ describe('features/replace - bpmn replace', function() {
     var diagramXML = require('./BpmnReplace.dataObjects.bpmn');
 
     beforeEach(bootstrapModeler(diagramXML, {
-      modules: testModules
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
     }));
 
 
@@ -394,7 +438,12 @@ describe('features/replace - bpmn replace', function() {
 
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
-    beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
+    }));
 
 
     it('should keep position', inject(function(elementRegistry, bpmnReplace) {
@@ -439,7 +488,12 @@ describe('features/replace - bpmn replace', function() {
 
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
-    beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
+    }));
 
 
     it('should select after replace',
@@ -466,7 +520,12 @@ describe('features/replace - bpmn replace', function() {
 
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
-    beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
+    }));
 
     it('should keep internal labels',
       inject(function(elementRegistry, bpmnReplace) {
@@ -514,7 +573,10 @@ describe('features/replace - bpmn replace', function() {
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
     beforeEach(bootstrapModeler(diagramXML, {
-      modules: testModules
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
     }));
 
 
@@ -576,7 +638,10 @@ describe('features/replace - bpmn replace', function() {
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
     beforeEach(bootstrapModeler(diagramXML, {
-      modules: testModules
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
     }));
 
 
@@ -811,7 +876,12 @@ describe('features/replace - bpmn replace', function() {
 
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
-    beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
+    }));
 
 
     it('should update bpmn containment properly', inject(function(elementRegistry, modeling, bpmnReplace) {
@@ -852,7 +922,12 @@ describe('features/replace - bpmn replace', function() {
 
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
-    beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
+    }));
 
 
     it('should allow morphing expanded into expanded ad hoc',
@@ -983,6 +1058,44 @@ describe('features/replace - bpmn replace', function() {
         expect(is(newElement, 'bpmn:CallActivity')).to.be.true;
       }));
 
+    it('should drop event type from start event after moving it into sub process',
+      inject(function(bpmnReplace, elementRegistry, modeling) {
+
+        // given
+        var startEvent = elementRegistry.get('StartEvent_4'),
+            subProcess = elementRegistry.get('SubProcess_2');
+
+        // when
+        modeling.moveElements([startEvent], { x: 100, y: 0 }, subProcess);
+
+        var startEventAfter = elementRegistry.filter(function(element) {
+          return is(element, 'bpmn:StartEvent') && element.parent === subProcess;
+        })[0];
+
+        // then
+        expect(startEventAfter.businessObject.eventDefinitions).to.be.undefined;
+      })
+    );
+
+    it('should not drop event type from start event after moving it into event sub process',
+      inject(function(bpmnReplace, elementRegistry, modeling) {
+
+        // given
+        var startEvent = elementRegistry.get('StartEvent_5'),
+            subProcess = elementRegistry.get('EventSubProcess_2');
+
+        // when
+        modeling.moveElements([startEvent], { x: -100, y: 0 }, subProcess);
+
+        var startEventAfter = elementRegistry.filter(function(element) {
+          return is(element, 'bpmn:StartEvent') && element.parent === subProcess;
+        })[0];
+
+        // then
+        expect(startEventAfter.businessObject.eventDefinitions[0].$type).to.equal('bpmn:MessageEventDefinition');
+      })
+    );
+
   });
 
 
@@ -991,7 +1104,10 @@ describe('features/replace - bpmn replace', function() {
     var diagramXML = require('../../../fixtures/bpmn/features/replace/01_replace.bpmn');
 
     beforeEach(bootstrapModeler(diagramXML, {
-      modules: testModules
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
     }));
 
 
@@ -1044,7 +1160,10 @@ describe('features/replace - bpmn replace', function() {
     var diagramXML = require('./BpmnReplace.compensation.bpmn');
 
     beforeEach(bootstrapModeler(diagramXML, {
-      modules: testModules
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
     }));
 
 
@@ -1070,7 +1189,12 @@ describe('features/replace - bpmn replace', function() {
 
     var diagramXML = require('./BpmnReplace.eventSubProcesses.bpmn');
 
-    beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
+    }));
 
 
     it('should remove connections',
@@ -1352,13 +1476,17 @@ describe('features/replace - bpmn replace', function() {
     var diagramXML = require('../../../fixtures/bpmn/basic.bpmn');
 
     beforeEach(bootstrapModeler(diagramXML, {
-      modules: testModules
+      modules: testModules,
+      moddleExtensions: {
+        camunda: camundaPackage
+      }
     }));
 
 
     it('should properly set parent of event definitions', inject(
-      function(elementRegistry, modeling, bpmnReplace) {
+      function(elementRegistry, bpmnReplace) {
 
+        // given
         var startEvent = elementRegistry.get('StartEvent_1');
 
         var messageEvent = bpmnReplace.replaceElement(startEvent, {
@@ -1375,8 +1503,9 @@ describe('features/replace - bpmn replace', function() {
 
 
     it('should add condition with ConditionalEventDefinition', inject(
-      function(elementRegistry, modeling, bpmnReplace) {
+      function(elementRegistry, bpmnReplace) {
 
+        // given
         var startEvent = elementRegistry.get('StartEvent_1');
 
         // when
@@ -1392,24 +1521,46 @@ describe('features/replace - bpmn replace', function() {
       })
     );
 
+
+    it('should set host for boundary event if provided',
+      inject(function(elementRegistry, bpmnReplace) {
+
+        // given
+        var startEvent = elementRegistry.get('StartEvent_1'),
+            task = elementRegistry.get('Task_1');
+
+        // when
+        var boundaryEvent = bpmnReplace.replaceElement(startEvent, {
+          type: 'bpmn:BoundaryEvent',
+          host: task
+        });
+
+        // then
+        expect(boundaryEvent).to.exist;
+        expect(boundaryEvent).to.have.property('host', task);
+        expect(task).to.have.property('attachers');
+        expect(task.attachers).to.deep.eql([ boundaryEvent ]);
+      })
+    );
+
   });
 
 
   describe('properties', function() {
-    var clonePropertiesXML = require('../../../fixtures/bpmn/features/replace/clone-properties.bpmn');
+    var copyPropertiesXML = require('../../../fixtures/bpmn/features/replace/copy-properties.bpmn');
 
-    var camundaPackage = require('../../../fixtures/json/model/camunda');
-
-    beforeEach(bootstrapModeler(clonePropertiesXML, {
+    beforeEach(bootstrapModeler(copyPropertiesXML, {
       modules: testModules,
       moddleExtensions: {
         camunda: camundaPackage
       }
     }));
 
-    it('should copy properties', inject(function(elementRegistry, bpmnReplace) {
+    it('should copy properties', inject(function(bpmnReplace, elementRegistry) {
+
       // given
       var task = elementRegistry.get('Task_1');
+
       var newElementData = {
         type: 'bpmn:ServiceTask'
       };
@@ -1422,39 +1573,46 @@ describe('features/replace - bpmn replace', function() {
 
       expect(businessObject.asyncBefore).to.be.true;
       expect(businessObject.jobPriority).to.equal('100');
-      expect(businessObject.documentation[0].text).to.equal('hello world');
 
-      var extensionElements = businessObject.extensionElements.values;
+      var documentation = businessObject.documentation;
 
-      expect(extensionElements).to.have.length(4);
+      expect(documentation).to.have.length(1);
+      expect(documentation[0]).to.exist;
+      expect(documentation[0].text).to.equal('hello world');
 
-      expect(is(extensionElements[0], 'camunda:InputOutput')).to.be.true;
+      var extensionElements = businessObject.extensionElements;
 
-      expect(is(extensionElements[0].inputParameters[0], 'camunda:InputParameter')).to.be.true;
+      expect(extensionElements.values).to.have.length(4);
 
-      expect(extensionElements[0].inputParameters[0].name).to.equal('Input_1');
-      expect(extensionElements[0].inputParameters[0].value).to.equal('foo');
+      var inputOutput = extensionElements.values[0],
+          properties = extensionElements.values[1],
+          executionListener = extensionElements.values[2],
+          retryCycle = extensionElements.values[3];
 
-      expect(is(extensionElements[0].outputParameters[0], 'camunda:OutputParameter')).to.be.true;
+      expect(is(inputOutput, 'camunda:InputOutput')).to.be.true;
 
-      expect(extensionElements[0].outputParameters[0].name).to.equal('Output_1');
-      expect(extensionElements[0].outputParameters[0].value).to.equal('bar');
+      expect(is(inputOutput.inputParameters[0], 'camunda:InputParameter')).to.be.true;
+      expect(inputOutput.inputParameters[0].name).to.equal('Input_1');
+      expect(inputOutput.inputParameters[0].value).to.equal('foo');
 
-      expect(is(extensionElements[1], 'camunda:Properties')).to.be.true;
+      expect(is(inputOutput.outputParameters[0], 'camunda:OutputParameter')).to.be.true;
+      expect(inputOutput.outputParameters[0].name).to.equal('Output_1');
+      expect(inputOutput.outputParameters[0].value).to.equal('bar');
 
-      expect(is(extensionElements[1].values[0], 'camunda:Property')).to.be.true;
+      expect(is(properties, 'camunda:Properties')).to.be.true;
 
-      expect(extensionElements[1].values[0].name).to.equal('bar');
-      expect(extensionElements[1].values[0].value).to.equal('foo');
+      expect(is(properties.values[0], 'camunda:Property')).to.be.true;
+      expect(properties.values[0].name).to.equal('bar');
+      expect(properties.values[0].value).to.equal('foo');
 
-      expect(is(extensionElements[2], 'camunda:ExecutionListener')).to.be.true;
+      expect(is(executionListener, 'camunda:ExecutionListener')).to.be.true;
 
-      expect(extensionElements[2].class).to.equal('reallyClassy');
-      expect(extensionElements[2].event).to.equal('start');
+      expect(executionListener.class).to.equal('reallyClassy');
+      expect(executionListener.event).to.equal('start');
 
-      expect(is(extensionElements[3], 'camunda:FailedJobRetryTimeCycle')).to.be.true;
+      expect(is(retryCycle, 'camunda:FailedJobRetryTimeCycle')).to.be.true;
 
-      expect(extensionElements[3].body).to.equal('10');
+      expect(retryCycle.body).to.equal('10');
     }));
 
   });
@@ -1473,8 +1631,8 @@ describe('features/replace - bpmn replace', function() {
       var newElementData = {
             type: 'bpmn:UserTask'
           },
-          fill = '#BBDEFB',
-          stroke = '#1E88E5';
+          fill = 'red',
+          stroke = 'green';
 
       modeling.setColor(task, { fill: fill, stroke: stroke });
 
@@ -1486,9 +1644,137 @@ describe('features/replace - bpmn replace', function() {
 
       expect(businessObject.di.fill).to.equal(fill);
       expect(businessObject.di.stroke).to.equal(stroke);
-
-      expect(newElement.colors).not.to.exist;
     }));
+
+  });
+
+
+  describe('center', function() {
+
+    var diagramXML = require('../../../fixtures/bpmn/features/replace/data-elements.bpmn');
+
+    var testModules = [
+      modelingModule,
+      coreModule
+    ];
+
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: testModules
+    }));
+
+
+    describe('data store reference to data object reference', function() {
+
+      it('should center on replace', inject(function(bpmnReplace, elementRegistry) {
+
+        // given
+        var dataStoreReference = elementRegistry.get('DataStoreReference_1');
+        var positionX = dataStoreReference.x;
+
+        // when
+        bpmnReplace.replaceElement(dataStoreReference, { type: 'bpmn:DataObjectReference' });
+
+        var dataObjectReference = elementRegistry.get('DataStoreReference_1');
+        var newPositionX = positionX + (dataStoreReference.width - dataObjectReference.width) / 2;
+
+        // then
+        expect(dataObjectReference.x).to.eql(newPositionX);
+      }));
+
+
+      it('should undo', inject(function(bpmnReplace, commandStack, elementRegistry) {
+
+        // given
+        var dataStoreReference = elementRegistry.get('DataStoreReference_1');
+        var positionX = dataStoreReference.x;
+
+        bpmnReplace.replaceElement(dataStoreReference, { type: 'bpmn:DataObjectReference' });
+
+        // when
+        commandStack.undo();
+
+        // then
+        expect(elementRegistry.get('DataStoreReference_1').x).to.eql(positionX);
+      }));
+
+
+      it('should redo', inject(function(bpmnReplace, commandStack, elementRegistry) {
+
+        // given
+        var dataStoreReference = elementRegistry.get('DataStoreReference_1');
+        var positionX = dataStoreReference.x;
+
+        bpmnReplace.replaceElement(dataStoreReference, { type: 'bpmn:DataObjectReference' });
+        commandStack.undo();
+
+        // when
+        commandStack.redo();
+
+        var dataObjectReference = elementRegistry.get('DataStoreReference_1');
+        var newPositionX = positionX + (dataStoreReference.width - dataObjectReference.width) / 2;
+
+        // then
+        expect(dataObjectReference.x).to.eql(newPositionX);
+      }));
+
+    });
+
+
+    describe('data object reference to data store reference', function() {
+
+      it('should center on replace', inject(function(bpmnReplace, elementRegistry) {
+
+        // given
+        var dataObjectReference = elementRegistry.get('DataObjectReference_1');
+        var positionX = dataObjectReference.x;
+
+        // when
+        bpmnReplace.replaceElement(dataObjectReference, { type: 'bpmn:DataStoreReference' });
+
+        var dataStoreReference = elementRegistry.get('DataObjectReference_1');
+        var newPositionX = positionX + (dataObjectReference.width - dataStoreReference.width) / 2;
+
+        // then
+        expect(dataStoreReference.x).to.eql(newPositionX);
+      }));
+
+
+      it('should undo', inject(function(bpmnReplace, commandStack, elementRegistry) {
+
+        // given
+        var dataObjectReference = elementRegistry.get('DataObjectReference_1');
+        var positionX = dataObjectReference.x;
+
+        bpmnReplace.replaceElement(dataObjectReference, { type: 'bpmn:DataStoreReference' });
+
+        // when
+        commandStack.undo();
+
+        // then
+        expect(elementRegistry.get('DataObjectReference_1').x).to.eql(positionX);
+      }));
+
+
+      it('should redo', inject(function(bpmnReplace, commandStack, elementRegistry) {
+
+        // given
+        var dataObjectReference = elementRegistry.get('DataObjectReference_1');
+        var positionX = dataObjectReference.x;
+
+        bpmnReplace.replaceElement(dataObjectReference, { type: 'bpmn:DataStoreReference' });
+        commandStack.undo();
+
+        // when
+        commandStack.redo();
+
+        var dataStoreReference = elementRegistry.get('DataObjectReference_1');
+        var newPositionX = positionX + (dataObjectReference.width - dataStoreReference.width) / 2;
+
+        // then
+        expect(dataStoreReference.x).to.eql(newPositionX);
+      }));
+
+    });
 
   });
 
@@ -1504,4 +1790,8 @@ function skipId(key, value) {
   }
 
   return value;
+}
+
+function getBounds(shape) {
+  return pick(shape, [ 'x', 'y', 'width', 'height' ]);
 }

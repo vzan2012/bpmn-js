@@ -3,7 +3,9 @@ import {
 } from 'test/TestHelper';
 
 import {
-  isString
+  isArray,
+  isString,
+  map
 } from 'min-dash';
 
 
@@ -47,6 +49,40 @@ export function expectCanDrop(element, target, expectedResult) {
 }
 
 
+export function expectCanCreate(shape, target, expectedResult) {
+
+  var result = getBpmnJS().invoke(function(rules) {
+
+    if (isArray(shape)) {
+      return rules.allowed('elements.create', {
+        elements: get(shape),
+        target: get(target)
+      });
+    }
+
+    return rules.allowed('shape.create', {
+      shape: get(shape),
+      target: get(target)
+    });
+  });
+
+  expect(result).to.eql(expectedResult);
+}
+
+
+export function expectCanCopy(element, elements, expectedResult) {
+
+  var result = getBpmnJS().invoke(function(rules) {
+    return rules.allowed('element.copy', {
+      element: element,
+      elements: elements
+    });
+  });
+
+  expect(result).to.eql(expectedResult);
+}
+
+
 export function expectCanInsert(element, target, expectedResult) {
 
   var result = getBpmnJS().invoke(function(bpmnRules) {
@@ -60,6 +96,8 @@ export function expectCanInsert(element, target, expectedResult) {
 export function expectCanMove(elements, target, rules) {
 
   var results = {};
+
+  elements = elements.map(get);
 
   getBpmnJS().invoke(function(bpmnRules) {
 
@@ -82,21 +120,25 @@ export function expectCanMove(elements, target, rules) {
  * Retrieve element, resolving an ID with
  * the actual element.
  */
-function get(element) {
+function get(elementId) {
 
-  var actualElement;
-
-  if (isString(element)) {
-    actualElement = getBpmnJS().invoke(function(elementRegistry) {
-      return elementRegistry.get(element);
-    });
-
-    if (!actualElement) {
-      throw new Error('element #' + element + ' not found');
-    }
-
-    return actualElement;
+  if (isArray(elementId)) {
+    return map(elementId, get);
   }
 
-  return element;
+  var element;
+
+  if (isString(elementId)) {
+    element = getBpmnJS().invoke(function(elementRegistry) {
+      return elementRegistry.get(elementId);
+    });
+
+    if (!element) {
+      throw new Error('element #' + elementId + ' not found');
+    }
+
+    return element;
+  }
+
+  return elementId;
 }

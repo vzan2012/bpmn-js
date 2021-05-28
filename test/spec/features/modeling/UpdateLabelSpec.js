@@ -20,7 +20,7 @@ describe('features/modeling - update label', function() {
 
 
   it('should change name of start event', inject(
-    function(modeling, elementRegistry, eventBus) {
+    function(modeling, elementRegistry) {
 
       // given
       var startEvent_1 = elementRegistry.get('StartEvent_1');
@@ -46,6 +46,27 @@ describe('features/modeling - update label', function() {
       // then
       expect(startEvent_2.businessObject.name).to.equal('bar');
       expect(startEvent_2.label).to.exist;
+    }
+  ));
+
+
+  it('should not create label on empty text', inject(
+    function(modeling, elementRegistry) {
+
+      // given
+      var startEvent_2 = elementRegistry.get('StartEvent_2');
+
+      // when
+      modeling.updateLabel(startEvent_2, '');
+
+      // then
+      expect(startEvent_2.businessObject.name).to.equal('');
+      expect(startEvent_2.label).not.to.exist;
+
+      expect(startEvent_2).to.have.dimensions({
+        width: 36,
+        height: 36
+      });
     }
   ));
 
@@ -134,6 +155,20 @@ describe('features/modeling - update label', function() {
   ));
 
 
+  it('should change value of group', inject(function(modeling, elementRegistry) {
+
+    // given
+    var group_1 = elementRegistry.get('Group_1');
+
+    // when
+    modeling.updateLabel(group_1, 'foo');
+
+    // then
+    expect(group_1.businessObject.categoryValueRef.value).to.equal('foo');
+    expect(group_1.label).to.exist;
+  }));
+
+
   it('should propertly fire events.changed after event name change', inject(
     function(modeling, elementRegistry, eventBus) {
 
@@ -175,5 +210,20 @@ describe('features/modeling - update label', function() {
       expect(changedEvent.elements).to.include(startEvent_1);
     }
   ));
+
+
+  it('should resize empty text annotation', inject(function(modeling, elementRegistry) {
+
+    // given
+    var element = elementRegistry.get('TextAnnotation_1');
+
+    var newBounds = { x: 100, y: 100, width: 100, height: 30 };
+
+    // when
+    modeling.updateLabel(element, null, newBounds);
+
+    // then
+    expect(element).to.have.bounds(newBounds);
+  }));
 
 });

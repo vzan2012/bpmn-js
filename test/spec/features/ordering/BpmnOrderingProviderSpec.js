@@ -91,6 +91,16 @@ describe('features/modeling - ordering', function() {
     }));
 
 
+    it('should stay behind Group', inject(function() {
+
+      // when
+      move('Participant', 'Collaboration');
+
+      // then
+      expectZOrder('Participant_StartEvent', 'Participant', 'Group');
+    }));
+
+
     it('should stay behind DataInputAssociation when moving Participant with DataStore', inject(function() {
 
       // when
@@ -276,6 +286,59 @@ describe('features/modeling - ordering', function() {
           'DataStore',
           'DataStore_label'
         );
+      }));
+
+    });
+
+  });
+
+
+  describe('groups', function() {
+
+    var diagramXML = require('./groups.bpmn');
+
+    beforeEach(bootstrapModeler(diagramXML, { modules: testModules }));
+
+
+    describe('should stay always in front', function() {
+
+      it('moving <Group> onto <StartEvent>', inject(function() {
+
+        // when
+        move('Group', { x: 100, y: 0 }, 'StartEvent', false);
+
+        // then
+        expectZOrder('StartEvent', 'Group');
+      }));
+
+
+      it('moving <Group> onto <Task>', inject(function() {
+
+        // when
+        move('Group', { x: 200, y: 50 }, 'Task', false);
+
+        // then
+        expectZOrder('Task', 'Group');
+      }));
+
+
+      it('move <Group> onto <SubProcess>', inject(function() {
+
+        // when
+        move('Group', { x: 400, y: 0 }, 'SubProcess', false);
+
+        // then
+        expectZOrder('SubProcess', 'Group');
+      }));
+
+
+      it('move <Group> onto <Participant>', inject(function() {
+
+        // when
+        move('Group', { x: 50, y: 0 }, 'Participant', false);
+
+        // then
+        expectZOrder('Participant', 'Group');
       }));
 
     });

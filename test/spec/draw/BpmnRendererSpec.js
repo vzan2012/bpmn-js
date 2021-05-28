@@ -22,194 +22,270 @@ import {
   getDi
 } from 'lib/draw/BpmnRenderUtil';
 
-function checkErrors(done) {
-  return function(err, warnings) {
-    expect(warnings).to.be.empty;
-    expect(err).not.to.exist;
-    done();
-  };
+function checkErrors(err, warnings) {
+  expect(warnings).to.be.empty;
+  expect(err).not.to.exist;
 }
 
 
 describe('draw - bpmn renderer', function() {
 
-  it('should render labels', function(done) {
+  it('should render labels', function() {
     var xml = require('./BpmnRenderer.labels.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render activity markers', function(done) {
+  it('should render activity markers', function() {
     var xml = require('../../fixtures/bpmn/draw/activity-markers.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render association markers', function(done) {
+  it('should render association markers', function() {
     var xml = require('../../fixtures/bpmn/draw/associations.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render activity markers (combination)', function(done) {
+  it('should render activity markers (combination)', function() {
     var xml = require('../../fixtures/bpmn/draw/activity-markers-combination.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render conditional flows', function(done) {
+  it('should render conditional flows', function() {
     var xml = require('../../fixtures/bpmn/draw/conditional-flow.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render conditional default flows', function(done) {
+  it('should render conditional default flows', function() {
     var xml = require('../../fixtures/bpmn/draw/conditional-flow-default.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      return checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render NO conditional flow (gateway)', function(done) {
+  it('should render NO conditional flow (gateway)', function() {
     var xml = require('../../fixtures/bpmn/draw/conditional-flow-gateways.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render conditional flow (typed task)', function(done) {
+  it('should render conditional flow (typed task)', function() {
     var xml = require('../../fixtures/bpmn/draw/conditional-flow-typed-task.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render data objects', function(done) {
+  it('should render data objects', function() {
     var xml = require('../../fixtures/bpmn/draw/data-objects.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render events', function(done) {
+  it('should render events', function() {
     var xml = require('../../fixtures/bpmn/draw/events.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render events (interrupting)', function(done) {
+  it('should render events (interrupting)', function() {
     var xml = require('../../fixtures/bpmn/draw/events-interrupting.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render event subprocesses (collapsed)', function(done) {
+  it('should render event subprocesses (collapsed)', function() {
     var xml = require('../../fixtures/bpmn/draw/event-subprocesses-collapsed.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render event subprocesses (expanded)', function(done) {
+  it('should render event subprocesses (expanded)', function() {
     var xml = require('../../fixtures/bpmn/draw/event-subprocesses-expanded.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render gateways', function(done) {
+  it('should render gateways', function() {
     var xml = require('../../fixtures/bpmn/draw/gateways.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render group', function(done) {
+  it('should render group', function() {
     var xml = require('../../fixtures/bpmn/draw/group.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render group name', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/group-name.bpmn');
+  it('should render message marker', function() {
+    var xml = require('../../fixtures/bpmn/draw/message-marker.bpmn');
+    return bootstrapViewer(xml).call(this).then(function(result) {
 
-    bootstrapViewer(xml).call(this, function(err) {
+      checkErrors(result.error, result.warnings);
+    });
+  });
 
+
+  it('should render message label', function() {
+    var xml = require('../../fixtures/bpmn/draw/message-label.bpmn');
+    return bootstrapViewer(xml).call(this).then(function(result) {
+      checkErrors(result.error, result.warnings);
       inject(function(elementRegistry) {
 
-        var groupGfx = elementRegistry.getGraphics('Group_1');
+        var dataFlow = elementRegistry.getGraphics('dataFlow');
 
-        expect(domQuery('.djs-label', groupGfx)).to.exist;
-
-        done(err);
+        expect(domQuery('.djs-label', dataFlow)).to.exist;
       })();
     });
   });
 
 
-  it('should render message marker', function(done) {
-    var xml = require('../../fixtures/bpmn/draw/message-marker.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
-  });
-
-
-  it('should render pools', function(done) {
+  it('should render pools', function() {
     var xml = require('../../fixtures/bpmn/draw/pools.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render pool collection marker', function(done) {
+  it('should render pool collection marker', function() {
     var xml = require('../../fixtures/bpmn/draw/pools-with-collection-marker.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render task types', function(done) {
+  it('should render task types', function() {
     var xml = require('../../fixtures/bpmn/draw/task-types.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render text annotations', function(done) {
+  it('should render text annotations', function() {
     var xml = require('../../fixtures/bpmn/draw/text-annotation.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render flow markers', function(done) {
+  it('should render flow markers', function() {
     var xml = require('../../fixtures/bpmn/flow-markers.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render xor gateways blank and with X', function(done) {
+  it('should render xor gateways blank and with X', function() {
     var xml = require('../../fixtures/bpmn/draw/xor.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render boundary events with correct z-index', function(done) {
+  it('should render boundary events with correct z-index', function() {
     var xml = require('../../fixtures/bpmn/draw/boundary-event-z-index.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render boundary events without flowNodeRef', function(done) {
+  it('should render boundary events without flowNodeRef', function() {
     var xml = require('../../fixtures/bpmn/draw/boundary-event-without-refnode.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render boundary event only once if referenced incorrectly via flowNodeRef (robustness)', function(done) {
+  it('should render boundary event only once if referenced incorrectly via flowNodeRef (robustness)', function() {
     var xml = require('../../fixtures/bpmn/draw/boundary-event-with-refnode.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render gateway event if attribute is missing in XML', function(done) {
+  it('should render gateway event if attribute is missing in XML', function() {
     var xml = require('../../fixtures/bpmn/draw/gateway-type-default.bpmn');
-    bootstrapViewer(xml).call(this, checkErrors(done));
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      checkErrors(result.error, result.warnings);
+    });
   });
 
 
-  it('should render call activity', function(done) {
+  it('should render call activity', function() {
     var xml = require('../../fixtures/bpmn/draw/call-activity.bpmn');
 
-    bootstrapViewer(xml).call(this, function(err) {
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      var err = result.error;
+
+      expect(err).not.to.exist;
 
       inject(function(elementRegistry) {
 
@@ -217,18 +293,20 @@ describe('draw - bpmn renderer', function() {
 
         // make sure the + marker is shown
         expect(domQuery('[data-marker=sub-process]', callActivityGfx)).to.exist;
-
-        done(err);
       })();
     });
 
   });
 
 
-  it('should render adhoc sub process', function(done) {
+  it('should render adhoc sub process', function() {
     var xml = require('../../fixtures/bpmn/draw/activity-markers-simple.bpmn');
 
-    bootstrapViewer(xml).call(this, function(err) {
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      var err = result.error;
+
+      expect(err).not.to.exist;
 
       inject(function(elementRegistry) {
 
@@ -236,18 +314,20 @@ describe('draw - bpmn renderer', function() {
 
         // make sure the + marker is shown
         expect(domQuery('[data-marker=adhoc]', callActivityGfx)).to.exist;
-
-        done(err);
       })();
     });
 
   });
 
 
-  it('should add random ID suffix to marker ID', function(done) {
+  it('should add random ID suffix to marker ID', function() {
 
     var xml = require('../../fixtures/bpmn/simple.bpmn');
-    bootstrapViewer(xml).call(this, function(err) {
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      var err = result.error;
+
+      expect(err).not.to.exist;
 
       inject(function(canvas) {
         var svg = canvas._svg;
@@ -255,44 +335,73 @@ describe('draw - bpmn renderer', function() {
 
         expect(markers[0].id).to.match(/^sequenceflow-end-white-black-[A-Za-z0-9]+$/);
       })();
-
-      done(err);
     });
   });
 
 
-  it('should properly render colored markers', function(done) {
+  it('should properly render colored markers', function() {
+    var xml = require('./BpmnRenderer.colors.bpmn');
 
-    var xml = require('../../fixtures/bpmn/draw/colors.bpmn');
-    bootstrapViewer(xml).call(this, function(err) {
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      var err = result.error;
+
+      expect(err).not.to.exist;
 
       inject(function(canvas) {
-        var svg = canvas._svg;
-        var markers = svg.querySelectorAll('marker');
+        var svg = canvas._svg,
+            markers = svg.querySelectorAll('marker');
 
-        expect(markers).to.have.length(5);
-        expect(markers[0].id).to.match(/^sequenceflow-end-white-black-[A-Za-z0-9]{25}$/);
+        expect(markers).to.have.length(7);
+        expect(markers[0].id).to.match(/^sequenceflow-end-rgb_255_224_178_-rgb_251_140_0_-[A-Za-z0-9]{25}$/);
         expect(markers[1].id).to.match(/^sequenceflow-end-yellow-blue-[A-Za-z0-9]{25}$/);
-        expect(markers[2].id).to.match(/^association-end-white-black-[A-Za-z0-9]{25}$/);
-        expect(markers[3].id).to.match(/^messageflow-end-white-black-[A-Za-z0-9]{25}$/);
-        expect(markers[4].id).to.match(/^messageflow-start-white-black-[A-Za-z0-9]{25}$/);
+        expect(markers[2].id).to.match(/^sequenceflow-end-white-_3399aa-[A-Za-z0-9]{25}$/);
+        expect(markers[3].id).to.match(/^sequenceflow-end-white-rgba_255_0_0_0_9_-[A-Za-z0-9]{25}$/);
+        expect(markers[4].id).to.match(/^association-end-_FFE0B2-_FB8C00-[A-Za-z0-9]{25}$/);
+        expect(markers[5].id).to.match(/^messageflow-end-_FFE0B2-_FB8C00-[A-Za-z0-9]{25}$/);
+        expect(markers[6].id).to.match(/^messageflow-start-_FFE0B2-_FB8C00-[A-Za-z0-9]{25}$/);
       })();
-
-      done(err);
     });
   });
 
 
-  it('should render sequenceFlows without source', function(done) {
+  it('should properly render connection markers (2)', function() {
+    var xml = require('./BpmnRenderer.connection-colors.bpmn');
 
-    var xml = require('../../fixtures/bpmn/draw/colors.bpmn');
-    bootstrapModeler(xml, {
+    return bootstrapViewer(xml).call(this).then(function(result) {
+
+      var err = result.error;
+
+      expect(err).not.to.exist;
+
+      inject(function(canvas) {
+        var svg = canvas._svg,
+            markers = svg.querySelectorAll('marker');
+
+        expect(markers).to.have.length(4);
+        expect(markers[0].id).to.match(/^association-end-rgb_23_100_344_-rgb_23_100_344_-[A-Za-z0-9]{25}$/);
+        expect(markers[1].id).to.match(/^association-end-_E1BEE7-_8E24AA-[A-Za-z0-9]{25}$/);
+        expect(markers[2].id).to.match(/^messageflow-end-rgb_23_100_344_-rgb_23_100_344_-[A-Za-z0-9]{25}$/);
+        expect(markers[3].id).to.match(/^messageflow-start-rgb_23_100_344_-rgb_23_100_344_-[A-Za-z0-9]{25}$/);
+      })();
+    });
+  });
+
+
+  it('should render sequenceFlows without source', function() {
+
+    var xml = require('./BpmnRenderer.sequenceFlow-no-source.bpmn');
+    return bootstrapModeler(xml, {
       modules: [
         coreModule,
         rendererModule,
         modelingModule
       ]
-    }).call(this, function(err) {
+    }).call(this).then(function(result) {
+
+      var err = result.error;
+
+      expect(err).not.to.exist;
 
       inject(function(elementFactory, graphicsFactory) {
 
@@ -311,8 +420,6 @@ describe('draw - bpmn renderer', function() {
 
         expect(gfx).to.exist;
       })();
-
-      done(err);
     });
 
   });
@@ -320,11 +427,23 @@ describe('draw - bpmn renderer', function() {
 
   describe('colors', function() {
 
-    var xml = require('../../fixtures/bpmn/draw/colors.bpmn');
+    var xml = require('./BpmnRenderer.colors.bpmn');
+
+    var groupXML = require('./BpmnRenderer.group-colors.bpmn');
+
+    it('should render colors without warnings and errors', function() {
+      return bootstrapViewer(xml).call(this).then(function(result) {
+
+        checkErrors(result.error, result.warnings);
+      });
+    });
 
 
-    it('should render colors without warnings and errors', function(done) {
-      bootstrapViewer(xml).call(this, checkErrors(done));
+    it('should render group colors', function() {
+      return bootstrapViewer(groupXML).call(this).then(function(result) {
+
+        checkErrors(result.error, result.warnings);
+      });
     });
 
 
@@ -333,13 +452,28 @@ describe('draw - bpmn renderer', function() {
       var defaultFillColor = 'red',
           defaultStrokeColor = 'lime';
 
-      // TODO(philippfromme): remove once PhantomJS is not used anymore
-      var hexValues = {
-        blue: '#0000ff',
-        lime: '#00ff00',
-        red: '#ff0000',
-        yellow: '#ffff00'
-      };
+      // TODO(philippfromme): remove once we drop PhantomJS
+      function expectedColors(color) {
+
+        var conversionValues = {
+          blue: '#0000ff',
+          lime: '#00ff00',
+          red: '#ff0000',
+          yellow: '#ffff00',
+          'rgb(251, 140, 0)': '#fb8c00',
+          '#FB8C00': 'rgb(251, 140, 0)',
+          '#3399aa': 'rgb(51, 153, 170)'
+        };
+
+        return [
+          color,
+          color.toLowerCase(),
+          color.toUpperCase(),
+          conversionValues[ color ],
+          conversionValues[ color ] && conversionValues[ color ].toLowerCase(),
+          conversionValues[ color ] && conversionValues[ color ].toUpperCase()
+        ];
+      }
 
       beforeEach(bootstrapViewer(xml,{
         bpmnRenderer: {
@@ -348,12 +482,42 @@ describe('draw - bpmn renderer', function() {
         }
       }));
 
+      // TODO(philippfromme): remove once we drop PhantomJS
+      /**
+       * Ensure alpha channel of RGB (rgba) color has one decimal point.
+       *
+       * @param {string} color
+       *
+       * @return {string}
+       */
+      function fixRgba(color) {
+        if (color.indexOf('rgba') !== -1) {
+          return [
+            'rgba(',
+            color
+              .replace(/rgba\(|\)/g, '')
+              .split(',')
+              .map(function(string) {
+                if (string.indexOf('.') !== -1) {
+                  return parseFloat(string).toFixed(1);
+                }
+
+                return parseInt(string);
+              })
+              .join(', '),
+            ')'
+          ].join('');
+        }
+
+        return color;
+      }
+
       function expectFillColor(element, color) {
-        expect([ color, hexValues[ color ]]).to.include(element.style.fill);
+        expect(expectedColors(color)).to.include(fixRgba(element.style.fill));
       }
 
       function expectStrokeColor(element, color) {
-        expect([ color, hexValues[ color ]]).to.include(element.style.stroke);
+        expect(expectedColors(color)).to.include(fixRgba(element.style.stroke));
       }
 
       /**
@@ -361,8 +525,8 @@ describe('draw - bpmn renderer', function() {
        *
        * @param {djs.model.base} element - Element.
        * @param {SVG} gfx - Graphics of element.
-       * @param {String} fillColor - Fill color to expect.
-       * @param {String} strokeColor - Stroke color to expect.
+       * @param {string} fillColor - Fill color to expect.
+       * @param {string} strokeColor - Stroke color to expect.
        */
       function expectColors(element, gfx, fillColor, strokeColor) {
         var djsVisual = domQuery('.djs-visual', gfx);
@@ -402,20 +566,20 @@ describe('draw - bpmn renderer', function() {
       it('should render default colors without overriding', inject(function(canvas, elementRegistry) {
         var rootElement = canvas.getRootElement();
 
-        elementRegistry.forEach(function(e) {
-          if (e === rootElement) {
+        elementRegistry.forEach(function(element) {
+          if (element === rootElement) {
             return;
           }
 
-          var gfx = elementRegistry.getGraphics(e),
-              di = getDi(e),
+          var gfx = elementRegistry.getGraphics(element),
+              di = getDi(element),
               fillColor = di.get('bioc:fill'),
               strokeColor = di.get('bioc:stroke');
 
           if (fillColor || strokeColor) {
-            expectColors(e, gfx, fillColor, strokeColor);
+            expectColors(element, gfx, fillColor, strokeColor);
           } else {
-            expectColors(e, gfx, defaultFillColor, defaultStrokeColor);
+            expectColors(element, gfx, defaultFillColor, defaultStrokeColor);
           }
         });
       }));

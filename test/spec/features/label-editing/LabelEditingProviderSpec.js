@@ -13,6 +13,10 @@ import {
   getLabel
 } from 'lib/features/label-editing/LabelUtil';
 
+import {
+  createCanvasEvent as canvasEvent
+} from '../../../util/MockEvents';
+
 var MEDIUM_LINE_HEIGHT = 12 * 1.2;
 
 var DELTA = 3;
@@ -21,6 +25,7 @@ var DELTA = 3;
 describe('features - label-editing', function() {
 
   var diagramXML = require('./LabelEditing.bpmn');
+
 
   describe('basics', function() {
 
@@ -163,17 +168,23 @@ describe('features - label-editing', function() {
       ]
     }));
 
-    var elementRegistry,
-        eventBus,
-        directEditing;
-
+    var create,
+        directEditing,
+        dragging,
+        elementFactory,
+        elementRegistry,
+        eventBus;
 
     beforeEach(inject([
-      'elementRegistry', 'eventBus', 'directEditing',
-      function(_elementRegistry, _eventBus, _directEditing) {
+      'create', 'directEditing', 'dragging',
+      'elementFactory', 'elementRegistry', 'eventBus',
+      function(_create, _directEditing, _dragging, _elementFactory, _elementRegistry, _eventBus) {
+        create = _create;
+        directEditing = _directEditing;
+        dragging = _dragging;
+        elementFactory = _elementFactory;
         elementRegistry = _elementRegistry;
         eventBus = _eventBus;
-        directEditing = _directEditing;
       }
     ]));
 
@@ -405,7 +416,101 @@ describe('features - label-editing', function() {
 
       it('lane without label', directEdit('Lane_2'));
 
+
+      it('data input', directEdit('DataInput'));
+
+      it('data output', directEdit('DataOutput'));
+
+
+      it('group', directEdit('Group_1'));
+
+      it('group via label', directEdit('Group_1_label'));
+
     });
+
+
+    describe('after elements create', function() {
+
+      var createTaskElement;
+
+      beforeEach(function() {
+
+        createTaskElement = function(context) {
+
+          var shape = elementFactory.create('shape', { type: 'bpmn:Task' }),
+              parent = elementRegistry.get('SubProcess_1'),
+              parentGfx = elementRegistry.getGraphics(parent);
+
+          create.start(canvasEvent({ x: 0, y: 0 }), [ shape ], context);
+          dragging.hover({
+            element: parent,
+            gfx: parentGfx
+          });
+          dragging.move(canvasEvent({ x: 400, y: 250 }));
+          dragging.end();
+        };
+
+      });
+
+      it('should activate', function() {
+
+        // when
+        createTaskElement();
+
+        // then
+        expect(directEditing.isActive()).to.be.true;
+
+      });
+
+
+      it('should NOT activate with behavior hint', function() {
+
+        // when
+        createTaskElement({
+          hints: { createElementsBehavior: false }
+        });
+
+        // then
+        expect(directEditing.isActive()).to.be.false;
+
+      });
+
+
+    });
+
+  });
+
+
+  describe('group support', function() {
+
+    beforeEach(bootstrapModeler(diagramXML, {
+      modules: [
+        labelEditingModule,
+        coreModule,
+        modelingModule
+      ],
+      canvas: { deferUpdate: false }
+    }));
+
+    it('should initialize categoryValue for empty group', inject(
+      function(elementRegistry, directEditing) {
+
+        // given
+        var shape = elementRegistry.get('Group_2');
+
+        // when
+        directEditing.activate(shape);
+        directEditing._textbox.content.innerText = 'FOO';
+        directEditing.complete();
+
+        // then
+        var label = getLabel(shape);
+
+        expect(shape.businessObject.categoryValueRef).to.exist;
+        expect(label).to.equal('FOO');
+      }
+    ));
+
   });
 
 

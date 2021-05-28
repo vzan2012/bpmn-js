@@ -11,9 +11,14 @@ import {
   find
 } from 'min-dash';
 
+import {
+  getMid
+} from 'diagram-js/lib/layout/LayoutUtil';
+
 import modelingModule from 'lib/features/modeling';
 import moveModule from 'diagram-js/lib/features/move';
 import coreModule from 'lib/core';
+import bendpointsModule from 'diagram-js/lib/features/bendpoints';
 
 import {
   createCanvasEvent as canvasEvent
@@ -64,7 +69,55 @@ describe('features/modeling - replace connection', function() {
 
     describe('after reconnecting', function() {
 
-      it('sequence flow to another task', inject(function(elementRegistry, modeling) {
+      it('sequence flow from a participant', inject(function(modeling) {
+
+        // given
+        var participant2 = element('Participant_2'),
+            subProcess1 = element('SubProcess_1'),
+            connection = element('SequenceFlow_1');
+
+        var newWaypoints = [
+          { x: participant2.x + 200, y: participant2.y },
+          { x: subProcess1.x, y: subProcess1.y + 50 }
+        ];
+
+        // when
+        modeling.reconnect(connection, participant2, connection.target, newWaypoints);
+
+        // then
+        expectConnected(participant2, subProcess1, 'bpmn:MessageFlow');
+      }));
+
+    });
+
+
+    describe('after reconnecting start', function() {
+
+      it('sequence flow from a participant', inject(function(modeling) {
+
+        // given
+        var participant2 = element('Participant_2'),
+            subProcess1 = element('SubProcess_1'),
+            connection = element('SequenceFlow_1');
+
+        var newWaypoints = [
+          { x: participant2.x + 200, y: participant2.y },
+          { x: subProcess1.x, y: subProcess1.y + 50 }
+        ];
+
+        // when
+        modeling.reconnectStart(connection, participant2, newWaypoints);
+
+        // then
+        expectConnected(participant2, subProcess1, 'bpmn:MessageFlow');
+      }));
+
+    });
+
+
+    describe('after reconnecting end', function() {
+
+      it('sequence flow to another task', inject(function(modeling) {
 
         // given
         var task4Shape = element('Task_4');
@@ -109,26 +162,6 @@ describe('features/modeling - replace connection', function() {
 
         // then
         expectConnected(element('Task_2'), participant2, 'bpmn:MessageFlow');
-      }));
-
-
-      it('sequence flow from a participant', inject(function(elementRegistry, modeling) {
-
-        // given
-        var participant2 = element('Participant_2'),
-            subProcess1 = element('SubProcess_1'),
-            connection = element('SequenceFlow_1');
-
-        var newWaypoints = [
-          { x: participant2.x + 200, y: participant2.y },
-          { x: subProcess1.x, y: subProcess1.y + 50 }
-        ];
-
-        // when
-        modeling.reconnectStart(connection, participant2, newWaypoints);
-
-        // then
-        expectConnected(participant2, subProcess1, 'bpmn:MessageFlow');
       }));
 
     });
@@ -270,7 +303,7 @@ describe('features/modeling - replace connection', function() {
   });
 
 
-  describe('should replace SequenceFlow <> MessageFlow', function() {
+  describe('text/data association', function() {
 
     var processDiagramXML = require('./ReplaceConnectionBehavior.association.bpmn');
 
@@ -319,6 +352,43 @@ describe('features/modeling - replace connection', function() {
 
         // then
         expectConnected(textAnnotationShape, targetShape, element('Association_1'));
+      }));
+
+    });
+
+
+    describe('reconnecting data output association to text annotation', function() {
+
+      it('execute', inject(function(modeling) {
+
+        // given
+        var textAnnotation = element('TextAnnotation_1'),
+            dataObjectReference = element('DataObjectReference'),
+            dataOutputAssociation = element('DataOutputAssociation');
+
+        // when
+        modeling.reconnectStart(dataOutputAssociation, textAnnotation, { x: 708, y: 100 });
+
+        // then
+        expectConnected(textAnnotation, dataObjectReference, 'bpmn:Association');
+      }));
+
+
+      it('undo', inject(function(modeling, commandStack) {
+
+        // given
+        var task = element('Task'),
+            dataObjectReference = element('DataObjectReference'),
+            textAnnotation = element('TextAnnotation_1'),
+            dataOutputAssociation = element('DataOutputAssociation');
+
+        modeling.reconnectStart(dataOutputAssociation, textAnnotation, { x: 708, y: 100 });
+
+        // when
+        commandStack.undo();
+
+        // then
+        expectConnected(task, dataObjectReference, dataOutputAssociation);
       }));
 
     });
@@ -447,6 +517,136 @@ describe('features/modeling - replace connection', function() {
       );
 
     });
+
+
+    describe('dragging selection cleanup', function() {
+
+      var processDiagramXML = require('./ReplaceConnectionBehavior.message-sequence-flow.bpmn');
+
+      beforeEach(bootstrapModeler(processDiagramXML, {
+        modules: testModules.concat(bendpointsModule)
+      }));
+
+
+      it('should select the new connection if replaced one was selected before',
+        inject(function(bendpointMove, dragging, elementRegistry, selection) {
+
+          // given
+          var participant2 = elementRegistry.get('Participant_2'),
+              connection = elementRegistry.get('SequenceFlow_1');
+
+
+          selection.select([ connection ]);
+
+          // when
+          bendpointMove.start(canvasEvent(connection.waypoints[0]), connection, 0);
+
+          dragging.hover({
+            element: participant2
+          });
+
+          dragging.move(canvasEvent({ x: participant2.x + 200, y: participant2.y }));
+          dragging.end();
+
+
+          // then
+          expect(selection.get()).to.deep.eql(participant2.outgoing.slice(-1));
+        })
+      );
+
+
+      it('should not interfere with connection to other element',
+        inject(function(bendpointMove, dragging, elementRegistry, selection) {
+
+          // given
+          var participant2 = elementRegistry.get('Participant_2'),
+              connection = elementRegistry.get('SequenceFlow_1');
+
+
+          selection.select([ participant2 ]);
+
+          // when
+          bendpointMove.start(canvasEvent(connection.waypoints[0]), connection, 0);
+
+          dragging.hover({
+            element: participant2
+          });
+
+          dragging.move(canvasEvent({ x: participant2.x + 200, y: participant2.y }));
+          dragging.end();
+
+
+          // then
+          expect(selection.get()).to.deep.eql([ participant2 ]);
+        })
+      );
+
+    });
+
+  });
+
+
+  describe('reconnecting to create loops', function() {
+
+    var processDiagramXML = require('./ReplaceConnectionBehavior.message-sequence-flow.bpmn');
+
+    beforeEach(bootstrapModeler(processDiagramXML, {
+      modules: testModules
+    }));
+
+
+    it('should set correct parents when reconnecting message flow start to task',
+      inject(function(elementRegistry, modeling) {
+
+        // given
+        var task = elementRegistry.get('Task_4'),
+            connection = elementRegistry.get('MessageFlow_5');
+
+        // when
+        modeling.reconnectStart(connection, task, getMid(task));
+
+        // then
+        expect(connection.parent).to.not.exist;
+        expect(task.outgoing[0]).to.exist;
+        expect(task.outgoing[0]).to.have.property('parent', task.parent);
+      })
+    );
+
+
+    it('should set correct parents when reconnecting message flow end to task',
+      inject(function(elementRegistry, modeling) {
+
+        // given
+        var task = elementRegistry.get('Task_3'),
+            connection = elementRegistry.get('MessageFlow_1');
+
+        // when
+        modeling.reconnectEnd(connection, task, getMid(task));
+
+        // then
+        expect(connection.parent).to.not.exist;
+        expect(task.outgoing[0]).to.exist;
+        expect(task.outgoing[0]).to.have.property('parent', task.parent);
+      })
+    );
+
+
+    it('should set correct parents when reconnecting message flow from participant to task',
+      inject(function(elementRegistry, modeling) {
+
+        // given
+        var task = elementRegistry.get('Task_3'),
+            connection = elementRegistry.get('MessageFlow_6');
+
+        // when
+        modeling.reconnectStart(connection, task, getMid(task));
+
+        // then
+        expect(connection.parent).to.not.exist;
+        expect(task.outgoing[1]).to.exist;
+        expect(task.outgoing[1]).to.have.property('parent', task.parent);
+      })
+    );
 
   });
 
